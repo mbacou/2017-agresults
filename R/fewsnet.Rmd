@@ -258,7 +258,7 @@ kable(fews[status==T, .(
 The series of maps below show all FEWSNET indicators (most recent data point) used in this study layered over Nigeria's household locations. These maps provide a good perspective of scale and resolution.
 
 
-```{r fews-chirp-nga, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.align="left", fig.width=3, fig.height=3}
+```{r fews-chirp-nga, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
 
 # Read in and plot all most recent rasters with NGA locations to make sure everything
 # lines up
@@ -275,7 +275,7 @@ tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.rain(36),
 
 ```
 
-```{r fews-chirp-ken, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.align="left", fig.width=3, fig.height=3}
+```{r fews-chirp-ken, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
 
 tm_shape(tmp2) + tm_raster(names(tmp1), pal=pal.rain(36),
   title="Kenya\nCHIRPS v2.0\nMay 2017\n(mm)",
