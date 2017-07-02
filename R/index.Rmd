@@ -333,7 +333,7 @@ html(tabular(Factor(State)*(Factor(LGA)*DropEmpty()+1)+1~Heading("Nigeria Househ
 There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map below.
 
 
-```{r nga-odd, fig.cap="Households Located outside of their recorded LGA, Nigeria", fig.height=7, fig.width=4}
+```{r nga-odd, fig.cap="Households Located outside of their recorded LGA, Nigeria", fig.height=6, fig.width=6}
 
 # Are all locations in the correct LGA
 tmap_mode("plot")

@@ -262,11 +262,11 @@ The series of maps below show all FEWSNET indicators (most recent data point) us
 
 # Read in and plot all most recent rasters with NGA locations to make sure everything
 # lines up
-tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=proj)]
+tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=last(proj))]
 tmp1 <- crop(tmp, nga.l2[nga.l2$svyL2Nm %in% nga.hh[, unique(calc_lga)], ])
 tmp2 <- crop(tmp, ken.pts)
 
-tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.rain(36),
+tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.rain(35),
   title="Nigeria\nCHIRPS v2.0\nMay 2017\n(mm)",
   breaks=seq(0,700,20), 
   labels=na2null(seq(0,700,20)*c(1, NA))) +
@@ -277,7 +277,7 @@ tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.rain(36),
 
 ```{r fews-chirp-ken, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
 
-tm_shape(tmp2) + tm_raster(names(tmp1), pal=pal.rain(36),
+tm_shape(tmp2) + tm_raster(names(tmp1), pal=pal.rain(35),
   title="Kenya\nCHIRPS v2.0\nMay 2017\n(mm)",
   breaks=seq(0,700,20), 
   labels=na2null(seq(0,700,20)*c(1, NA))) +
