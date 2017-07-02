@@ -71,14 +71,14 @@
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#uganda"><i class="fa fa-check"></i><b>1.3</b> Uganda</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html"><i class="fa fa-check"></i><b>2</b> Data Sources and Preprocessing</a><ul>
-<li class="chapter" data-level="2.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#soil-characteristics"><i class="fa fa-check"></i><b>2.1</b> Soil Characteristics</a></li>
-<li class="chapter" data-level="2.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#market-access"><i class="fa fa-check"></i><b>2.2</b> Market Access</a></li>
-<li class="chapter" data-level="2.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#climatic-indicators"><i class="fa fa-check"></i><b>2.3</b> Climatic Indicators</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#fewsnet"><i class="fa fa-check"></i><b>2.3.1</b> FEWSNET</a></li>
-<li class="chapter" data-level="2.3.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#worldclim"><i class="fa fa-check"></i><b>2.3.2</b> WorldClim</a></li>
-<li class="chapter" data-level="2.3.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#other-sources"><i class="fa fa-check"></i><b>2.3.3</b> Other Sources</a></li>
+<li class="chapter" data-level="2.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#climatic-indicators"><i class="fa fa-check"></i><b>2.1</b> Climatic Indicators</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#fewsnet"><i class="fa fa-check"></i><b>2.1.1</b> FEWSNET</a></li>
+<li class="chapter" data-level="2.1.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#worldclim"><i class="fa fa-check"></i><b>2.1.2</b> WorldClim</a></li>
+<li class="chapter" data-level="2.1.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#other-sources"><i class="fa fa-check"></i><b>2.1.3</b> Other Sources</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#drought"><i class="fa fa-check"></i><b>2.4</b> Drought</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#drought"><i class="fa fa-check"></i><b>2.2</b> Drought</a></li>
+<li class="chapter" data-level="2.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#soil-characteristics"><i class="fa fa-check"></i><b>2.3</b> Soil Characteristics</a></li>
+<li class="chapter" data-level="2.4" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#market-access"><i class="fa fa-check"></i><b>2.4</b> Market Access</a></li>
 </ul></li>
 </ul>
 
@@ -109,7 +109,7 @@
 <p>In the case of erroneous coordinates (locations falling largely outside of a household’s administrative unit).</p>
 <div id="nigeria" class="section level2">
 <h2><span class="header-section-number">1.1</span> Nigeria</h2>
-<p><strong>2,065</strong> households are sampled in Nigeria. There are <strong>81</strong> households missing coordinates and <strong>414 erroneous</strong> locations.</p>
+<p><strong>2,065</strong> households are sampled in Nigeria. There are <strong>81</strong> households missing coordinates and <strong>414 possibly invalid</strong> locations.</p>
 <table class="Rtable">
 <caption>
 <span id="tab:nga-na">Tab. 1.1: </span> Survey Sampling across LGAs and missing Household Locations
@@ -122,7 +122,7 @@
 <th>
  
 </th>
-<th colspan="2">
+<th colspan="3">
 Nigeria Household GPS Locations
 </th>
 </tr>
@@ -138,6 +138,9 @@ Obs.
 </th>
 <th>
 Missing
+</th>
+<th>
+Invalid
 </th>
 </tr>
 </thead>
@@ -155,6 +158,9 @@ Birnin-Gwari
 <td>
     3
 </td>
+<td>
+   10
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -168,6 +174,9 @@ Chukun
 </td>
 <td>
     1
+</td>
+<td>
+    2
 </td>
 </tr>
 <tr class="center">
@@ -183,6 +192,9 @@ Giwa
 <td>
    26
 </td>
+<td>
+   17
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -193,6 +205,9 @@ Igabi
 </th>
 <td>
     7
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -211,6 +226,9 @@ Ikara
 <td>
     3
 </td>
+<td>
+   11
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -224,6 +242,9 @@ Jema’a
 </td>
 <td>
     9
+</td>
+<td>
+   18
 </td>
 </tr>
 <tr class="center">
@@ -239,6 +260,9 @@ Kaura
 <td>
     7
 </td>
+<td>
+    0
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -252,6 +276,9 @@ Kauru
 </td>
 <td>
     0
+</td>
+<td>
+    5
 </td>
 </tr>
 <tr class="center">
@@ -267,6 +294,9 @@ Kubau
 <td>
     0
 </td>
+<td>
+   23
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -280,6 +310,9 @@ Kudan
 </td>
 <td>
     4
+</td>
+<td>
+   18
 </td>
 </tr>
 <tr class="center">
@@ -295,6 +328,9 @@ Lere
 <td>
     1
 </td>
+<td>
+    0
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -308,6 +344,9 @@ Makarfi
 </td>
 <td>
     3
+</td>
+<td>
+   28
 </td>
 </tr>
 <tr class="center">
@@ -323,6 +362,9 @@ Rogo
 <td>
     0
 </td>
+<td>
+    1
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -337,6 +379,9 @@ Sabon Gari
 <td>
     0
 </td>
+<td>
+   20
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -347,6 +392,9 @@ Soba
 </th>
 <td>
   157
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -365,6 +413,9 @@ Zaria
 <td>
     4
 </td>
+<td>
+   17
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -378,6 +429,9 @@ All
 </td>
 <td>
    61
+</td>
+<td>
+  170
 </td>
 </tr>
 <tr class="center">
@@ -393,6 +447,9 @@ Bebeji
 <td>
     1
 </td>
+<td>
+    3
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -403,6 +460,9 @@ Bunkure
 </th>
 <td>
    19
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -421,6 +481,9 @@ Dawakin Kudu
 <td>
     1
 </td>
+<td>
+    8
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -431,6 +494,9 @@ Doguwa
 </th>
 <td>
    35
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -449,6 +515,9 @@ Gwarzo
 <td>
     1
 </td>
+<td>
+    3
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -463,6 +532,9 @@ Karaye
 <td>
     2
 </td>
+<td>
+    0
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -473,6 +545,9 @@ Kibiya
 </th>
 <td>
     9
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -491,6 +566,9 @@ Kiru
 <td>
     1
 </td>
+<td>
+    0
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -501,6 +579,9 @@ Kura
 </th>
 <td>
    10
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -519,6 +600,9 @@ Rano
 <td>
     0
 </td>
+<td>
+    0
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -533,6 +617,9 @@ Rimin Gado
 <td>
     0
 </td>
+<td>
+   13
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -543,6 +630,9 @@ Rogo
 </th>
 <td>
    31
+</td>
+<td>
+    0
 </td>
 <td>
     0
@@ -561,6 +651,9 @@ Tofa
 <td>
     0
 </td>
+<td>
+    0
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -574,6 +667,9 @@ Tudun Wada
 </td>
 <td>
     8
+</td>
+<td>
+    0
 </td>
 </tr>
 <tr class="center">
@@ -589,6 +685,9 @@ All
 <td>
    14
 </td>
+<td>
+   27
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -602,6 +701,9 @@ Bakori
 </td>
 <td>
     2
+</td>
+<td>
+   93
 </td>
 </tr>
 <tr class="center">
@@ -617,6 +719,9 @@ Danja
 <td>
     0
 </td>
+<td>
+   18
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -630,6 +735,9 @@ Funtua
 </td>
 <td>
     1
+</td>
+<td>
+   24
 </td>
 </tr>
 <tr class="center">
@@ -645,6 +753,9 @@ Kahur
 <td>
     2
 </td>
+<td>
+   37
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -658,6 +769,9 @@ Malumfashi
 </td>
 <td>
     1
+</td>
+<td>
+   35
 </td>
 </tr>
 <tr class="center">
@@ -673,6 +787,9 @@ Sabuwa
 <td>
     0
 </td>
+<td>
+   10
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -687,6 +804,9 @@ All
 <td>
     6
 </td>
+<td>
+  217
+</td>
 </tr>
 <tr class="center">
 <th class="left">
@@ -700,306 +820,26 @@ All
 <td>
    81
 </td>
+<td>
+  414
+</td>
 </tr>
 </tbody>
 </table>
-<p>There are <strong>414 households</strong> with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map and in the table below.</p>
+<p>There are <strong>414 households</strong> with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map below.</p>
 <div class="figure"><span id="fig:nga-odd"></span>
-<img src="fig/nga-odd-1.svg" alt="Households Located outside of their Recorded LGA, Nigeria" width="2100" />
+<img src="fig/nga-odd-1.png" alt="Households Located outside of their recorded LGA, Nigeria" width="1200" />
 <p class="caption">
-Fig. 1.1: Households Located outside of their Recorded LGA, Nigeria
+Fig. 1.1: Households Located outside of their recorded LGA, Nigeria
 </p>
 </div>
-<table>
-<caption><span id="tab:nga-odd">Tab. 1.2: </span>Households with Problematic GPS Coordinates, Nigeria</caption>
-<thead>
-<tr class="header">
-<th align="left">State</th>
-<th align="left">LGA</th>
-<th align="left">LGA (GPS)</th>
-<th>Dubious Obs.</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Birnin-Gwari</td>
-<td align="left">Chikun</td>
-<td>7</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Birnin-Gwari</td>
-<td align="left">Rogo</td>
-<td>3</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Chukun</td>
-<td align="left">Igabi</td>
-<td>2</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Giwa</td>
-<td align="left">Kaduna South</td>
-<td>1</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Giwa</td>
-<td align="left">Sabuwa</td>
-<td>16</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Ikara</td>
-<td align="left">Makarfi</td>
-<td>11</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Jema’a</td>
-<td align="left">Zangon Kataf</td>
-<td>18</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Kauru</td>
-<td align="left">Lere</td>
-<td>5</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Kubau</td>
-<td align="left">Ikara</td>
-<td>23</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Kudan</td>
-<td align="left">Kubau</td>
-<td>16</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Kudan</td>
-<td align="left">Sabon Gari</td>
-<td>2</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Makarfi</td>
-<td align="left">Ikara</td>
-<td>10</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Makarfi</td>
-<td align="left">Kaduna South</td>
-<td>1</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Makarfi</td>
-<td align="left">Kudan</td>
-<td>10</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Makarfi</td>
-<td align="left">Rogo</td>
-<td>7</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Rogo</td>
-<td align="left">Gwarzo</td>
-<td>1</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Sabon Gari</td>
-<td align="left">Kudan</td>
-<td>20</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Zaria</td>
-<td align="left">Giwa</td>
-<td>6</td>
-</tr>
-<tr class="odd">
-<td align="left">Kaduna</td>
-<td align="left">Zaria</td>
-<td align="left">Igabi</td>
-<td>10</td>
-</tr>
-<tr class="even">
-<td align="left">Kaduna</td>
-<td align="left">Zaria</td>
-<td align="left">Soba</td>
-<td>1</td>
-</tr>
-<tr class="odd">
-<td align="left">Kano</td>
-<td align="left">Bebeji</td>
-<td align="left">Madobi</td>
-<td>2</td>
-</tr>
-<tr class="even">
-<td align="left">Kano</td>
-<td align="left">Bebeji</td>
-<td align="left">Ungogo</td>
-<td>1</td>
-</tr>
-<tr class="odd">
-<td align="left">Kano</td>
-<td align="left">Dawakin Kudu</td>
-<td align="left">Kumbotso</td>
-<td>8</td>
-</tr>
-<tr class="even">
-<td align="left">Kano</td>
-<td align="left">Gwarzo</td>
-<td align="left">Shanono</td>
-<td>2</td>
-</tr>
-<tr class="odd">
-<td align="left">Kano</td>
-<td align="left">Gwarzo</td>
-<td align="left">Tofa</td>
-<td>1</td>
-</tr>
-<tr class="even">
-<td align="left">Kano</td>
-<td align="left">Rimin Gado</td>
-<td align="left">Bagwai</td>
-<td>5</td>
-</tr>
-<tr class="odd">
-<td align="left">Kano</td>
-<td align="left">Rimin Gado</td>
-<td align="left">Tofa</td>
-<td>8</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Bakori</td>
-<td align="left">Danja</td>
-<td>16</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Bakori</td>
-<td align="left">Funtua</td>
-<td>48</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Bakori</td>
-<td align="left">Kafur</td>
-<td>11</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Bakori</td>
-<td align="left">Kankara</td>
-<td>16</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Bakori</td>
-<td align="left">Katsina</td>
-<td>2</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Danja</td>
-<td align="left">Bakori</td>
-<td>18</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Funtua</td>
-<td align="left">Bakori</td>
-<td>2</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Funtua</td>
-<td align="left">Batagarawa</td>
-<td>2</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Funtua</td>
-<td align="left">Faskari</td>
-<td>9</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Funtua</td>
-<td align="left">Sabuwa</td>
-<td>11</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Kahur</td>
-<td align="left">Dandume</td>
-<td>27</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Kahur</td>
-<td align="left">Funtua</td>
-<td>10</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Malumfashi</td>
-<td align="left">Bakori</td>
-<td>2</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Malumfashi</td>
-<td align="left">Funtua</td>
-<td>1</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Malumfashi</td>
-<td align="left">Kafur</td>
-<td>10</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Malumfashi</td>
-<td align="left">Musawa</td>
-<td>18</td>
-</tr>
-<tr class="even">
-<td align="left">Katsina</td>
-<td align="left">Malumfashi</td>
-<td align="left">Sabuwa</td>
-<td>4</td>
-</tr>
-<tr class="odd">
-<td align="left">Katsina</td>
-<td align="left">Sabuwa</td>
-<td align="left">Malumfashi</td>
-<td>10</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div id="kenya" class="section level2">
 <h2><span class="header-section-number">1.2</span> Kenya</h2>
-<p><strong>5235 households</strong> are sampled in Kenya. There are <strong>30</strong> households missing coordinates and <strong><code>nrow(ken.odd)</code> erroneous</strong> locations.</p>
+<p><strong>5235 households</strong> are sampled in Kenya. There are <strong>30</strong> households missing coordinates and <strong><code>nrow(ken.odd)</code> possibly invalid</strong> locations.</p>
 <table class="Rtable">
 <caption>
-<span id="tab:ken-na">Tab. 1.3: </span> Survey Sampling across Counties and missing Household Locations
+<span id="tab:ken-na">Tab. 1.2: </span> Survey Sampling across Counties and missing Household Locations
 </caption>
 <thead>
 <tr class="center">
@@ -1479,7 +1319,7 @@ All
 </tbody>
 </table>
 <div class="figure"><span id="fig:ken-hh"></span>
-<img src="fig/ken-hh-1.svg" alt="Households Locations across Counties, Kenya" width="2100" />
+<img src="fig/ken-hh-1.png" alt="Households Locations across Counties, Kenya" width="2100" />
 <p class="caption">
 Fig. 1.2: Households Locations across Counties, Kenya
 </p>
@@ -1487,7 +1327,7 @@ Fig. 1.2: Households Locations across Counties, Kenya
 </div>
 <div id="uganda" class="section level2">
 <h2><span class="header-section-number">1.3</span> Uganda</h2>
-<p><strong><code>prettyNum(nrow(uga.hh))</code> households</strong> are sampled in Kenya. There are <strong><code>uga.hh[is.na(X), .N]</code></strong> households missing coordinates and <strong><code>nrow(uga.odd)</code> erroneous</strong> locations.</p>
+<p><strong><code>prettyNum(nrow(uga.hh))</code> households</strong> are sampled in Uganda. There are <strong><code>uga.hh[is.na(X), .N]</code></strong> households missing coordinates and <strong><code>nrow(uga.odd)</code> possibly invalid</strong> locations.</p>
 
 </div>
 </div>

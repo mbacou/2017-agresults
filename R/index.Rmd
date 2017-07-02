@@ -1,5 +1,5 @@
 ---
-title: "Geospatial Characteristics of Households"
+title: "Geospatial Characteristics"
 author: "[BACOU, Melanie](http://github.com/mbacou) for [AgResults](http://agresults.org/) (Abt Associates)"
 date: "Last updated on `r Sys.Date()`. DO NOT USE OR CITE"
 description: "Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series."
@@ -16,7 +16,10 @@ cover-image: fig/cover.jpg
 csl: apa.csl
 link-citations: yes
 nocite: |
+  @mathew2016drought, @santiago2016speibase
 ---
+
+# Survey Sampling
 
 ```{r setup, include=F}
 
@@ -26,12 +29,14 @@ library(tables)
 library(tmap)
 library(viridis)
 library(knitr)
+library(stringr)
+library(curl)
 
-load("../tmp/2017-abt.RData")
+load("../tmp/2017-agresults.RData")
 
 # Output options
 opts_chunk$set(comment=NA, warning=F, message=F, echo=F, base.url="../docs",
-  dev="svg", fig.path="fig/", fig.width=7, fig.height=3.8, dpi=300, cache=T, 
+  dev="png", fig.path="fig/", fig.width=7, fig.height=3.8, dpi=300, cache=T, 
   dev.args=list(
     png=list(family="Roboto Condensed", pointsize=9), 
     svg=list(family="Roboto Condensed")))
@@ -42,7 +47,68 @@ table_options(htmloptions(justification="c", head=F, pad=T))
 
 ```{r nga, eval=FALSE}
 
-load("./tmp/2017-abt.RData")
+load("./tmp/2017-agresults.RData")
+
+#####################################################################################
+# Helper - Color Palettes
+#####################################################################################
+pal.rain <- fread("
+224	255	255	Light cyan
+135	206	235	Sky blue
+30	144	255	Dodger blue
+0	0	205	Medium blue
+20	113	61	Camarone
+60	179	113	Medium sea green
+143	188	143	Dark sea green
+240	230	140	Khaki
+244	164	96	Sandy brown
+178	34	34	Firebrick
+  ")
+pal.rain <- rgb(pal.rain[, .(V1, V2, V3)], maxColorValue=255)
+pal.rain <- colorRampPalette(pal.rain)
+
+pal.et_anom <- fread("
+245	145	31	Lightning yellow
+246	169	30	Supernova
+252	211	112	Salomie
+205	204	204	Blue zodiac
+214	232	186	Snow flurry
+158	203	59	Atlantis
+54	170	73	Forest green
+  ")
+pal.et_anom <- rgb(pal.et_anom[, .(V1, V2, V3)], maxColorValue=255)
+pal.et_anom <- colorRampPalette(pal.et_anom)
+
+pal.spei <- fread("
+245	145	31	Lightning yellow
+246	169	30	Supernova
+252	211	112	Salomie
+205	204	204	Blue zodiac
+214	232	186	Snow flurry
+158	203	59	Atlantis
+54	170	73	Forest green
+  ")
+pal.spei <- rgb(pal.spei[, .(V1, V2, V3)], maxColorValue=255)
+pal.spei <- colorRampPalette(pal.spei)
+
+pal.pet <- fread("
+219	189	117	Marzipan
+230	204	150	Chamois
+240	219	184	Champagne
+247	232	204	Varden
+255	255	212	Light goldenrod
+240	255	176	Australian mint
+222	255	173	Reef
+199	255	140	Mantis
+128	255	8	Chartreuse
+51	255	0	Green
+13	194	0	Lime green
+0	156	33	Forest green
+0	128	135	Teal
+0	92	125	Orient
+  ")
+pal.pet <- rgb(pal.pet[, .(V1, V2, V3)], maxColorValue=255)
+pal.pet <- colorRampPalette(pal.pet)
 
 #####################################################################################
 # Nigeria Locations
@@ -97,9 +163,11 @@ levels(nga.l2$svyL2Nm)[c(109,139,397,709)] <- c("Birnin-Gwari", "Chukun", "Kahur
 nga.pts <- SpatialPointsDataFrame(nga.hh[, .(X_imp,Y_imp)], data.frame(nga.hh),
   proj4string=CRS("+init=epsg:4326"))
 
-nga.odd <- data.table(extract(nga.l2, nga.pts))
-nga.odd <- cbind(nga.odd, nga.pts@data)
-nga.odd <- nga.odd[calc_lga != svyL2Nm]
+nga.hh <- data.table(extract(nga.l2, nga.pts))
+nga.hh <- cbind(nga.odd, nga.pts@data)
+setcolorder(nga.hh, c(30:39, 1:29))
+nga.hh <- nga.hh[, .SD, .SDcols=c(1:10,13,14,17:18,21,22,29)]
+nga.odd <- nga.hh[calc_lga != svyL2Nm]
 # => need to map these
 
 # Export to STATA
@@ -113,19 +181,17 @@ setattr(nga.odd, "var.labels",
 write.dta(nga.odd, "./out/2017-abt-nga_odd.dta", version=12L, convert.factors="string")
 
 # Make and save map
-tmp <- nga.pts[nga.odd$point.ID,]
+tmp <- nga.pts[nga.odd$hhid %in% nga.odd$hhid,]
 
 m.nga <- tm_shape(nga.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
   tm_text("svyL2Nm", col="grey30", size="AREA", root=4) +
   tm_shape(tmp, is.master=T, projection="eck4") +
-  tm_dots(col="calc_lga", shape=4, alpha=.5,
-    legend.show=F, size=0.08, palette=viridis(22)) +
-  tm_text("calc_lga", col="calc_lga", size=.4, legend.col.show=F, palette=viridis(22), auto.placement=1, remove.overlap=T) +
+  tm_dots(col="calc_lga", shape=25, alpha=.5, border.col="white",
+    legend.show=T, size=.6, palette=viridis(22),
+    title="Nigeria\nHousehold Locations\n(uncertain)") +
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60)) +
-  tm_layout(' "Problematic" Household Locations, Nigeria  ', 
-    title.color="white", title.size=.8, title.bg.color="grey30",
-    title.bg.alpha=.8, title.position=c("LEFT", "BOTTOM"))
+  tm_layout(legend.outside=T)
 
 save_tmap(m.nga, "./out/2017-abt-nga_odd.pdf", width=5, units="in")
 
@@ -136,6 +202,8 @@ save_tmap(m.nga, "./out/2017-abt-nga_odd.pdf", width=5, units="in")
 #####################################################################################
 # Kenya Locations
 #####################################################################################
+# 2017.07.01 update: received admin details from Betsy but file is no good
+
 # Load KEN coords
 ken.hh <- fread("./data/gis_kenya_for consultant.csv")
 setnames(ken.hh, tolower(names(ken.hh)))
@@ -194,20 +262,19 @@ write.dta(ken.hh, "./out/2017-abt-ken_hh.dta", version=12L, convert.factors="str
 # Make and save map
 ken.pts <- SpatialPointsDataFrame(ken.hh[!is.na(X), .(X,Y)], data.frame(ken.hh[!is.na(X)]),
   proj4string=CRS("+init=epsg:4326"))
+ken.pts$adm2_name <- factor(as.character(ken.pts$adm2_name))
 
 m.ken <- tm_shape(ken.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
-  tm_shape(ken.pts, is.master=T, projection="eck4") +
-  tm_dots(col="adm2_name", shape=4, alpha=.3,
-    legend.show=F, size=0.06, palette=viridis(47)) +
-  tm_shape(ken.l2) +
   tm_text("ADM2_NAME", col="grey30", size="AREA", root=4) +
-  tm_scale_bar(position=c("left", "bottom"), breaks=c(0,40,80)) +
-  tm_layout(" Household Locations, Kenya  ",
-    title.color="white", title.size=.8, title.bg.color="grey30", 
-    title.bg.alpha=.8, title.position=c("LEFT", "BOTTOM"))
+  tm_shape(ken.pts, is.master=T, projection="eck4") +
+  tm_dots(col="adm2_name", shape=25, alpha=.5, border.col="white",
+    legend.show=T, size=.3, palette=viridis(24), max.categories=24,
+    title="Kenya\nHousehold Locations") +
+  tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60,80)) +
+  tm_layout(legend.outside=T)
 
-save_tmap(m.ken, "./out/2017-abt-ken_hh.pdf", width=5, units="in")
+save_tmap(m.ken, "./out/2017-abt-ken_hh.pdf", width=7, units="in")
 
 # Also save county and coords for QGIS
 shapefile(ken.l2, "./maps/ken-abt-17_L2.shp")
@@ -241,96 +308,6 @@ Biophysical, socio-economic, and market information derived from high-resolution
 
 ```
 
-# Data Sources
-
-## Biophysical Conditions
-
-### Long-term Time Series
-
-Need to generate seasonal (maize, March-April-May-June) biophysical indices over the study years (2015-2017).
-
-CRU TS 4.00
-http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/
-
-### Current Conditions
-
-#### IrriSAT
-
-[IrriSAT](https://irrisat-cloud.appspot.com/) is a weather based irrigation scheduling service which is used to inform farmers how much water their crop has used and how much how much irrigation they need to apply. Information is produced daily, and can work across large spatial scales. The IrriSAT methodology uses satellite images to determine a Normalized Difference Vegetation Index (NDVI) for each field, from which the plant canopy size can be determined and a specific crop coefficient (Kc) can be estimated.
-
-IrriSAT provides a [web API](https://irrisat-cloud.appspot.com/api) to batch retrieve daily NDVI and Kc at specified locations.
-
-```
-irrisat.services.data.cropgrowth()
-```
-
-#### CHIRPS
-
-
-
-#### ERA-Interim (Jan 1979 - present)
-
-ERA-Interim is a global atmospheric reanalysis from 1979, continuously updated in real time. The operational analysis is produced four times a day at 00:00, 06:00, 12:00 and 18:00 UTC. It has spatial resolution of about 16 km. The first layer of soil is 0-7cm. Normally we should correct for altitude.
-
-```{r}
-
-tmp <- fread("
-Key:Value
-Stream:Atmospheric model
-Area:15.0°N 2.0°E 6.0°S 43.0°E
-Type:Analysis
-Dataset:interim_daily
-Step:0
-Version:1
-Type of level:Surface
-Time:06
-Date:20150101 to 20170331
-Grid:0.125° x 0.125°
-Parameter:Soil temperature level 1
-Class:ERA Interim", sep=":")
-
-kable(tmp, caption="ERA Interim Soil Temperature at 0-7cm (request details)")
-
-```
-
-#### FEWSNET
-
-Also look at USGS FEWSNET data products at:
-
-- http://ewx.chg.ucsb.edu:8080/EWX/index.html
-- https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af
-
-### Drought
-
-Aside from SPEIBase, drought events are also tracked by NASA EONET. There's an R package for this at http://enelmargen.org/nasadata/vignette_v0/.
-
-```
-
-{
-"title": "EONET Event Categories",
-	"description": "List of all the available event categories in the EONET system",
-	"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories",
-	"categories": [
-		{
-			"id": 6,
-			"title": "Drought",
-			"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/6",
-			"description": "Long lasting absence of precipitation affecting agriculture and livestock, and the overall availability of food and water.",
-			"layers": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/layers/6"
-		}
-}
-		
-```
-
-## Soil Characteristics
-
-
-
-## Market Access
-
-
-# Survey Sampling
-
 The tables and maps below provide details of household locations across the 3 survey samples.
 
 In particular we highlight households with missing and problematic GPS coordinates. In the case of missing coordinates a location is imputed using the centroid of that household's administrative unit (LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over that entire administrative unit and use these values to impute household characteristics. However this approach requires substantial processing.
@@ -339,36 +316,34 @@ In the case of erroneous coordinates (locations falling largely outside of a hou
 
 ## Nigeria
 
-**`r format(nrow(nga.hh), big.mark=",")`** households are sampled in Nigeria. There are **`r nga.hh[is.na(X), .N]`** households missing coordinates and **`r nrow(nga.odd)` erroneous** locations.
+**`r format(nrow(nga.hh), big.mark=",")`** households are sampled in Nigeria. There are **`r nga.hh[is.na(X), .N]`** households missing coordinates and **`r nrow(nga.odd)` possibly invalid** locations.
 
 ```{r nga-na, results="asis"}
 
 # How many NAs?
-tmp <- nga.hh[, .(N=.N, miss=sum(is.na(X))), keyby=.(calc_state, calc_lga)]
+tmp <- nga.hh[, .(`Obs.`=.N, Missing=sum(is.na(X)), Invalid=sum(calc_lga!=svyL2Nm)),
+  keyby=.(State=calc_state, LGA=calc_lga)]
 
 table_options(HTMLcaption="(#tab:nga-na) Survey Sampling across LGAs and missing Household Locations")
-html(tabular((`State`=Factor(calc_state))*((`LGA`=Factor(calc_lga))*DropEmpty()+1)+1~Heading("Nigeria Household GPS Locations")*(Heading("Obs.")*N+Heading("Missing")*miss)*Format(big.mark=",")*Heading()*sum, data=tmp), rmarkdown=T)
+html(tabular(Factor(State)*(Factor(LGA)*DropEmpty()+1)+1~Heading("Nigeria Household GPS Locations")*(`Obs.`+Missing+Invalid)*Format(big.mark=",")*Heading()*sum, data=tmp),
+  rmarkdown=T)
 
 ```
 
-Over 400 households have GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are more troublesome (over 40km). Households with problematic locations are highlighted on the map and in the table below.
+There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map below.
 
 
-```{r nga-odd, fig.cap="Households Located outside of their Recorded LGA, Nigeria", fig.height=8}
+```{r nga-odd, fig.cap="Households Located outside of their recorded LGA, Nigeria", fig.height=8, fig.width=4}
 
 # Are all locations in the correct LGA
 tmap_mode("plot")
 m.nga
 
-# kable(nga.odd[, .(hhid, calc_lga, ADM2_NAME), keyby=calc_state], padding=0,
-#   caption="Households with Problematic GPS Coordinates, Nigeria")
-
-
 ```
 
 ## Kenya
 
-**`r prettyNum(nrow(ken.hh))` households** are sampled in Kenya. There are **`r ken.hh[is.na(X), .N]`** households missing coordinates and **` nrow(ken.odd)` erroneous** locations.
+**`r prettyNum(nrow(ken.hh))` households** are sampled in Kenya. There are **`r ken.hh[is.na(X), .N]`** households missing coordinates and **` nrow(ken.odd)` possibly invalid** locations.
 
 
 ```{r ken-na, results="asis"}
@@ -384,7 +359,7 @@ html(tabular((`Province`=Factor(adm1_name))*((`County`=Factor(adm2_name))*DropEm
 ```
 
 
-```{r ken-hh, fig.cap="Households Locations across Counties, Kenya", fig.height=6}
+```{r ken-hh, fig.cap="Households Locations across Counties, Kenya", fig.height=6, fig.width=7}
 
 # Are all locations in the correct LGA
 tmap_mode("plot")
@@ -394,5 +369,5 @@ m.ken
 
 ## Uganda
 
-**` prettyNum(nrow(uga.hh))` households** are sampled in Kenya. There are **` uga.hh[is.na(X), .N]`** households missing coordinates and **` nrow(uga.odd)` erroneous** locations.
+**` prettyNum(nrow(uga.hh))` households** are sampled in Uganda. There are **` uga.hh[is.na(X), .N]`** households missing coordinates and **` nrow(uga.odd)` possibly invalid** locations.
 

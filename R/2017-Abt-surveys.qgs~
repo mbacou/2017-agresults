@@ -37,10 +37,10 @@
   <mapcanvas>
     <units>degrees</units>
     <extent>
-      <xmin>-1.3095060313011011</xmin>
-      <ymin>-13.78982183726037292</ymin>
-      <xmax>47.10953405016951479</xmax>
-      <ymax>21.123630800068117</ymax>
+      <xmin>-1.4128551029798011</xmin>
+      <ymin>-15.03001069740476225</ymin>
+      <xmax>47.00618497849080768</xmax>
+      <ymax>19.88344193992372766</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -3039,7 +3039,6 @@ def my_form_open(dialog, layer, feature):
       <Automatic type="bool">true</Automatic>
       <DegreeFormat type="QString">MU</DegreeFormat>
     </PositionPrecision>
-    <WCSUrl type="QString"></WCSUrl>
     <qgis2web>
       <Maxzoomlevel type="QString">12</Maxzoomlevel>
       <Showpopupsonhover type="bool">true</Showpopupsonhover>
@@ -3066,8 +3065,9 @@ def my_form_open(dialog, layer, feature):
       <Searchlayer type="QString"></Searchlayer>
       <Layersearch type="QString">None</Layersearch>
     </qgis2web>
-    <WMSContactPhone type="QString"></WMSContactPhone>
+    <WCSUrl type="QString"></WCSUrl>
     <WMSServiceCapabilities type="bool">false</WMSServiceCapabilities>
+    <WMSContactPhone type="QString"></WMSContactPhone>
     <WMSServiceAbstract type="QString"></WMSServiceAbstract>
     <WMSContactPosition type="QString"></WMSContactPosition>
     <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
