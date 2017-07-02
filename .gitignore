@@ -4,6 +4,9 @@
 
 # Session Data files
 .RData
+*.RData
+/Rplots.png
+/Rplots.pdf
 
 # Example code in package build process
 *-Ex.R
@@ -16,6 +19,7 @@
 
 # RStudio files
 .Rproj.user/
+/_bookdown_files/
 
 # produced vignettes
 vignettes/*.html
@@ -31,3 +35,10 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+.Rproj.user
+
+# Anything confidential
+/data/
+/out/
+/tmp/
+

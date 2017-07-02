@@ -1,0 +1,14 @@
+base
+sp
+raster
+data.table
+lattice
+survival
+Formula
+ggplot2
+Hmisc
+tables
+tmap
+viridisLite
+viridis
+knitr
