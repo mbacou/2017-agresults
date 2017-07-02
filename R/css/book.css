@@ -1,0 +1,143 @@
+/* Title:  A few custom fixes to Tufte HTML styles */
+/* Author: BACOU, Melanie                          */
+/* Date:   2017.04.04                              */
+
+/*
+.book.font-family-1, .book .book-header, .book .book-summary {
+  font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+*/
+
+.left   { text-align:left; }
+.center { text-align:center; }
+.right  { text-align:right; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+
+h5, h6 {
+  font-style: italic;
+}
+
+.level1 h1 {
+  border-bottom: 1px solid;
+}
+
+.level1 h1 .header-section-number {
+  display: inline-block;
+  border-bottom: 3px solid;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal b,
+.book .book-body .page-wrapper .page-inner section.normal strong {
+    font-weight: 600;
+}
+
+.book-summary ul ul {
+  font-size: 13px;
+  line-height: .8em;
+}
+
+.book-summary li b {
+  font-size: .9em;
+  font-weight: 600;
+}
+
+ul.summary > li:first-child {
+  font-size: 14px;
+  font-weight: 500;
+  padding-top: 6px;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal blockquote {
+  color: #333;
+  border-left: 4px solid #FFF3B8;
+  background-color: #FFFCED;
+}
+
+.marginnote {
+   word-wrap: break-word;
+ }
+
+.book .book-body .page-wrapper .page-inner section.normal pre  {
+  width: auto;
+  word-wrap: break-word;
+}
+
+.caption, caption {
+  color: #777;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal .caption {
+   font-size: .9em;
+}
+
+caption {
+  text-align: left;
+}
+
+caption span {
+  font-weight: bold;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table tr:nth-child(2n) {
+    background-color: transparent;
+}
+
+.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
+  padding: 0 2px;
+  vertical-align: bottom;
+}
+
+.table-condensed td em, .book .book-body .page-wrapper .page-inner section.normal td em {
+  color: #777;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table {
+  font-size: .9em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table td,
+.book .book-body .page-wrapper .page-inner section.normal table th {
+  border-top-style: dotted;
+  border-bottom-style: dotted;
+  padding: 0 2px;
+  vertical-align: bottom;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table tr,
+.book .book-body .page-wrapper .page-inner section.normal table thead th {
+  border: none;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table tr:last-child th,
+.book .book-body .page-wrapper .page-inner section.normal table tr:last-child td {
+  border-bottom: 2px solid #ddd;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table tbody th:nth-child(2) {
+  font-weight: normal;
+  font-style: italic;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table thead tr:last-child th {
+  font-weight: normal;
+  font-style: italic;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table thead tr:first-child th {
+  border-top: 1px solid #ddd;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.references p {
+  text-indent: -2em;
+  margin-left: 2em;
+}
+
+div.rhandsontable {
+  max-width: 100%;
+}
+

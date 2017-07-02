@@ -1,0 +1,410 @@
+# Data Sources and Preprocessing
+
+## Climatic Indicators
+
+Notes on extracting monthly and dekadal cimatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from **Jan. 2015** to the latest available data point (typically **May 2017**). These data extracts may be used to generate summary statistics over specific planting/growing seasons (a typical calendar is shown here).
+
+```{r, fig.cap="Seasonal Calendar (Haigh et al., 2015)"}
+
+include_graphics("./fig/calendar.png", dpi=125)
+
+```
+
+WorldClim is a repository of long-term climatic time-series for the period **1970-2000** from which to derive normal baseline data.
+
+### FEWSNET
+
+```{r fews, eval=FALSE}
+
+library(raster)
+library(data.table)
+library(tables)
+library(tmap)
+library(viridis)
+library(knitr)
+library(stringr)
+library(curl)
+
+load("./tmp/2017-agresults.RData")
+
+# Make a neat catalog of FEWS indicators and locations
+fews <- list(
+  chirps = list(
+    varLabel = "CHIRPS v2 rainfall estimates (monthly, mm)",
+    time = "month",
+    unit = "mm",
+    files = paste0("chirps-v2.0.", format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "%Y.%m") , ".tif.gz"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/"
+  ),
+  rfe = list(
+    varLabel = "FEWS rainfall estimates (RFE) (dekadal, mm)",
+    time = "dekade",
+    unit = "mm",
+    files = paste0("a", levels(interaction(15:17, str_pad(1:12, 2, "left", 0), 1:3, sep="", lex.order=T)), "rb.zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/"
+  ),
+  pet = list(
+    varLabel = "potential evapotranspiration (PET) (monthly, mm)",
+    time = "day",
+    unit = "mm",
+    files = paste0("et", format(seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"), "%Y%m%d"), ".tar.gz"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/daily/pet/downloads/daily/"
+  ),
+  eta = list(
+    varLabel = "SSEBop actual evapotranspiration (ETa) (dekadal, mm)",
+    time = "dekade",
+    unit = "mm",
+    files = paste0("d", levels(interaction(2015:2017, str_pad(1:12, 2, "left", 0), 1:3, sep="", lex.order=T)), ".zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/"
+  ),
+  et_anom = list(
+    varLabel = "SSEBop evapotranspiration anomaly (monthly, percent of median)",
+    time = "month",
+    unit = "percent",
+    files = paste0("ma", levels(interaction(15:17, str_pad(1:12, 2, "left", 0), sep="", lex.order=T)), ".zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/monthly/"
+  ),
+  ndvi_west = list(
+    varLabel = "eMODIS TERRA smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)",
+    time = "dekade",
+    unit = "index 0-1",
+    files = paste0("wa", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), ".zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/west/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/"
+  ),
+  ndvi_anom_west = list(
+    varLabel = "eMODIS TERRA NDVI anomaly (dekadal, percent of median)",
+    time = "dekade",
+    unit = "percent",
+    files = paste0("wa", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), "pct.zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/west/dekadal/emodis/ndvi_c6/percentofmedian/downloads/dekadal/"
+  ),
+  ndvi_east = list(
+    varLabel = "eMODIS TERRA smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)",
+    time = "dekade",
+    unit = "index 0-1",
+    files = paste0("ea", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), ".zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/"
+  ),
+  ndvi_anom_east = list(
+    varLabel = "eMODIS TERRA NDVI anomaly (dekadal, percent of median)",
+    time = "dekade",
+    unit = "percent",
+    files = paste0("ea", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), "pct.zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/dekadal/"
+  )  
+)
+
+fews <- lapply(fews, data.frame)
+fews <- rbindlist(fews, idcol=T)
+setnames(fews, ".id", "varCode")
+fews[, .N, by=varCode]
+#           varCode   N
+# 1:            rfe 108
+# 2:            pet 912
+# 3:            eta 108
+# 4:        et_anom  36
+# 5:      ndvi_west 108
+# 6: ndvi_anom_west 108
+# 7:      ndvi_east 108
+# 8: ndvi_anom_east 108
+
+# Download all these files
+# Fill in spatial resolution and projection details
+dir <- "~/Projects/hc-data/FEWS/"
+fews[, dest := paste0(dir, varCode, "/", files)]
+download.file(paste0(fews$url, fews$files), fews$dest)
+# Retry a few vars
+tmp <- fews[varCode %like% "ndvi"]
+download.file(paste0(tmp$url, tmp$files), tmp$dest)
+tmp <- fews[varCode=="eta"]
+download.file(paste0(tmp$url, tmp$files), tmp$dest)
+
+# Which ones failed to download
+fews[, status := file.exists(dest)]
+fews[status==F, .N, by=varCode]
+
+# Retry to download these 30 missing files by hand
+fwrite(fews, "./out/fews_catalog.csv")
+fews <- fread("./out/fews_catalog.csv")
+tmp <- fews[status=="FALSE"]
+download.file(paste0(tmp$url, tmp$files), tmp$dest)
+fews[, status := file.exists(dest)]
+fews[status==F, .N, by=varCode]
+#           varCode  N
+# 1:            rfe 19
+# 2:            pet  0
+# 3:            eta 19
+# 4:        et_anom  7
+# 5:      ndvi_west 19
+# 6: ndvi_anom_west 19
+# 7:      ndvi_east 19
+# 8: ndvi_anom_east 19
+# 9:         chirps  7
+# => all good!
+
+# Fill in approx dates
+fews[, date := NULL]
+fews[time=="dekade", 
+  date := rep(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), each=3)+c(0,10,20),
+  by=varCode]
+fews[time=="month", 
+  date := seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month")+14,
+  by=varCode]
+fews[time=="day", 
+  date := seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"),
+  by=varCode]
+
+# Unzip
+tmp <- lapply(fews[!varCode %in% c("pet", "chirps") & status==T, dest], 
+  function(x) unzip(x, exdir=dirname(x)))
+fews[!varCode %in% c("pet", "chirps") & status==T, 
+  raster := sapply(tmp, function(x) basename(x[1]))]
+tmp <- lapply(fews[varCode %in% c("pet", "chirps") & status==T, dest], 
+  function(x) untar(x, exdir=dirname(x)))
+fews[varCode %in% c("pet", "chirps") & status==T, 
+  raster := str_replace(files, ".tar.gz", ".bil")]
+
+# Verify
+fews[, first(raster), by=varCode]
+#          varCode                                     V1
+# 1:            rfe                           a15011rf.bil
+# 2:            eta d2015011_modisSSEBopETv4_actual_mm.tif
+# 3:        et_anom               ma1501.modisSSEBopET.tif
+# 4:      ndvi_west                             wa1501.tif
+# 5: ndvi_anom_west                          wa1501pct.tif
+# 6:      ndvi_east                             ea1501.tif
+# 7: ndvi_anom_east                          ea1501pct.tif
+# 8:            pet                           et150101.bil
+
+# Full paths
+fews[, raster := paste0(dirname(dest), "/", raster)]
+
+# Extract metadata for each layer (projection, extent, resolution)
+tmp <- lapply(fews[, first(raster), by=varCode][, V1], function(x) proj4string(raster(x)))
+# => only RFE is missing projection details
+# Others are all "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+tmp <- lapply(fews[, first(raster), by=varCode][, V1], function(x) extent(raster(x)))
+
+# Read in projection into catalog
+fews[varCode!="rfe" & status==T, 
+  proj := "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"]
+# https://gis.stackexchange.com/questions/177447/defining-the-correct-aea-proj4string-for-fewsnet-rainfall-data-southern-africa
+fews[varCode=="rfe" & status==T, 
+  proj := "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"]
+
+
+
+```
+
+```{r fews-save, eval=FALSE}
+
+rm(i, x, dir, url, tmp, log, pet, tmp1, tmp2)
+save.image("./tmp/2017-agresults.RData")
+
+```
+
+FEWSNET spatial data layers are available from multiple sources, primarily from USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWSNET's climatic indicators, e.g.:
+
+- http://ewx.chg.ucsb.edu:8080/EWX/index.html
+- https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af
+
+To the author's knowledge there is no Web service or API to facilitate programmatic access to all of FEWSNET data archives, only public FTP locations[thredds]:
+
+- **FEWSNET/USGS**  
+  https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/  
+  Contains RFE[rfe], PET[pet], ETa[et], NDVI[ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions for Africa.
+
+- **FEWSNET/NOAA**  
+  ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
+  Contains daily ARC2[arc2] and RFE[rfe] rainfall estimates for Africa at 10km resolution
+  
+In this study all spatial estimates are derived from the following repositories:
+
+- `chirps` (monthly, mm, 0.05 degree/~5km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/  
+- `rfe` (dekadal, mm, 0.1 degree/~10km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/  
+- `pet` (daily, daily mean, mm, 1 degree/~100km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/daily/pet/downloads/monthly/
+- `eta` actual ET (dekadal, mm) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/  
+- `et_anom` ET Anomaly (monthly, percent of median) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/  
+- `ndvi` (dekadal, daily mean, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/  
+- `ndvi_anom` NDVI Anomaly (dekadal, percent of median, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/  
+
+Note that `SPI` (Standardized Precipitation Index) is *not* available from FEWS database (see missing downloads at https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/). An alternative source is [SPEIBase v2.4](http://digital.csic.es/handle/10261/128892) (2016), but this database does not include the last 2 years 2015-2017 yet and the 0.5 degree resolution is a little coarse for this study.
+
+
+```{r fews-cat}
+
+kable(fews[status==T, .(
+  Periodicity=unique(time),
+  Start=min(date), 
+  End=max(date),
+  Files=.N), keyby=.(Indicator=varCode)],
+  align=c("l", "c", "c", "c", "c"),
+  caption="Tally of Indicators and Files extracted from FEWSNET")
+
+```
+
+[thredds]: For reference there is an [R geoknife](https://github.com/USGS-R/geoknife) and [Python PyGDP](https://github.com/USGS-CIDA/pyGDP) library to access a subset of USGS rasters off CIDA's THREDDS server, but currently that repository does not incorporate FEWSNET data.
+
+[rfe]: Rainfall Estimator for data over Africa -- daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml.
+
+[arc2]: NOAA Climate Prediction Center Africa Rainfall Climatology version 2 -- this data is a result of a project to create a satellite-estimated precipitation climatology over the Africa domain. This climatology has been created to compliment the daily operational rainfall estimate product (RFE) in order to generate anomaly fields over Africa over various timescales. In contrast to the RFE, where inputs include SSMI, AMSUB, half-hourly GPI, and GTS data, ARC uses only 3-hourly GPI and GTS data, exclusively This is due to the absence of microwave-derived estimates over a long-term historical record, and the large amount of data which makes up the operational half-hourly GPI input. As such, the ARC algorithm itself has been slightly modified in order to maintain a homogeneous and stable climate data record. GTS rain gauge data used in both static and daily-updating climatology products is of the same source, though inputs used to create GPI estimates differ slightly in source. For creation of the climatological GPI, 3-hourly Meteosat data was obtained directly from Eumetsat's archived data group, while daily-updating products use 3-hourly data pulled from NOAA's Meteosat data feed. Data resolution and specifications of the ARC dataset are identical to that of the RFE.
+
+[pet]: Potential Evapotranspiration -- daily global PET is calculated from climate parameter data that is extracted from Global Data Assimilation System (GDAS) analysis fields. The GDAS data is generated every 6 hours by NOAA. The GDAS fields used as input to the PET calculation include air temperature, atmospheric pressure, wind speed, relative humidity, and solar radiation (long wave, short wave, outgoing and incoming). PET is computed for each 6 hour period and then summed to obtain daily totals. A day is defined as beginning at 00 hours GMT. The daily PET is calculated on a spatial basis using the Penman-Monteith equation (the formulation of Shuttleworth (1992) for reference crop evaporation is used). These equations were standardized in accordance with the FAO publication 56 for the 6-hourly calculations (Allen et al, 1998). The daily PET values are scaled up by a factor of 100 to preserve the precision to .01 mm. The PET data have a 1 deg. ground resolution and are global in spatial extent. 
+
+[et]: SSEBop Evapotranspiration Products -- ET is the combination of transpiration from vegetation and evaporation from soil. Actual ET (ETa) is produced using the operational SSEBop model (Senay et al., 2012) for the period 2000 to present. This model combines ET fractions generated from remotely sensed MODIS thermal imagery, acquired every 8 days, with reference ET using a thermal index approach. The unique feature of the SSEBop parameterization is that it uses pre-defined, seasonally dynamic, boundary conditions that are unique to each pixel for the "hot/dry" and "cold/wet" reference points. The actual ET data unit is millimeters (mm). The anomalies are the ratio of ETa and the corresponding median ETa, expressed as a percent value.
+
+[ndvi]: eMODIS NDVI -- distributed by USGS Earth Resources Observation and Science (EROS) Center. Satellite-derived vegetation products generated from the Moderate Resolution Imaging Spectroradiometer (MODIS). These products, known as "eMODIS," respond to operational land monitoring applications requiring near-real time Normalized Difference Vegetation Index (NDVI) data for comparison against historical records. Real-time and historical NDVI products are composited in 10-day intervals every 5 days on a Geographic mapping grid.
+
+The series of maps below show all FEWSNET indicators (most recent data point) used in this study layered over Nigeria's household locations. These maps provide a good perspective of scale and resolution.
+
+
+```{r fews-chirp-nga, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
+
+# Read in and plot all most recent rasters with NGA locations to make sure everything
+# lines up
+tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=proj)]
+tmp1 <- crop(tmp, nga.l2[nga.l2$svyL2Nm %in% nga.hh[, unique(calc_lga)], ])
+tmp2 <- crop(tmp, ken.pts)
+
+tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.rain(36),
+  title="Nigeria\nCHIRPS v2.0\nMay 2017\n(mm)",
+  breaks=seq(0,700,20), 
+  labels=na2null(seq(0,700,20)*c(1, NA))) +
+  tm_shape(nga.pts) + tm_dots(col="grey10", shape=4, alpha=.5, size=0.08) +
+  tm_layout(legend.outside=T, attr.outside=T)
+
+```
+
+```{r fews-chirp-ken, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
+
+tm_shape(tmp2) + tm_raster(names(tmp1), pal=pal.rain(36),
+  title="Kenya\nCHIRPS v2.0\nMay 2017\n(mm)",
+  breaks=seq(0,700,20), 
+  labels=na2null(seq(0,700,20)*c(1, NA))) +
+  tm_shape(ken.pts) + tm_dots(col="grey10", shape=4, alpha=.5, size=0.08) +
+  tm_layout(legend.outside=T, attr.outside=T)
+
+```
+
+
+### WorldClim
+
+```{r wc, eval=FALSE}
+
+# An aside: Bio vars from WorldClim at 0.5 minute
+tmp <- getData("worldclim", var="bio", res=0.5, lon=nga.hh[1,X], lat=nga.hh[1,Y],
+  path="~/Projects/hc-data/WorldClim_0.5")
+names(tmp)
+#  [1] "bio1_26"  "bio2_26"  "bio3_26"  "bio4_26"  "bio5_26"  "bio6_26"  "bio7_26"  "bio8_26"  "bio9_26" 
+# [10] "bio10_26" "bio11_26" "bio12_26" "bio13_26" "bio14_26" "bio15_26" "bio16_26" "bio17_26" "bio18_26"
+# [19] "bio19_26"
+dim(tmp)
+# [1] 3600 3600   19
+# => long term mean
+spplot(tmp[[1]])
+
+tmp <- getData("worldclim", var="tmin", res=0.5, lon=nga.hh[1,X], lat=nga.hh[1,Y],
+  path="~/Projects/hc-data/WorldClim_0.5")
+names(tmp)
+# [1] "tmin1_26"  "tmin2_26"  "tmin3_26"  "tmin4_26"  "tmin5_26"  "tmin6_26"  "tmin7_26"  "tmin8_26" 
+# [9] "tmin9_26"  "tmin10_26" "tmin11_26" "tmin12_26"
+dim(tmp)
+# [1] 3600 3600   12
+# => long term monthly mean
+
+```
+
+WorldClim [version 2](http://worldclim.org/version2 ) has long-term average monthly climate data for minimum, mean, and maximum temperature and for precipitation for **1970-2000**. WorldClim also provides a series of 19 bioclimatic variables reflecting annual trends seasonality (annual range in temperature and precipitation) and extreme or limiting environmental factors (temperature of the coldest and warmest month, and precipitation of the wet and dry quarters): 
+
+- `bio1` annual mean temperature  
+- `bio2` mean diurnal range (mean of monthly (max temp - min temp))  
+- `bio3` isothermality (bio2/bio7) (* 100)  
+- `bio4` temperature seasonality (standard deviation *100)  
+- `bio5` max temperature of warmest month  
+- `bio6` min temperature of coldest month  
+- `bio7` temperature annual range (bio5-bio6)  
+- `bio8` mean temperature of wettest quarter  
+- `bio9` mean temperature of driest quarter  
+- `bio10` mean temperature of warmest quarter  
+- `bio11` mean temperature of coldest quarter  
+- `bio12` annual precipitation  
+- `bio13` precipitation of wettest month  
+- `bio14` precipitation of driest month  
+- `bio15` precipitation seasonality (coefficient of variation)  
+- `bio16` precipitation of wettest quarter  
+- `bio17` precipitation of driest quarter  
+- `bio18` precipitation of warmest quarter  
+- `bio19` precipitation of coldest quarter  
+
+### Other Sources
+
+There are other sources of current climatic conditions. They are listed here for information, but not used in this study.
+
+#### IrriSAT
+
+[IrriSAT](https://irrisat-cloud.appspot.com/) is a weather based irrigation scheduling service which is used to inform farmers how much water their crop has used and how much how much irrigation they need to apply. Information is produced daily, and can work across large spatial scales. The IrriSAT methodology uses satellite images to determine a Normalized Difference Vegetation Index (NDVI) for each field, from which the plant canopy size can be determined and a specific crop coefficient (Kc) can be estimated.
+
+IrriSAT provides a [web API](https://irrisat-cloud.appspot.com/api) to batch retrieve daily NDVI and Kc at specified locations.
+
+```
+irrisat.services.data.cropgrowth()
+```
+
+#### CRU TS 4.00
+
+http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/
+
+#### ERA-Interim (Jan 1979--present)
+
+[ERA-Interim]() is a global atmospheric reanalysis from 1979, continuously updated in real time. The operational analysis is produced four times a day at 00:00, 06:00, 12:00 and 18:00 UTC. It has spatial resolution of about 16 km. The first layer of soil is 0-7cm. Normally we should correct for altitude.
+
+```{r}
+
+tmp <- fread("
+Key:Value
+Stream:Atmospheric model
+Area:15.0°N 2.0°E 6.0°S 43.0°E
+Type:Analysis
+Dataset:interim_daily
+Step:0
+Version:1
+Type of level:Surface
+Time:06
+Date:20150101 to 20170331
+Grid:0.125° x 0.125°
+Parameter:Soil temperature level 1
+Class:ERA Interim", sep=":")
+
+kable(tmp, caption="ERA Interim Soil Temperature at 0-7cm (request details)")
+
+```
+
+## Drought
+
+Aside from SPEIBase, drought events are also tracked by NASA EONET. There's an R package for this at http://enelmargen.org/nasadata/vignette_v0/.
+
+```
+
+{
+"title": "EONET Event Categories",
+	"description": "List of all the available event categories in the EONET system",
+	"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories",
+	"categories": [
+		{
+			"id": 6,
+			"title": "Drought",
+			"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/6",
+			"description": "Long lasting absence of precipitation affecting agriculture and livestock, and the overall availability of food and water.",
+			"layers": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/layers/6"
+		}
+}
+		
+```
+
+## Soil Characteristics
+
+
+
+## Market Access
+
+

@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Geospatial Characteristics</title>
+  <meta name="description" content="Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series.">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Geospatial Characteristics" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="fig/cover.jpg" />
+  <meta property="og:description" content="Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Geospatial Characteristics" />
+  
+  <meta name="twitter:description" content="Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series." />
+  <meta name="twitter:image" content="fig/cover.jpg" />
+
+<meta name="author" content="BACOU, Melanie for AgResults (Abt Associates)">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+
+<link rel="next" href="data-sources-and-preprocessing.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="css/book.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./"><img src="fig/logo.png" width="auto" /></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Survey Sampling</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#nigeria"><i class="fa fa-check"></i><b>1.1</b> Nigeria</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kenya"><i class="fa fa-check"></i><b>1.2</b> Kenya</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#uganda"><i class="fa fa-check"></i><b>1.3</b> Uganda</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html"><i class="fa fa-check"></i><b>2</b> Data Sources and Preprocessing</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#climatic-indicators"><i class="fa fa-check"></i><b>2.1</b> Climatic Indicators</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#fewsnet"><i class="fa fa-check"></i><b>2.1.1</b> FEWSNET</a></li>
+<li class="chapter" data-level="2.1.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#worldclim"><i class="fa fa-check"></i><b>2.1.2</b> WorldClim</a></li>
+<li class="chapter" data-level="2.1.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#other-sources"><i class="fa fa-check"></i><b>2.1.3</b> Other Sources</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#drought"><i class="fa fa-check"></i><b>2.2</b> Drought</a></li>
+<li class="chapter" data-level="2.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#soil-characteristics"><i class="fa fa-check"></i><b>2.3</b> Soil Characteristics</a></li>
+<li class="chapter" data-level="2.4" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#market-access"><i class="fa fa-check"></i><b>2.4</b> Market Access</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Geospatial Characteristics</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Geospatial Characteristics</h1>
+<h4 class="author"><em><a href="http://github.com/mbacou">BACOU, Melanie</a> for <a href="http://agresults.org/">AgResults</a> (Abt Associates)</em></h4>
+<h4 class="date"><em>Last updated on 2017-07-02. DO NOT USE OR CITE</em></h4>
+</div>
+<div id="survey-sampling" class="section level1">
+<h1><span class="header-section-number">Section 1</span> Survey Sampling</h1>
+<p>The tables and maps below provide details of household locations across the 3 survey samples.</p>
+<p>In particular we highlight households with missing and problematic GPS coordinates. In the case of missing coordinates a location is imputed using the centroid of that household’s administrative unit (LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over that entire administrative unit and use these values to impute household characteristics. However this approach requires substantial processing.</p>
+<p>In the case of erroneous coordinates (locations falling largely outside of a household’s administrative unit).</p>
+<div id="nigeria" class="section level2">
+<h2><span class="header-section-number">1.1</span> Nigeria</h2>
+<p><strong>2,065</strong> households are sampled in Nigeria. There are <strong>81</strong> households missing coordinates and <strong>414 possibly invalid</strong> locations.</p>
+<table class="Rtable">
+<caption>
+<span id="tab:nga-na">Tab. 1.1: </span> Survey Sampling across LGAs and missing Household Locations
+</caption>
+<thead>
+<tr class="center">
+<th>
+ 
+</th>
+<th>
+ 
+</th>
+<th colspan="3">
+Nigeria Household GPS Locations
+</th>
+</tr>
+<tr class="center">
+<th>
+State
+</th>
+<th>
+LGA
+</th>
+<th>
+Obs.
+</th>
+<th>
+Missing
+</th>
+<th>
+Invalid
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="center">
+<th class="left">
+Kaduna
+</th>
+<th class="left">
+Birnin-Gwari
+</th>
+<td>
+  133
+</td>
+<td>
+    3
+</td>
+<td>
+   10
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Chukun
+</th>
+<td>
+    3
+</td>
+<td>
+    1
+</td>
+<td>
+    2
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Giwa
+</th>
+<td>
+  151
+</td>
+<td>
+   26
+</td>
+<td>
+   17
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Igabi
+</th>
+<td>
+    7
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Ikara
+</th>
+<td>
+   84
+</td>
+<td>
+    3
+</td>
+<td>
+   11
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Jema’a
+</th>
+<td>
+   54
+</td>
+<td>
+    9
+</td>
+<td>
+   18
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kaura
+</th>
+<td>
+   12
+</td>
+<td>
+    7
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kauru
+</th>
+<td>
+   22
+</td>
+<td>
+    0
+</td>
+<td>
+    5
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kubau
+</th>
+<td>
+  160
+</td>
+<td>
+    0
+</td>
+<td>
+   23
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kudan
+</th>
+<td>
+   49
+</td>
+<td>
+    4
+</td>
+<td>
+   18
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Lere
+</th>
+<td>
+   62
+</td>
+<td>
+    1
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Makarfi
+</th>
+<td>
+  109
+</td>
+<td>
+    3
+</td>
+<td>
+   28
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rogo
+</th>
+<td>
+   20
+</td>
+<td>
+    0
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Sabon Gari
+</th>
+<td>
+   29
+</td>
+<td>
+    0
+</td>
+<td>
+   20
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Soba
+</th>
+<td>
+  157
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Zaria
+</th>
+<td>
+   21
+</td>
+<td>
+    4
+</td>
+<td>
+   17
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+1,073
+</td>
+<td>
+   61
+</td>
+<td>
+  170
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kano
+</th>
+<th class="left">
+Bebeji
+</th>
+<td>
+   34
+</td>
+<td>
+    1
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Bunkure
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Dawakin Kudu
+</th>
+<td>
+   14
+</td>
+<td>
+    1
+</td>
+<td>
+    8
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Doguwa
+</th>
+<td>
+   35
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Gwarzo
+</th>
+<td>
+   40
+</td>
+<td>
+    1
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Karaye
+</th>
+<td>
+   39
+</td>
+<td>
+    2
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kibiya
+</th>
+<td>
+    9
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kiru
+</th>
+<td>
+   14
+</td>
+<td>
+    1
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kura
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rano
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rimin Gado
+</th>
+<td>
+   16
+</td>
+<td>
+    0
+</td>
+<td>
+   13
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rogo
+</th>
+<td>
+   31
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Tofa
+</th>
+<td>
+    5
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Tudun Wada
+</th>
+<td>
+   83
+</td>
+<td>
+    8
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  359
+</td>
+<td>
+   14
+</td>
+<td>
+   27
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Katsina
+</th>
+<th class="left">
+Bakori
+</th>
+<td>
+  256
+</td>
+<td>
+    2
+</td>
+<td>
+   93
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Danja
+</th>
+<td>
+   90
+</td>
+<td>
+    0
+</td>
+<td>
+   18
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Funtua
+</th>
+<td>
+   83
+</td>
+<td>
+    1
+</td>
+<td>
+   24
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kahur
+</th>
+<td>
+   71
+</td>
+<td>
+    2
+</td>
+<td>
+   37
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Malumfashi
+</th>
+<td>
+  113
+</td>
+<td>
+    1
+</td>
+<td>
+   35
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Sabuwa
+</th>
+<td>
+   20
+</td>
+<td>
+    0
+</td>
+<td>
+   10
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  633
+</td>
+<td>
+    6
+</td>
+<td>
+  217
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+</th>
+<th class="left">
+All
+</th>
+<td>
+2,065
+</td>
+<td>
+   81
+</td>
+<td>
+  414
+</td>
+</tr>
+</tbody>
+</table>
+<p>There are <strong>414 households</strong> with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map below.</p>
+<div class="figure"><span id="fig:nga-odd"></span>
+<img src="fig/nga-odd-1.png" alt="Households Located outside of their recorded LGA, Nigeria" width="1200" />
+<p class="caption">
+Fig. 1.1: Households Located outside of their recorded LGA, Nigeria
+</p>
+</div>
+</div>
+<div id="kenya" class="section level2">
+<h2><span class="header-section-number">1.2</span> Kenya</h2>
+<p><strong>5235 households</strong> are sampled in Kenya. There are <strong>30</strong> households missing coordinates and <strong><code>nrow(ken.odd)</code> possibly invalid</strong> locations.</p>
+<table class="Rtable">
+<caption>
+<span id="tab:ken-na">Tab. 1.2: </span> Survey Sampling across Counties and missing Household Locations
+</caption>
+<thead>
+<tr class="center">
+<th>
+ 
+</th>
+<th>
+ 
+</th>
+<th colspan="2">
+Kenya Household GPS Locations
+</th>
+</tr>
+<tr class="center">
+<th>
+Province
+</th>
+<th>
+County
+</th>
+<th>
+Obs.
+</th>
+<th>
+Missing
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="center">
+<th class="left">
+Central
+</th>
+<th class="left">
+Kiambu
+</th>
+<td>
+    3
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kirinyaga
+</th>
+<td>
+    8
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Murang’a
+</th>
+<td>
+    3
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Nyandarua
+</th>
+<td>
+    2
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   16
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Coast
+</th>
+<th class="left">
+Kilifi
+</th>
+<td>
+    1
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Taita Taveta
+</th>
+<td>
+    1
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+    2
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Eastern
+</th>
+<th class="left">
+Embu
+</th>
+<td>
+  939
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kitui
+</th>
+<td>
+  971
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Machakos
+</th>
+<td>
+  881
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Makueni
+</th>
+<td>
+  876
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Meru
+</th>
+<td>
+  896
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Tharaka
+</th>
+<td>
+   28
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+4,591
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+N/A
+</th>
+<th class="left">
+N/A
+</th>
+<td>
+   30
+</td>
+<td>
+   30
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   30
+</td>
+<td>
+   30
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Nairobi
+</th>
+<th class="left">
+Nairobi
+</th>
+<td>
+    4
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+    4
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Rift Valley
+</th>
+<th class="left">
+Baringo
+</th>
+<td>
+   66
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Bomet
+</th>
+<td>
+   90
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kajiado
+</th>
+<td>
+    5
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Keiyo-Marakwet
+</th>
+<td>
+    2
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kericho
+</th>
+<td>
+   41
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Laikipia
+</th>
+<td>
+   60
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Nakuru
+</th>
+<td>
+   69
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Nandi
+</th>
+<td>
+   65
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Narok
+</th>
+<td>
+   77
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Trans Nzoia
+</th>
+<td>
+   60
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Uasin Gishu
+</th>
+<td>
+   57
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  592
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+</th>
+<th class="left">
+All
+</th>
+<td>
+5,235
+</td>
+<td>
+   30
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure"><span id="fig:ken-hh"></span>
+<img src="fig/ken-hh-1.png" alt="Households Locations across Counties, Kenya" width="2100" />
+<p class="caption">
+Fig. 1.2: Households Locations across Counties, Kenya
+</p>
+</div>
+</div>
+<div id="uganda" class="section level2">
+<h2><span class="header-section-number">1.3</span> Uganda</h2>
+<p><strong><code>prettyNum(nrow(uga.hh))</code> households</strong> are sampled in Uganda. There are <strong><code>uga.hh[is.na(X), .N]</code></strong> households missing coordinates and <strong><code>nrow(uga.odd)</code> possibly invalid</strong> locations.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="data-sources-and-preprocessing.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 1
+},
+"edit": {
+"link": "https://github.com/mbacou/2017-abt/blob/master/R/index.Rmd",
+"text": "Edit"
+},
+"download": null,
+"toc": {
+"collapse": "subsection",
+"scroll_highlight": true
+},
+"toolbar": {
+"position": "fixed"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
