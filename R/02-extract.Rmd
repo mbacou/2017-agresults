@@ -48,7 +48,7 @@ pts.wc <- lapply(tmp, function(x) )
 
 ## Climatic Indicators
 
-```{r wc, eval=F, fig.cap="Long-Term Precipitation and Temperature Seasonality across Regions (1970-2000, percent std. dev.) Source: WorldClim."}
+```{r wc, eval=F, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States (1970-2000, percent std. dev.) Source: WorldClim."}
 
 par(mfrow=c(1,2))
 pplot(bio4~adm1_name, data=pts.wc, 
@@ -64,13 +64,13 @@ pplot(bio415~adm1_name, data=pts.wc,
 
 ## Market Access
 
-```{r tt10, fig.cap="Tavel Times to Markets across States (hrs). Source: IFPRI/HarvestChoice."}
+```{r tt10, fig.cap="Distribution of Travel Times to Market at Household Locations across States (hrs). Source: IFPRI/HarvestChoice."}
 
 par(mfrow=c(1,2))
 pplot(tt10_20k~adm1_name, data=pts.tt, 
   ylab="Travel Time to 20K Market (hrs)", xlab=NA)
 pplot(tt10_100k~adm1_name, data=pts.tt, 
-  ylab="Travel Time to 20K Market (hrs)", xlab=NA)
+  ylab="Travel Time to 100K Market (hrs)", xlab=NA)
 
 ```
 

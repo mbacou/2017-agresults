@@ -323,7 +323,7 @@ save.image("./tmp/2017-agresults.RData")
 
 ```
 
-FEWSNET spatial data layers are distributed through multiple channels, primarily USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWSNET's climatic indicators, e.g.:
+FEWS spatial data layers are distributed through multiple channels, primarily USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWS' climatic indicators, e.g.:
 
 - http://ewx.chg.ucsb.edu:8080/EWX/index.html
 - https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af
@@ -338,7 +338,7 @@ To the author's knowledge there is no Web service or API to facilitate programma
   ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
   Contains daily ARC2[^arc2] and RFE[^rfe] rainfall estimates for Africa at 10km resolution
   
-In this study all spatial estimates are derived from the following repositories:
+In this study all spatial estimates are derived from raw data at the following locations:
 
 - `chirps` (monthly, mm, 0.05 degree/~5km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/  
 - `rfe` (dekadal, mm, 0.1 degree/~10km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/  
