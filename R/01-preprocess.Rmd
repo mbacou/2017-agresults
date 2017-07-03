@@ -659,6 +659,6 @@ http://sedac.ciesin.columbia.edu/data/collection/grump-v1.
 
 Below is an example for Nigeria. Red areas are within a 5 km distance buffer to a mapped road.
 
-![NGA network](http://africasoils.net/files/2014/11/fig_7-1024x768.jpg)
+![NGA network](http://africasoils.net/files/2014/11/fig_7-1024x768.jpg){width="580px"}
 
 
