@@ -437,14 +437,9 @@ save.image("./tmp/2017-agresults.RData")
 
 ```
 
-**Abstract**  
-We derive climatic, biophysical, socio-economic, and market-based information using a variety of sources, high-resolution remote sensing, and modeled time series.
+This pages document data sources and methods used to generate detailed spatially-referenced characteristics of farm households interviewed as part of AgResults 2015-2017 porgram evaluation in Nigeria, Kenya, and Uganda.
 
---------------------------------------------------------------------------------------
-
-The tables and maps below provide detailed spatially-referenced characteristics of farm households interviewed as part of AgResults 2015-2017 baseline and endline surveys in Nigeria, Kenya, and Uganda.
-
-All statistics are derived using the geospatial locations of surveyed respondents. However these locations are sometimes missing or invalid. In the case of missing coordinates we collect spatial statistics at the centroid of the matching administrative unit (the lowest level unit that may be mapped with any confidence, i.e. LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.
+All statistics are derived using the geospatial locations of surveyed respondents. However these locations are sometimes missing or invalid. In the case of missing coordinates we generate spatial statistics at the centroid of the matching administrative unit (the lowest level unit that may be mapped with any confidence, i.e. LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.
 
 ## Nigeria
 
