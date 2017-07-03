@@ -1,7 +1,76 @@
 # Data Summaries
 
-```{r extract, eval=F}
+This section provides visual summaries for a sample of variables. All estimates below are across surveyed household locations. Complete results are available in **STATA format** on (Huddle)[https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list].
 
+<u>Note</u>: the *violin* (pirate) plots below show **median** line in **red**, **mean** line in **green**, and the **blue** region is the inferred **95% confidence interval** of the mean.
+
+
+```{r extract, eval=FALSE}
+
+# 30 obs not imputed for KEN
+# Just do NGA for now, not to confuse things, but code below will run for whatever
+# locations are in `pts`
+pts <- nga.pts
+
+#####################################################################################
+# Travel Times
+#####################################################################################
+pts.tt <- extract(tt, pts)
+pts.tt <- data.table(cbind(
+  pts@data[, c("hhid", "adm0_name", "adm1_name", "adm2_name")], pts.tt))
+pts.tt[, ISO3 := "NGA"]
+
+#####################################################################################
+# AfSIS
+#####################################################################################
+
+
+
+
+#####################################################################################
+# WorldClim Biovars
+#####################################################################################
+# Download tile and extract single point data
+# Note that tiles are cached locally
+tmp <- data.table(coordinates(pts))
+setnames(tmp, c("X", "Y"))
+pts.wc <- list(nrow(tmp))
+pts.wc <- lapply(tmp, function(x) )
+
+
+
+#####################################################################################
+# FEWSNET
+#####################################################################################
 
 
 ```
+
+## Climatic Indicators
+
+```{r wc, eval=F, fig.cap="Long-Term Precipitation and Temperature Seasonality across Regions (1970-2000, percent std. dev.) Source: WorldClim."}
+
+par(mfrow=c(1,2))
+pplot(bio4~adm1_name, data=pts.wc, 
+  ylab="Temperature Seasonality (percent std. dev.)", xlab=NA)
+pplot(bio415~adm1_name, data=pts.wc, 
+  ylab="Precipitation Seasonality (percent, std. dev.)", xlab=NA)
+
+```
+
+## Soil Characteristics
+
+## Drought
+
+## Market Access
+
+```{r tt10, fig.cap="Tavel Times to Markets across States (hrs). Source: IFPRI/HarvestChoice."}
+
+par(mfrow=c(1,2))
+pplot(tt10_20k~adm1_name, data=pts.tt, 
+  ylab="Travel Time to 20K Market (hrs)", xlab=NA)
+pplot(tt10_100k~adm1_name, data=pts.tt, 
+  ylab="Travel Time to 20K Market (hrs)", xlab=NA)
+
+```
+

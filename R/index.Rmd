@@ -1,5 +1,5 @@
 ---
-title: "Geospatial Characteristics of AgResults Beneficiaries"
+title: "Geospatial Characteristics of Program Beneficiaries"
 author: "[BACOU, Melanie](http://github.com/mbacou) for [AgResults](http://agresults.org/) (Abt Associates)"
 date: "Last updated on `r Sys.Date()`. DO NOT USE OR CITE"
 description: "Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series."
@@ -50,8 +50,21 @@ table_options(htmloptions(justification="c", head=F, pad=T))
 load("./tmp/2017-agresults.RData")
 
 #####################################################################################
-# Helper - Color Palettes
+# Helper - Pirate Plot Defaults
+pplot <- function(..., note=NULL, alpha=.1) {
+  require(yarrr)
+  pirateplot(..., pal="black", jitter.val=.07,
+    cex.names=.8, cex.axis=.8, gl.lty=3, back.col="white",
+    point.o=min(alpha, .1), point.pch=16, point.cex=.5,
+    bean.f.col="white", bean.lwd=.2,
+    inf.lwd=.2, inf.f.col="blue", inf.f.o=.3,
+    quant=.5, quant.col="limegreen", quant.lwd=1.2, quant.length=.9,
+    avg.line.col="red", avg.line.lwd=1.2)
+  if(!missing(note)) title(main=sprintf("Missing or null: %4.0f%%", note), 
+    adj=.99, col.main="grey10", cex.main=.8, font.main=1, line=.5)
+}
 #####################################################################################
+# Helper - Color Palettes
 pal.rain <- fread("
 224	255	255	Light cyan
 135	206	235	Sky blue
@@ -166,6 +179,20 @@ pal.ndvi_pct <- fread("
 pal.ndvi_pct <- rgb(pal.ndvi_pct[, .(V1, V2, V3)], maxColorValue=255)
 pal.ndvi_pct <- colorRampPalette(pal.ndvi_pct)
 
+pal.temp <- fread("
+253	229	253	Thistle
+252	61	251	Fuchsia
+98	1	254	Blue
+61	160	252	Havelock blue
+49	251	139	Medium spring green
+126	254	0	Chartreuse
+252	223	0	Gorse
+239	112	1	Dark orange
+126	0	1	Dark red
+  ")
+pal.temp <- rgb(pal.temp[, .(V1, V2, V3)], maxColorValue=255)
+pal.temp <- colorRampPalette(pal.temp)
+
 #####################################################################################
 # Nigeria Locations
 #####################################################################################
@@ -246,11 +273,11 @@ tmp <- nga.pts[nga.odd$hhid %in% nga.odd$hhid,]
 
 m.nga <- tm_shape(nga.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
-  tm_text("svyL2Nm", col="grey30", size="AREA", root=4) +
   tm_shape(tmp, is.master=T, projection="eck4") +
-  tm_dots(col="calc_lga", shape=25, alpha=.5, border.col="white",
-    legend.show=T, size=.6, palette=viridis(22),
-    title="Nigeria\nHousehold Locations\n(invalid)") +
+  tm_dots(col="calc_lga", shape=4, alpha=.5, legend.show=T, size=.3,
+    title="Nigeria\nSurveyed\nHousehold\nLocations\n(invalid)") +
+  tm_shape(nga.l2) +
+  tm_text("svyL2Nm", col="grey30", size="AREA", root=4) +  
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60)) +
   tm_layout(legend.outside=T)
 
@@ -263,19 +290,56 @@ save_tmap(m.nga, "./out/2017-abt-nga_odd.pdf", width=5, units="in")
 #####################################################################################
 # Kenya Locations
 #####################################################################################
-# 2017.07.01 update: received admin details from Betsy but file is no good
+# 2017.07.03: received corrected admin details from Betsy
+# 2017.07.01: received admin details but file is no good
+# 2017.07.01: asked Katie for a recent map of Kenya's subcounties
+
+# This survey includes 2 rounds of data collection with replacements
+# so some hhlds are only present in round #1 and some in round #2.
+# The general imputation approach is:
+# 1) if both GPS locations seem valid, then use middle point 
+# 2) if only 1 of the 2 locations is valid, use that one 
+# 3) if no location is valid (both fall outside of that unit), use the unit centroid
 
 # Load KEN coords
-ken.hh <- fread("./data/gis_kenya_for consultant.csv")
+ken.hh <- read.dta("./data/gis_kenya_for consultant.dta")
+ken.hh <- data.table(ken.hh)
+
+# Codebook from MSExcel
+ken.lbl <- fread("
+varCode	varLabel
+HHID	Unique household identifier
+GPS_LA	GPS measurement from baseline data collection round 1
+GPS_LO	GPS measurement from baseline data collection round 1
+BL2_GPS_LA	GPS measurement from baseline data collection round 2
+BL2_GPS_LO	GPS measurement from baseline data collection round 2
+A01	Region
+A02	County
+A03	Subcounty
+A04	Location
+A05	Sublocation
+A06	Village
+BL2_A01	Region (baseline data collection round 2)
+BL2_A02	County  (baseline data collection round 2)
+BL2_A03	Subcounty (baseline data collection round 2)
+BL2_A04	Location (baseline data collection round 2)
+BL2_A05	Sublocation (baseline data collection round 2)
+BL2_A06	VIllage (baseline data collection round 2)
+  ")
+
+# Keep only what I need
+ken.hh <- ken.hh[, .SD, .SDcols=ken.lbl$varCode]
 setnames(ken.hh, tolower(names(ken.hh)))
+ken.lbl[, varCode := tolower(varCode)]
 
-# Use coords from round #2 if available, else round #1
-ken.hh[, X := ifelse(is.na(bl2_gps_lo), gps_lo, bl2_gps_lo)]
-ken.hh[, Y := ifelse(is.na(bl2_gps_la), gps_la, bl2_gps_la)]
-
+# Validate admin details
 # Missing?
 ken.hh[is.na(X), .N]
 # [1] 30
+
+# Merge survey labels into Kenya county map `ken.l2`
+
+# Validate all locations
 
 # Use the latest county map from CELL5M
 load("~/Projects/hc-cell5m/rdb/g2.rda")
@@ -296,7 +360,7 @@ tmp <- data.table(coordinates(ken.l2))
 setnames(tmp, c("X", "Y"))
 ken.l2.pts <- cbind(tmp, ken.l2.pts)
 
-# Check to make sure existing coords fall in expected LGA
+# Check to make sure existing coords fall in expected county
 ken.pts <- SpatialPointsDataFrame(ken.hh[!is.na(X), .(X,Y)], data.frame(ken.hh[!is.na(X)]),
   proj4string=CRS("+init=epsg:4326"))
 
@@ -310,6 +374,15 @@ setkey(ken.hh, hhid)
 ken.hh <- tmp[, .SD, .SDcols=1:7][ken.hh]
 setcolorder(ken.hh, c(7:13, 6,3,5,2,4,1))
 
+
+# Impute loc_status, X_imp, Y_imp
+# Use coords from round #2 if available, else round #1
+ken.hh[, X := ifelse(is.na(bl2_gps_lo), gps_lo, bl2_gps_lo)]
+ken.hh[, Y := ifelse(is.na(bl2_gps_la), gps_la, bl2_gps_la)]
+
+
+
+
 # Export to STATA
 setattr(ken.hh, "var.labels", 
   c("household id",
@@ -320,18 +393,19 @@ setattr(ken.hh, "var.labels",
     "GAUL country code", "GAUL country name"))
 write.dta(ken.hh, "./out/2017-abt-ken_hh.dta", version=12L, convert.factors="string")
 
-# Make and save map
+# Make and save maps
 ken.pts <- SpatialPointsDataFrame(ken.hh[!is.na(X), .(X,Y)], data.frame(ken.hh[!is.na(X)]),
   proj4string=CRS("+init=epsg:4326"))
 ken.pts$adm2_name <- factor(as.character(ken.pts$adm2_name))
 
 m.ken <- tm_shape(ken.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
-  tm_text("ADM2_NAME", col="grey30", size="AREA", root=4) +
   tm_shape(ken.pts, is.master=T, projection="eck4") +
-  tm_dots(col="adm2_name", shape=25, alpha=.5, border.col="white",
-    legend.show=T, size=.3, palette=viridis(24), max.categories=24,
-    title="Kenya\nHousehold Locations") +
+  tm_dots(col="adm2_name", shape=4, alpha=.5, size=.3,
+    legend.show=T, max.categories=24,
+    title="Kenya\nSurveyed\nHousehold\nLocations") +
+  tm_shape(ken.l2) +
+  tm_text("ADM2_NAME", col="grey30", size="AREA", root=4) +
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60,80)) +
   tm_layout(legend.outside=T)
 
@@ -341,7 +415,7 @@ save_tmap(m.ken, "./out/2017-abt-ken_hh.pdf", width=7, units="in")
 shapefile(ken.l2, "./maps/ken-abt-17_L2.shp")
 shapefile(ken.pts, "./maps/ken-abt-17_hh.shp")
 
-# TODO Impute missing with County centroid
+
 
 
 ```
@@ -364,11 +438,13 @@ save.image("./tmp/2017-agresults.RData")
 ```
 
 **Abstract**  
-Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series.
+We derive climatic, biophysical, socio-economic, and market-based information using a variety of sources, high-resolution remote sensing, and modeled time series.
 
-The tables and maps below provide details of biophysical, socio-economics, and market-based characteristics of farm households interviewed as part of AgResults' baseline and endline surveys in Nigeria, Kenya, and Uganda.
+--------------------------------------------------------------------------------------
 
-All statistics are derived using the geospatial locations of survey respondents. However these locations are sometimes missing or invalid. In the case of missing coordinates we collect spatial statistics at the centroid of the matching administrative unit (the lowest level unit that may be mapped with any confidence, i.e. LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.
+The tables and maps below provide detailed spatially-referenced characteristics of farm households interviewed as part of AgResults 2015-2017 baseline and endline surveys in Nigeria, Kenya, and Uganda.
+
+All statistics are derived using the geospatial locations of surveyed respondents. However these locations are sometimes missing or invalid. In the case of missing coordinates we collect spatial statistics at the centroid of the matching administrative unit (the lowest level unit that may be mapped with any confidence, i.e. LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.
 
 ## Nigeria
 
@@ -386,7 +462,7 @@ html(tabular(Factor(State)*(Factor(LGA)*DropEmpty()+1)+1~Heading("Nigeria Househ
 
 ```
 
-There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). For documentatio purposes households with problematic locations are highlighted on the map below.
+There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). For documentation purposes households with problematic locations are highlighted on the map below.
 
 
 ```{r nga-odd, fig.cap="Households with Invalid GPS Locations, Nigeria", fig.height=6, fig.width=6}
@@ -399,10 +475,16 @@ m.nga
 
 ## Kenya
 
-**`r format(nrow(ken.hh), big.mark=",")` households** are sampled in Kenya. There are **`r ken.hh[is.na(X), .N]`** households missing coordinates and **` nrow(ken.odd)` possibly invalid** locations.
+In Kenya data was collected over 2 rounds with some attrition, and household locations do not necessarily match across rounds. We use a general approach to impute missing and/or conflicting coordinates:
+
+1) if both GPS locations seem valid, we use the middle point   
+2) if only 1 of the 2 locations is valid, we use that one   
+3) if no location is valid (both fall outside of a recorded administrative unit), we use this unit centroid.  
+
+**`r format(nrow(ken.hh), big.mark=",")` households** are sampled in Kenya. There are **`r ken.hh[is.na(gps_la), .N]`** households missing coordinates and **` nrow(ken.odd)` possibly invalid** locations. Details in the table below.
 
 
-```{r ken-na, results="asis"}
+```{r ken-na, eval=F, results="asis"}
 
 # How many NAs?
 tmp <- ken.hh[, .(N=.N, miss=sum(is.na(X))), 
@@ -425,5 +507,9 @@ m.ken
 
 ## Uganda
 
+[in progress]
+
 **` format(nrow(uga.hh), big.mark=",")` households** are sampled in Uganda. There are **` uga.hh[is.na(X), .N]`** households missing coordinates and **` nrow(uga.odd)` possibly invalid** locations.
+
+
 

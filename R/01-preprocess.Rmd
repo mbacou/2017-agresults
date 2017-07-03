@@ -117,14 +117,10 @@ tmp <- fews[varCode=="eta"]
 download.file(paste0(tmp$url, tmp$files), tmp$dest)
 
 # Which ones failed to download
-fews[, status := file.exists(dest)]
-fews[status==F, .N, by=varCode]
-
 # Retry to download these 30 missing files by hand
-fwrite(fews, "./out/fews_catalog.csv")
-fews <- fread("./out/fews_catalog.csv")
 tmp <- fews[status=="FALSE"]
 download.file(paste0(tmp$url, tmp$files), tmp$dest)
+# => might need a few trials
 fews[, status := file.exists(dest)]
 fews[status==F, .N, by=varCode]
 #           varCode  N
@@ -161,9 +157,6 @@ tmp <- lapply(fews[varCode %in% c("pet", "chirps") & status==T, dest],
 fews[varCode %in% c("pet", "chirps") & status==T, 
   raster := str_replace(files, ".tar.gz", ".bil")]
 
-tmp <- lapply(fews[varCode=="et_anom" & status==T, dest], 
-  function(x) unzip(x, exdir=dirname(x)))
-
 # Verify
 fews[, first(raster), by=varCode]
 #          varCode                                      V1
@@ -193,17 +186,29 @@ fews[varCode!="rfe" & status==T,
 fews[varCode=="rfe" & status==T, 
   proj := "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"]
 
+# Add spatial resolution
+fews[varCode=="chirps", res := 0.05]
+fews[varCode=="rfe", res := 0.1]
+fews[varCode=="pet", res := 1]
+fews[varCode=="eta", res := 0.009652]
+fews[varCode=="et_anom", res := 0.009652]
+fews[varCode=="ndvi", res := 0.002413]
+fews[varCode=="ndvi_anom", res := 0.002413]
+
 ```
 
-```{r fews-plots, eval=F}
+```{r fews-plot, eval=F}
 
 #####################################################################################
 # Prepare plots
 #####################################################################################
 
-# Hhlds locations
-pts <- rbind(nga.pts[, c("hhid", "adm0_name")], ken.pts[, c("hhid", "adm0_name")])
+# Combine all hhld locations
+pts <- rbind(
+  nga.pts[, c("hhid", "adm0_name")], 
+  ken.pts[, c("hhid", "adm0_name")])
 
+# Default map aesthetics
 p <- tm_shape(pts, is.master=T, projection="eck4") + 
   tm_dots(col="grey10", shape=4, alpha=.3, size=.08) +
   tm_facets("adm0_name", nrow=1, free.coords=T, free.scales=T) +
@@ -339,8 +344,8 @@ In this study all spatial estimates are derived from the following repositories:
 - `chirps` (monthly, mm, 0.05 degree/~5km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/  
 - `rfe` (dekadal, mm, 0.1 degree/~10km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/  
 - `pet` (daily, daily mean, mm, 1 degree/~100km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/daily/pet/downloads/monthly/
-- `eta` actual ET (dekadal, mm) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/  
-- `et_anom` ET Anomaly (monthly, percent of median) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/  
+- `eta` actual ET (dekadal, mm, 0.01 degree/~1km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/  
+- `et_anom` ET Anomaly (monthly, percent of median, 0.01 degree/~1km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/  
 - `ndvi` (dekadal, daily mean, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/  
 - `ndvi_anom` NDVI Anomaly (dekadal, percent of median, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/  
 
@@ -351,6 +356,7 @@ Note that `SPEI`/`SPI` (standardized precipitation indices) are *not* available 
 
 kable(fews[status==T, .(
   Periodicity=unique(time),
+  Resolution=unique(res),
   Start=min(date), 
   End=max(date),
   Rasters=.N), keyby=.(Indicator=varCode)],
@@ -361,7 +367,7 @@ kable(fews[status==T, .(
 
 [^thredds]: For reference there is an [R geoknife](https://github.com/USGS-R/geoknife) and [Python PyGDP](https://github.com/USGS-CIDA/pyGDP) library to access a subset of USGS rasters off CIDA's THREDDS server, but currently that repository does not incorporate FEWSNET data.
 
-[^rfe]: **Rainfall Estimator** for data over Africa -- daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml.
+[^rfe]: **NOAA CPC RFE Rainfall Estimates (version 2.0)** for data over Africa -- daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Resolution is 0.1 degree. Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml.
 
 [^arc2]: NOAA Climate Prediction Center **Africa Rainfall Climatology (version 2)** -- this data is a result of a project to create a satellite-estimated precipitation climatology over the Africa domain. This climatology has been created to compliment the daily operational rainfall estimate product (RFE) in order to generate anomaly fields over Africa over various timescales. In contrast to the RFE, where inputs include SSMI, AMSUB, half-hourly GPI, and GTS data, ARC uses only 3-hourly GPI and GTS data, exclusively This is due to the absence of microwave-derived estimates over a long-term historical record, and the large amount of data which makes up the operational half-hourly GPI input. As such, the ARC algorithm itself has been slightly modified in order to maintain a homogeneous and stable climate data record. GTS rain gauge data used in both static and daily-updating climatology products is of the same source, though inputs used to create GPI estimates differ slightly in source. For creation of the climatological GPI, 3-hourly Meteosat data was obtained directly from Eumetsat's archived data group, while daily-updating products use 3-hourly data pulled from NOAA's Meteosat data feed. Data resolution and specifications of the ARC dataset are identical to that of the RFE.
 
@@ -416,13 +422,20 @@ include_graphics("./out/fews-ndvi_anom.png", dpi=300)
 
 ```
 
+### Other Sources
 
-### WorldClim
+There are other sources of current climatic conditions. They are listed here for information, but not used in this study currently.
 
-```{r wc, eval=FALSE}
+#### WorldClim
 
-# An aside: Bio vars from WorldClim at 0.5 minute
-tmp <- getData("worldclim", var="bio", res=0.5, lon=nga.hh[1,X], lat=nga.hh[1,Y],
+```{r wc-plot, eval=FALSE}
+
+# IF EXTRA TIME OR EXTRA REQUEST
+# Plot Bioclim vars from WorldClim at 0.5 arc-minute
+# These are available monthly or as long-term summaries
+# WEST
+tmp <- getData("worldclim", var="bio", res=0.5, 
+  lon=mean(nga.hh$X_imp), lat=mean(nga.hh$Y_imp),
   path="~/Projects/hc-data/WorldClim_0.5")
 names(tmp)
 #  [1] "bio1_26"  "bio2_26"  "bio3_26"  "bio4_26"  "bio5_26"  "bio6_26"  "bio7_26"  "bio8_26"  "bio9_26" 
@@ -431,20 +444,67 @@ names(tmp)
 dim(tmp)
 # [1] 3600 3600   19
 # => long term mean
-spplot(tmp[[1]])
+spplot(crop(tmp[[4]], nga.pts))
+# => 1000 to 4000
+spplot(crop(tmp[[15]], nga.pts))
+# => 70 to 160
 
-tmp <- getData("worldclim", var="tmin", res=0.5, lon=nga.hh[1,X], lat=nga.hh[1,Y],
+# EAST
+# Kenya locations require 2 tiles unfortunately (27 and 37)
+tmp1 <- getData("worldclim", var="bio", res=0.5, 
+  lon=mean(ken.hh$gps_lo, na.rm=T), lat=mean(ken.hh$gps_la, na.rm=T),
   path="~/Projects/hc-data/WorldClim_0.5")
-names(tmp)
-# [1] "tmin1_26"  "tmin2_26"  "tmin3_26"  "tmin4_26"  "tmin5_26"  "tmin6_26"  "tmin7_26"  "tmin8_26" 
-# [9] "tmin9_26"  "tmin10_26" "tmin11_26" "tmin12_26"
-dim(tmp)
-# [1] 3600 3600   12
-# => long term monthly mean
+tmp2 <- getData("worldclim", var="bio", res=0.5, 
+  lon=min(ken.hh$gps_lo, na.rm=T), lat=max(ken.hh$gps_la, na.rm=T),
+  path="~/Projects/hc-data/WorldClim_0.5")
+
+spplot(crop(tmp1[[4]], ken.pts))
+spplot(crop(tmp2[[4]], ken.pts))
+# => 400 to 1900, 400, 1200
+spplot(crop(tmp1[[15]], ken.pts))
+spplot(crop(tmp2[[15]], ken.pts))
+# => 10, 150
+
+# Plot BIO4
+m <- tm_shape(tmp) + tm_raster("bio4_26", pal=pal.temp(255),
+  title="Temperature\nSeasonality\n(std. dev.)",
+  breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) +
+  tm_shape(tmp1) + tm_raster("bio4_37", pal=pal.temp(255),
+    legend.show=F,
+    breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) +
+  tm_shape(tmp2) + tm_raster("bio4_27", pal=pal.temp(255),
+    legend.show=F,
+    breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) + p
+
+save_tmap(m, "./docs/out/wc-bio4.png", width=6, height=3.6)
+
+# Plot BIO15
+m <- tm_shape(tmp) + tm_raster("bio15_26", pal=pal.rain(255),
+  title="Precipitation\nSeasonality\n(coeff. var.)",
+  breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) +
+  tm_shape(tmp1) + tm_raster("bio15_37", pal=pal.rain(255),
+    legend.show=F,
+    breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) +
+  tm_shape(tmp2) + tm_raster("bio15_27", pal=pal.rain(255),
+    legend.show=F,
+    breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) + p
+
+save_tmap(m, "./docs/out/wc-bio15.png", width=6, height=3.6)
+
 
 ```
 
-WorldClim [version 2](http://worldclim.org/version2 ) has long-term average monthly climate data for minimum, mean, and maximum temperature and for precipitation for **1970-2000**. WorldClim also provides a series of 19 bioclimatic variables reflecting annual trends seasonality (annual range in temperature and precipitation) and extreme or limiting environmental factors (temperature of the coldest and warmest month, and precipitation of the wet and dry quarters): 
+WorldClim [version 2](http://worldclim.org/version2 ) has long-term average **monthly** climate data for minimum, mean, and maximum temperature and for precipitation for **1970-2000**:
+
+- `tmin` minimum temperature (°C)
+- `tmax` maximum temperature (°C)  
+- `tavg` average temperature (°C) 
+- `prec` precipitation (mm) 
+- `srad` solar radiation (kJ m-2 day-1)
+- `wind` wind speed (m s-1) 
+- `vapr` water vapor pressure (kPa) 
+
+WorldClim also provides a series of 19 long-term **bioclimatic** variables reflecting annual trends seasonality (annual range in temperature and precipitation) and extreme or limiting environmental factors (temperature of the coldest and warmest month, and precipitation of the wet and dry quarters): 
 
 - `bio1` annual mean temperature  
 - `bio2` mean diurnal range (mean of monthly (max temp - min temp))  
@@ -466,9 +526,20 @@ WorldClim [version 2](http://worldclim.org/version2 ) has long-term average mont
 - `bio18` precipitation of warmest quarter  
 - `bio19` precipitation of coldest quarter  
 
-### Other Sources
+```{r wc-bio4, fig.cap="Temperature Seasonality (std. dev., 1970-2000). Source: WorldClim."}
 
-There are other sources of current climatic conditions. They are listed here for information, but not used in this study.
+include_graphics("./out/wc-bio4.png")
+
+```
+
+```{r wc-bio15, fig.cap="Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim."}
+
+include_graphics("./out/wc-bio15.png")
+
+```
+
+
+
 
 #### IrriSAT
 
@@ -536,5 +607,58 @@ Aside from SPEIBase, drought events are also tracked by NASA EONET. There's an R
 
 
 ## Market Access
+
+### IFPRI/HarvestChoice
+
+HarvestChoice market access layers are available and documented at https://harvestchoice.org/search/apachesolr_search/travel%20time. These estimates are travel times to 20K, 50K, 100K, 250K, and 500K market sizes, at a resolution of 5-arc minute (~10 km) for sub-Saharan Africa.
+
+```{r hc-maps, eval=FALSE}
+
+load("~/Projects/hc-data/CELL5M/cell5m.rda")
+tmp <- names(dt)[names(dt) %like% "tt10"]
+tt <- dt[, .SD, .SDcols=c("CELL5M", "X", "Y", tmp)]
+rm(dt); gc()
+tt <- SpatialPixelsDataFrame(tt[, .(X,Y)], data.frame(tt)[, 4:8],
+  proj4string=CRS("+init=epsg:4326"))
+tt <- brick(tt)
+
+# Map 2 of them
+m <- tm_shape(tt) + tm_raster("tt10_20k", pal=plasma(255),
+  title="Travel Time\nto nearest\n20K Market\n(hrs)",
+  breaks=c(0,.5,1,1.5,2,3,4,6,8,12,310), 
+  labels=c("0","< 1/2 hr", "< 1 hr", "", "< 2 hr", "", "< 4 hr", "", "< 8 hr", "> 12 hr")) + p
+
+save_tmap(m, "./docs/out/tt10_20k.png", width=6, height=3.6)
+
+m <- tm_shape(tt) + tm_raster("tt10_100k", pal=plasma(255),
+  title="Travel Time\nto nearest\n100K Market\n(hrs)",
+  breaks=c(0,.5,1,1.5,2,3,4,6,8,12,310), 
+  labels=c("0","< 1/2 hr", "< 1 hr", "", "< 2 hr", "", "< 4 hr", "", "< 8 hr", "> 12 hr")) + p
+
+save_tmap(m, "./docs/out/tt10_100k.png", width=6, height=3.6)
+
+```
+
+```{r hc-tt220k, fig.cap="IFPRI/HarvestChoice Travel Time to 20K Market (hrs, circa 2010)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/tt10_20k.png", dpi=300)
+
+```
+
+```{r hc-tt100k, fig.cap="IFPRI/HarvestChoice Travel Time to 100K Market (hrs, circa 2010)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/tt10_100k.png", dpi=300)
+
+```
+
+
+### CIESIN/GRUMP
+
+Maps of roads and settlements are also available from CIESIN/GRUMP at
+http://sedac.ciesin.columbia.edu/data/collection/grump-v1.
+
+Below is an example for Nigeria. Red areas are within a 5 km distance buffer to a mapped road.
+
+![NGA network](http://africasoils.net/files/2014/11/fig_7-1024x768.jpg)
 
 
