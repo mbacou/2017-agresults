@@ -363,11 +363,8 @@ save.image("./tmp/2017-agresults.RData")
 
 ```
 
-```abstract
-
+**Abstract**  
 Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series.
-
-```
 
 The tables and maps below provide details of biophysical, socio-economics, and market-based characteristics of farm households interviewed as part of AgResults' baseline and endlines surveys in Nigeria, Kenya, and Uganda.
 
