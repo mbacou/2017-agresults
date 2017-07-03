@@ -2,7 +2,7 @@
 
 ## Climatic Indicators
 
-Notes on extracting monthly and dekadal cimatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from **Jan. 2015** to the latest recorded data point (typically **May or June 2017**). These data extracts may be used to generate summary statistics over specific planting/growing seasons (for info the effects of biophysical stresses over a typical year is illustrated below).
+Notes on extracting monthly and dekadal climatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from **Jan. 2015** to the latest recorded data point (typically **May or June 2017**). These data extracts may be used to generate summary statistics over specific planting/growing seasons (for info the effects of biophysical stresses over a typical year are illustrated below).
 
 ```{r, fig.cap="Seasonal Calendar (Haigh et al., 2015)", fig.align="center"}
 
