@@ -6,9 +6,9 @@ description: "Biophysical, socio-economic, and market information derived from h
 site: bookdown::bookdown_site
 knit: bookdown::render_book
 output:
-bookdown::gitbook:
-url: https://mbacou.github.io/2017-agresults/
-github-repo: "mbacou/2017-agresults"
+  bookdown::gitbook:
+    url: "https://mbacou.github.io/2017-agresults/"
+    github-repo: "mbacou/2017-agresults"
 df_print: paged
 always_allow_html: yes
 bibliography: biblio.bib
