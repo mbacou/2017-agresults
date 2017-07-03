@@ -328,11 +328,11 @@ To the author's knowledge there is no Web service or API to facilitate programma
 
 - **FEWSNET/USGS**  
   https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/  
-  Contains RFE^[rfe], PET^[pet], ETa^[eta], NDVI^[ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions for Africa.
+  Contains [RFE][rfe], [PET][pet], [ETa][eta], [NDVI][ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions for Africa.
 
 - **FEWSNET/NOAA**  
   ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
-  Contains daily ARC2^[arc2] and RFE^[rfe] rainfall estimates for Africa at 10km resolution
+  Contains daily [ARC2][arc2] and [RFE][rfe] rainfall estimates for Africa at 10km resolution
   
 In this study all spatial estimates are derived from the following repositories:
 
