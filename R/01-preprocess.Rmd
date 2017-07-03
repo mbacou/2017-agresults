@@ -2,7 +2,7 @@
 
 ## Climatic Indicators
 
-Notes on extracting monthly and dekadal cimatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from **Jan. 2015** to the latest available data point (typically **May 2017**). These data extracts may be used to generate summary statistics over specific planting/growing seasons (a typical calendar is shown here).
+Notes on extracting monthly and dekadal cimatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from **Jan. 2015** to the latest available data point (typically **May or June 2017**). These data extracts may be used to generate summary statistics over specific planting/growing seasons (the effects of biophysical stresses over a typical year is illustrated below).
 
 ```{r, fig.cap="Seasonal Calendar (Haigh et al., 2015)"}
 
@@ -18,12 +18,9 @@ WorldClim is a repository of long-term climatic time-series for the period **197
 
 library(raster)
 library(data.table)
-library(tables)
-library(tmap)
-library(viridis)
-library(knitr)
 library(stringr)
-library(curl)
+library(viridis)
+library(tmap)
 
 load("./tmp/2017-agresults.RData")
 
@@ -33,7 +30,7 @@ fews <- list(
     varLabel = "CHIRPS v2 rainfall estimates (monthly, mm)",
     time = "month",
     unit = "mm",
-    files = paste0("chirps-v2.0.", format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "%Y.%m") , ".tif.gz"),
+    files = paste0("chirps-v2.0.", format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "%Y.%m"), ".tif.gz"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/"
   ),
   rfe = list(
@@ -61,8 +58,8 @@ fews <- list(
     varLabel = "SSEBop evapotranspiration anomaly (monthly, percent of median)",
     time = "month",
     unit = "percent",
-    files = paste0("ma", levels(interaction(15:17, str_pad(1:12, 2, "left", 0), sep="", lex.order=T)), ".zip"),
-    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/monthly/"
+    files = paste0("m", format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "%Y%m"), ".zip"),
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/"
   ),
   ndvi_west = list(
     varLabel = "eMODIS TERRA smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)",
@@ -164,17 +161,20 @@ tmp <- lapply(fews[varCode %in% c("pet", "chirps") & status==T, dest],
 fews[varCode %in% c("pet", "chirps") & status==T, 
   raster := str_replace(files, ".tar.gz", ".bil")]
 
+tmp <- lapply(fews[varCode=="et_anom" & status==T, dest], 
+  function(x) unzip(x, exdir=dirname(x)))
+
 # Verify
 fews[, first(raster), by=varCode]
-#          varCode                                     V1
-# 1:            rfe                           a15011rf.bil
-# 2:            eta d2015011_modisSSEBopETv4_actual_mm.tif
-# 3:        et_anom               ma1501.modisSSEBopET.tif
-# 4:      ndvi_west                             wa1501.tif
-# 5: ndvi_anom_west                          wa1501pct.tif
-# 6:      ndvi_east                             ea1501.tif
-# 7: ndvi_anom_east                          ea1501pct.tif
-# 8:            pet                           et150101.bil
+#          varCode                                      V1
+# 1:            rfe                            a15011rf.bil
+# 2:            eta  d2015011_modisSSEBopETv4_actual_mm.tif
+# 3:        et_anom m201501_modisSSEBopETv4_anomaly_pct.tif
+# 4:      ndvi_west                              wa1501.tif
+# 5: ndvi_anom_west                           wa1501pct.tif
+# 6:      ndvi_east                              ea1501.tif
+# 7: ndvi_anom_east                           ea1501pct.tif
+# 8:            pet                            et150101.bil
 
 # Full paths
 fews[, raster := paste0(dirname(dest), "/", raster)]
@@ -188,17 +188,133 @@ tmp <- lapply(fews[, first(raster), by=varCode][, V1], function(x) extent(raster
 # Read in projection into catalog
 fews[varCode!="rfe" & status==T, 
   proj := "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"]
-# https://gis.stackexchange.com/questions/177447/defining-the-correct-aea-proj4string-for-fewsnet-rainfall-data-southern-africa
+
+# Refer to https://gis.stackexchange.com/questions/177447/defining-the-correct-aea-proj4string-for-fewsnet-rainfall-data-southern-africa
 fews[varCode=="rfe" & status==T, 
   proj := "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"]
 
+```
+
+```{r fews-plots, eval=F}
+
+#####################################################################################
+# Prepare plots
+#####################################################################################
+
+# Hhlds locations
+pts <- rbind(nga.pts[, c("hhid", "adm0_name")], ken.pts[, c("hhid", "adm0_name")])
+
+p <- tm_shape(pts, is.master=T, projection="eck4") + 
+  tm_dots(col="grey10", shape=4, alpha=.3, size=.08) +
+  tm_facets("adm0_name", nrow=1, free.coords=T, free.scales=T) +
+  tm_scale_bar(position=c("right", "bottom"), breaks=c(0,20,40,60,80)) +
+  tm_layout(legend.outside=T, legend.text.size=.8,
+    attr.outside=T, title.size=.8)
+
+# CHIRPS
+tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=last(proj))]
+tmp[tmp<0] <- NA
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
+  title="CHIRPS v2.0\nMay 2017\n(mm)",
+  breaks=seq(0,760,40), labels=na2null(seq(0,720,40)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-chirps.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
+
+# RFE
+tmp <- fews[varCode=="rfe" & status==T, raster(last(raster), crs=last(proj))]
+tmp[tmp<0] <- NA
+colortable(tmp) <- logical(0)
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
+  title="RFE\nJune 2017\ndekade 2\n(mm)",
+  breaks=seq(0,168,8), labels=na2null(seq(0,160,8)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-rfe.png", width=6, height=3.6)
+
+# PET
+tmp <- fews[varCode=="pet" & status==T, raster(last(raster), crs=last(proj))]
+tmp[tmp<0] <- NA
+minValue(crop(tmp, pts))
+maxValue(crop(tmp, pts))
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.pet(255),
+  title="PET\nJune, 20 2017\n(mm)",
+  breaks=seq(100,960,40), labels=na2null(seq(100,920,40)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-pet.png", width=6, height=3.6)
+
+# ETa
+tmp <- fews[varCode=="eta" & status==T, raster(last(raster), crs=last(proj))]
+tmp[tmp<0] <- NA
+maxValue(crop(tmp, pts))
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et(255),
+  title="ETa\nJune 2017\ndekade 2\n(mm)",
+  breaks=seq(0,130,10), labels=na2null(seq(0,120,10)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-eta.png", width=6, height=3.6)
+
+# ET_ANOM - should be percent of median 1,100
+tmp <- fews[varCode=="et_anom" & status==T, raster(last(raster), crs=last(proj))]
+colortable(tmp) <- logical(0)
+maxValue(crop(tmp, pts))
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et_anom(255),
+  title="ET Anomaly\nJune 2017\ndekade 2\n(percent)",
+  breaks=seq(0,285,15), labels=na2null(seq(0,270,15)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-et_anom.png", width=6, height=3.6)
+
+# NDVI
+tmp <- fews[varCode=="ndvi_east" & status==T, raster(last(raster), crs=last(proj))]
+tmp1 <- fews[varCode=="ndvi_west" & status==T, raster(last(raster), crs=last(proj))]
+colortable(tmp) <- logical(0)
+colortable(tmp1) <- logical(0)
+minValue(tmp)
+maxValue(tmp)
+minValue(tmp1)
+maxValue(tmp1)
+# => 0-255, does not look correct, like image has been stretched, should be 0,1
+tmp <- crop(tmp, ken.l2)
+tmp1 <- crop(tmp1, nga.l2)
+tmp <- tmp/255
+tmp1 <- tmp1/255
+spplot(tmp, palette=pal.ndvi)
+
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
+  title="NDVI\nJune 2017\ndekade 2\n(index)",
+  breaks=seq(0,1.05,.05), labels=na2null(seq(0,1,.05)*c(1, NA))) +
+  tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi(255),
+    legend.show=F,
+    breaks=seq(0,1.05,.05), labels=na2null(seq(0,1,.05)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-ndvi.png", width=6, height=3.6)
+
+# NDVI_ANOM (-0.4 to 0.4)
+tmp <- fews[varCode=="ndvi_anom_east" & status==T, raster(last(raster), crs=last(proj))]
+tmp1 <- fews[varCode=="ndvi_anom_west" & status==T, raster(last(raster), crs=last(proj))]
+colortable(tmp) <- logical(0)
+colortable(tmp1) <- logical(0)
+tmp <- crop(tmp, ken.l2)
+tmp1 <- crop(tmp1, nga.l2)
+minValue(tmp)
+maxValue(tmp)
+minValue(tmp1)
+maxValue(tmp1)
+# => 0-255, 100 should be normal
+spplot(tmp)
+
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi_pct(255),
+  title="NDVI Anomaly\nJune 2017\ndekade 2\n(percent of normal)",
+  breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) +
+  tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi_pct(255),
+    legend.show=F,
+    breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) + p
+
+save_tmap(m, "./out/fews-ndvi_anom.png", width=6, height=3.6)
 
 
 ```
 
 ```{r fews-save, eval=FALSE}
 
-rm(i, x, dir, url, tmp, log, pet, tmp1, tmp2)
+rm(i, x, dir, url, tmp, log, pet, tmp1, tmp2, m)
 save.image("./tmp/2017-agresults.RData")
 
 ```
@@ -208,15 +324,15 @@ FEWSNET spatial data layers are available from multiple sources, primarily from 
 - http://ewx.chg.ucsb.edu:8080/EWX/index.html
 - https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af
 
-To the author's knowledge there is no Web service or API to facilitate programmatic access to all of FEWSNET data archives, only public FTP locations[thredds]:
+To the author's knowledge there is no Web service or API to facilitate programmatic access to all of FEWSNET data archives, only public FTP locations^[thredds]:
 
 - **FEWSNET/USGS**  
   https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/  
-  Contains RFE[rfe], PET[pet], ETa[et], NDVI[ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions for Africa.
+  Contains RFE^[rfe], PET^[pet], ETa^[eta], NDVI^[ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions for Africa.
 
 - **FEWSNET/NOAA**  
   ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
-  Contains daily ARC2[arc2] and RFE[rfe] rainfall estimates for Africa at 10km resolution
+  Contains daily ARC2^[arc2] and RFE^[rfe] rainfall estimates for Africa at 10km resolution
   
 In this study all spatial estimates are derived from the following repositories:
 
@@ -239,7 +355,7 @@ kable(fews[status==T, .(
   End=max(date),
   Files=.N), keyby=.(Indicator=varCode)],
   align=c("l", "c", "c", "c", "c"),
-  caption="Tally of Indicators and Files extracted from FEWSNET")
+  caption="Tally of Indicators and Raster Layers extracted from FEWSNET")
 
 ```
 
@@ -251,38 +367,52 @@ kable(fews[status==T, .(
 
 [pet]: Potential Evapotranspiration -- daily global PET is calculated from climate parameter data that is extracted from Global Data Assimilation System (GDAS) analysis fields. The GDAS data is generated every 6 hours by NOAA. The GDAS fields used as input to the PET calculation include air temperature, atmospheric pressure, wind speed, relative humidity, and solar radiation (long wave, short wave, outgoing and incoming). PET is computed for each 6 hour period and then summed to obtain daily totals. A day is defined as beginning at 00 hours GMT. The daily PET is calculated on a spatial basis using the Penman-Monteith equation (the formulation of Shuttleworth (1992) for reference crop evaporation is used). These equations were standardized in accordance with the FAO publication 56 for the 6-hourly calculations (Allen et al, 1998). The daily PET values are scaled up by a factor of 100 to preserve the precision to .01 mm. The PET data have a 1 deg. ground resolution and are global in spatial extent. 
 
-[et]: SSEBop Evapotranspiration Products -- ET is the combination of transpiration from vegetation and evaporation from soil. Actual ET (ETa) is produced using the operational SSEBop model (Senay et al., 2012) for the period 2000 to present. This model combines ET fractions generated from remotely sensed MODIS thermal imagery, acquired every 8 days, with reference ET using a thermal index approach. The unique feature of the SSEBop parameterization is that it uses pre-defined, seasonally dynamic, boundary conditions that are unique to each pixel for the "hot/dry" and "cold/wet" reference points. The actual ET data unit is millimeters (mm). The anomalies are the ratio of ETa and the corresponding median ETa, expressed as a percent value.
+[eta]: SSEBop Evapotranspiration Products -- ET is the combination of transpiration from vegetation and evaporation from soil. Actual ET (ETa) is produced using the operational SSEBop model (Senay et al., 2012) for the period 2000 to present. This model combines ET fractions generated from remotely sensed MODIS thermal imagery, acquired every 8 days, with reference ET using a thermal index approach. The unique feature of the SSEBop parameterization is that it uses pre-defined, seasonally dynamic, boundary conditions that are unique to each pixel for the "hot/dry" and "cold/wet" reference points. The actual ET data unit is millimeters (mm). The anomalies are the ratio of ETa and the corresponding median ETa, expressed as a percent value.
 
 [ndvi]: eMODIS NDVI -- distributed by USGS Earth Resources Observation and Science (EROS) Center. Satellite-derived vegetation products generated from the Moderate Resolution Imaging Spectroradiometer (MODIS). These products, known as "eMODIS," respond to operational land monitoring applications requiring near-real time Normalized Difference Vegetation Index (NDVI) data for comparison against historical records. Real-time and historical NDVI products are composited in 10-day intervals every 5 days on a Geographic mapping grid.
 
 The series of maps below show all FEWSNET indicators (most recent data point) used in this study layered over Nigeria's household locations. These maps provide a good perspective of scale and resolution.
 
 
-```{r fews-chirp-nga, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
+```{r fews-chirps, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=6, fig.height=3}
 
-# Read in and plot all most recent rasters with NGA locations to make sure everything
-# lines up
-tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=last(proj))]
-tmp1 <- crop(tmp, nga.l2[nga.l2$svyL2Nm %in% nga.hh[, unique(calc_lga)], ])
-tmp2 <- crop(tmp, ken.pts)
-
-tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.rain(35),
-  title="Nigeria\nCHIRPS v2.0\nMay 2017\n(mm)",
-  breaks=seq(0,700,20), 
-  labels=na2null(seq(0,700,20)*c(1, NA))) +
-  tm_shape(nga.pts) + tm_dots(col="grey10", shape=4, alpha=.5, size=0.08) +
-  tm_layout(legend.outside=T, attr.outside=T)
+include_graphics("./out/fews-chirps.png", dpi=300)
 
 ```
 
-```{r fews-chirp-ken, fig.cap="CHIRPS v2.0 (May 2017, mm)", fig.width=3, fig.height=3}
+```{r fews-rfe, fig.cap="RFE (June 2017, mm)", fig.width=6, fig.height=3.6}
 
-tm_shape(tmp2) + tm_raster(names(tmp1), pal=pal.rain(35),
-  title="Kenya\nCHIRPS v2.0\nMay 2017\n(mm)",
-  breaks=seq(0,700,20), 
-  labels=na2null(seq(0,700,20)*c(1, NA))) +
-  tm_shape(ken.pts) + tm_dots(col="grey10", shape=4, alpha=.5, size=0.08) +
-  tm_layout(legend.outside=T, attr.outside=T)
+include_graphics("./out/fews-rfe.png", dpi=300)
+
+```
+
+```{r fews-pet, fig.cap="Potential Evapotranspiration (June 30, 2017, mm)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/fews-pet.png", dpi=300)
+
+```
+
+```{r fews-eta, fig.cap="ETa (June 2017, mm)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/fews-eta.png", dpi=300)
+
+```
+
+```{r fews-et_anom, fig.cap="ET Anomaly (June 2017, percent of median)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/fews-et_anom.png", dpi=300)
+
+```
+
+```{r fews-ndvi, fig.cap="NDVI (June 2017, 0-1 index)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/fews-ndvi.png", dpi=300)
+
+```
+
+```{r fews-ndvi_anom, fig.cap="NDVI Anomaly (June 2017, percent of median)", fig.width=6, fig.height=3.6}
+
+include_graphics("./out/fews-ndvi_anom.png", dpi=300)
 
 ```
 
