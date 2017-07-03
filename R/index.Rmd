@@ -36,7 +36,7 @@ load("../tmp/2017-agresults.RData")
 
 # Output options
 opts_chunk$set(comment=NA, warning=F, message=F, echo=F, base.url="../docs",
-  dev="png", fig.path="fig/", fig.width=7, fig.height=3.8, dpi=300, cache=T, 
+  dev="png", fig.path="fig/", fig.width=7, fig.height=3.8, dpi=300, cache=F, 
   dev.args=list(
     png=list(family="Roboto Condensed", pointsize=9), 
     svg=list(family="Roboto Condensed")))
@@ -359,11 +359,11 @@ shapefile(ken.pts, "./maps/ken-abt-17_hh.shp")
 ```{r save, eval=FALSE}
 
 rm(tmp, x, i)
-save.image("./tmp/2017-abt.RData")
+save.image("./tmp/2017-agresults.RData")
 
 ```
 
-```{abstract}
+```abstract
 
 Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series.
 

@@ -9,7 +9,7 @@ bookdown::gitbook:
       collapse: subsection
       scroll_highlight: yes
       before: |
-          <li><a href="./"><img src="fig/logo.png" width="auto" /></a></li>
+          <li><a href="./"><img src="fig/logo.png" width="240px" /></a></li>
     toolbar:
       position: fixed
     fontsettings:
