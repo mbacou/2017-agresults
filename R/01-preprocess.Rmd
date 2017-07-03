@@ -192,8 +192,7 @@ fews[varCode=="rfe", res := 0.1]
 fews[varCode=="pet", res := 1]
 fews[varCode=="eta", res := 0.009652]
 fews[varCode=="et_anom", res := 0.009652]
-fews[varCode=="ndvi", res := 0.002413]
-fews[varCode=="ndvi_anom", res := 0.002413]
+fews[varCode %like% "ndvi", res := 0.002413]
 
 ```
 
@@ -659,6 +658,6 @@ http://sedac.ciesin.columbia.edu/data/collection/grump-v1.
 
 Below is an example for Nigeria. Red areas are within a 5 km distance buffer to a mapped road.
 
-![NGA network](http://africasoils.net/files/2014/11/fig_7-1024x768.jpg){width="580px"}
+![NGA network](http://africasoils.net/files/2014/11/fig_7-1024x768.jpg){width="480px"}
 
 
