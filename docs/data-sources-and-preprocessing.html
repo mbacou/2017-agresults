@@ -63,7 +63,6 @@
 
 <ul class="summary">
 <li><a href="./"><img src="fig/logo.png" width="180px" /></a></li>
-
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Survey Sampling</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#nigeria"><i class="fa fa-check"></i><b>1.1</b> Nigeria</a></li>
@@ -80,7 +79,7 @@
 <li class="chapter" data-level="2.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#soil-characteristics"><i class="fa fa-check"></i><b>2.3</b> Soil Characteristics</a></li>
 <li class="chapter" data-level="2.4" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#market-access"><i class="fa fa-check"></i><b>2.4</b> Market Access</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="data-summaries.html"><a href="data-summaries.html"><i class="fa fa-check"></i><b>3</b> Data summaries</a></li>
+<li class="chapter" data-level="3" data-path="data-summaries.html"><a href="data-summaries.html"><i class="fa fa-check"></i><b>3</b> Data Summaries</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -103,17 +102,17 @@
 <h1><span class="header-section-number">Section 2</span> Data Sources and Preprocessing</h1>
 <div id="climatic-indicators" class="section level2">
 <h2><span class="header-section-number">2.1</span> Climatic Indicators</h2>
-<p>Notes on extracting monthly and dekadal cimatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from <strong>Jan. 2015</strong> to the latest available data point (typically <strong>May or June 2017</strong>). These data extracts may be used to generate summary statistics over specific planting/growing seasons (the effects of biophysical stresses over a typical year is illustrated below).</p>
-<div class="figure"><span id="fig:unnamed-chunk-1"></span>
+<p>Notes on extracting monthly and dekadal cimatic indicators from FEWSNET and WorldClim repositories. In the case of FEWSNET all spatial layers are extracted from <strong>Jan. 2015</strong> to the latest recorded data point (typically <strong>May or June 2017</strong>). These data extracts may be used to generate summary statistics over specific planting/growing seasons (for info the effects of biophysical stresses over a typical year is illustrated below).</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-1"></span>
 <img src="fig/calendar.png" alt="Seasonal Calendar (Haigh et al., 2015)" width="621" />
 <p class="caption">
 Fig. 2.1: Seasonal Calendar (Haigh et al., 2015)
 </p>
 </div>
-<p>WorldClim is a repository of long-term climatic time-series for the period <strong>1970-2000</strong> from which to derive normal baseline data.</p>
+<p>WorldClim is a repository of long-term climatic time-series for the period <strong>1970-2000</strong> from which to derive 30-year normal baseline data.</p>
 <div id="fewsnet" class="section level3">
 <h3><span class="header-section-number">2.1.1</span> FEWSNET</h3>
-<p>FEWSNET spatial data layers are available from multiple sources, primarily from USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWSNET’s climatic indicators, e.g.:</p>
+<p>FEWSNET spatial data layers are distributed through multiple channels, primarily USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWSNET’s climatic indicators, e.g.:</p>
 <ul>
 <li><a href="http://ewx.chg.ucsb.edu:8080/EWX/index.html" class="uri">http://ewx.chg.ucsb.edu:8080/EWX/index.html</a></li>
 <li><a href="https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af" class="uri">https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af</a></li>
@@ -122,7 +121,7 @@ Fig. 2.1: Seasonal Calendar (Haigh et al., 2015)
 <ul>
 <li><p><strong>FEWSNET/USGS</strong><br />
 <a href="https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/" class="uri">https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/</a><br />
-Contains RFE<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, PET<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, ETa<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>, NDVI<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions for Africa.</p></li>
+Contains RFE<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, PET<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, ETa<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>, NDVI<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions in Africa.</p></li>
 <li><p><strong>FEWSNET/NOAA</strong><br />
 <a href="ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa" class="uri">ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa</a><br />
 Contains daily ARC2<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a> and RFE<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a> rainfall estimates for Africa at 10km resolution</p></li>
@@ -142,16 +141,16 @@ Contains daily ARC2<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></
 </li>
 <li><code>ndvi_anom</code> NDVI Anomaly (dekadal, percent of median, 250m) – <a href="https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/" class="uri">https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/</a></li>
 </ul>
-<p>Note that <code>SPI</code> (Standardized Precipitation Index) is <em>not</em> available from FEWS database (see missing downloads at <a href="https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/" class="uri">https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/</a>). An alternative source is <a href="http://digital.csic.es/handle/10261/128892">SPEIBase v2.4</a> (2016), but this database does not include the last 2 years 2015-2017 yet and the 0.5 degree resolution is a little coarse for this study.</p>
+<p>Note that <code>SPEI</code>/<code>SPI</code> (standardized precipitation indices) are <em>not</em> available from FEWS database (see missing downloads at <a href="https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/" class="uri">https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/</a>). An alternative source is <a href="http://digital.csic.es/handle/10261/128892">SPEIBase v2.4</a> (2016), but this database does not include the last 2 years 2015-2017 yet and the 0.5 degree resolution is a little coarse for this study.</p>
 <table>
-<caption><span id="tab:fews-cat">Tab. 2.1: </span>Tally of Indicators and Raster Layers extracted from FEWSNET</caption>
+<caption><span id="tab:fews-cat">Tab. 2.1: </span>Tally of Indicators and Raster Layers extracted from FEWS Databases</caption>
 <thead>
 <tr class="header">
 <th align="left">Indicator</th>
 <th align="center">Periodicity</th>
 <th align="center">Start</th>
 <th align="center">End</th>
-<th align="center">Files</th>
+<th align="center">Rasters</th>
 </tr>
 </thead>
 <tbody>
@@ -220,7 +219,7 @@ Contains daily ARC2<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></
 </tr>
 </tbody>
 </table>
-<p>The series of maps below show all FEWSNET indicators (most recent data point) used in this study layered over Nigeria’s household locations. These maps provide a good perspective of scale and resolution.</p>
+<p>The series of maps below show all FEWSNET indicators (most recent data point) used in this study layered under Nigeria and Kenya’s household locations (after imputation). These maps provide a good perspective of input scale and resolution.</p>
 <div class="figure"><span id="fig:fews-chirps"></span>
 <img src="./out/fews-chirps.png" alt="CHIRPS v2.0 (May 2017, mm)"  />
 <p class="caption">
@@ -416,12 +415,12 @@ Fig. 2.8: NDVI Anomaly (June 2017, percent of median)
 <hr />
 <ol start="1">
 <li id="fn1"><p>For reference there is an <a href="https://github.com/USGS-R/geoknife">R geoknife</a> and <a href="https://github.com/USGS-CIDA/pyGDP">Python PyGDP</a> library to access a subset of USGS rasters off CIDA’s THREDDS server, but currently that repository does not incorporate FEWSNET data.<a href="data-sources-and-preprocessing.html#fnref1">↩</a></p></li>
-<li id="fn2"><p>Rainfall Estimator for data over Africa – daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at <a href="http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml" class="uri">http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml</a>.<a href="data-sources-and-preprocessing.html#fnref2">↩</a></p></li>
-<li id="fn3"><p>Potential Evapotranspiration – daily global PET is calculated from climate parameter data that is extracted from Global Data Assimilation System (GDAS) analysis fields. The GDAS data is generated every 6 hours by NOAA. The GDAS fields used as input to the PET calculation include air temperature, atmospheric pressure, wind speed, relative humidity, and solar radiation (long wave, short wave, outgoing and incoming). PET is computed for each 6 hour period and then summed to obtain daily totals. A day is defined as beginning at 00 hours GMT. The daily PET is calculated on a spatial basis using the Penman-Monteith equation (the formulation of Shuttleworth (1992) for reference crop evaporation is used). These equations were standardized in accordance with the FAO publication 56 for the 6-hourly calculations (Allen et al, 1998). The daily PET values are scaled up by a factor of 100 to preserve the precision to .01 mm. The PET data have a 1 deg. ground resolution and are global in spatial extent.<a href="data-sources-and-preprocessing.html#fnref3">↩</a></p></li>
-<li id="fn4"><p>SSEBop Evapotranspiration Products – ET is the combination of transpiration from vegetation and evaporation from soil. Actual ET (ETa) is produced using the operational SSEBop model (Senay et al., 2012) for the period 2000 to present. This model combines ET fractions generated from remotely sensed MODIS thermal imagery, acquired every 8 days, with reference ET using a thermal index approach. The unique feature of the SSEBop parameterization is that it uses pre-defined, seasonally dynamic, boundary conditions that are unique to each pixel for the “hot/dry” and “cold/wet” reference points. The actual ET data unit is millimeters (mm). The anomalies are the ratio of ETa and the corresponding median ETa, expressed as a percent value.<a href="data-sources-and-preprocessing.html#fnref4">↩</a></p></li>
-<li id="fn5"><p>eMODIS NDVI – distributed by USGS Earth Resources Observation and Science (EROS) Center. Satellite-derived vegetation products generated from the Moderate Resolution Imaging Spectroradiometer (MODIS). These products, known as “eMODIS,” respond to operational land monitoring applications requiring near-real time Normalized Difference Vegetation Index (NDVI) data for comparison against historical records. Real-time and historical NDVI products are composited in 10-day intervals every 5 days on a Geographic mapping grid.<a href="data-sources-and-preprocessing.html#fnref5">↩</a></p></li>
-<li id="fn6"><p>NOAA Climate Prediction Center Africa Rainfall Climatology version 2 – this data is a result of a project to create a satellite-estimated precipitation climatology over the Africa domain. This climatology has been created to compliment the daily operational rainfall estimate product (RFE) in order to generate anomaly fields over Africa over various timescales. In contrast to the RFE, where inputs include SSMI, AMSUB, half-hourly GPI, and GTS data, ARC uses only 3-hourly GPI and GTS data, exclusively This is due to the absence of microwave-derived estimates over a long-term historical record, and the large amount of data which makes up the operational half-hourly GPI input. As such, the ARC algorithm itself has been slightly modified in order to maintain a homogeneous and stable climate data record. GTS rain gauge data used in both static and daily-updating climatology products is of the same source, though inputs used to create GPI estimates differ slightly in source. For creation of the climatological GPI, 3-hourly Meteosat data was obtained directly from Eumetsat’s archived data group, while daily-updating products use 3-hourly data pulled from NOAA’s Meteosat data feed. Data resolution and specifications of the ARC dataset are identical to that of the RFE.<a href="data-sources-and-preprocessing.html#fnref6">↩</a></p></li>
-<li id="fn7"><p>Rainfall Estimator for data over Africa – daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at <a href="http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml" class="uri">http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml</a>.<a href="data-sources-and-preprocessing.html#fnref7">↩</a></p></li>
+<li id="fn2"><p><strong>Rainfall Estimator</strong> for data over Africa – daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at <a href="http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml" class="uri">http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml</a>.<a href="data-sources-and-preprocessing.html#fnref2">↩</a></p></li>
+<li id="fn3"><p><strong>Potential Evapotranspiration</strong> – daily global PET is calculated from climate parameter data that is extracted from Global Data Assimilation System (GDAS) analysis fields. The GDAS data is generated every 6 hours by NOAA. The GDAS fields used as input to the PET calculation include air temperature, atmospheric pressure, wind speed, relative humidity, and solar radiation (long wave, short wave, outgoing and incoming). PET is computed for each 6 hour period and then summed to obtain daily totals. A day is defined as beginning at 00 hours GMT. The daily PET is calculated on a spatial basis using the Penman-Monteith equation (the formulation of Shuttleworth (1992) for reference crop evaporation is used). These equations were standardized in accordance with the FAO publication 56 for the 6-hourly calculations (Allen et al, 1998). The daily PET values are scaled up by a factor of 100 to preserve the precision to .01 mm. The PET data have a 1 deg. ground resolution and are global in spatial extent.<a href="data-sources-and-preprocessing.html#fnref3">↩</a></p></li>
+<li id="fn4"><p><strong>SSEBop Evapotranspiration Products (version 4)</strong> – ET is the combination of transpiration from vegetation and evaporation from soil. Actual ET (ETa) is produced using the operational SSEBop model (Senay et al., 2012) for the period 2000 to present. This model combines ET fractions generated from remotely sensed MODIS thermal imagery, acquired every 8 days, with reference ET using a thermal index approach. The unique feature of the SSEBop parameterization is that it uses pre-defined, seasonally dynamic, boundary conditions that are unique to each pixel for the “hot/dry” and “cold/wet” reference points. The actual ET data unit is millimeters (mm). The anomalies are the ratio of ETa and the corresponding median ETa, expressed as a percent value.<a href="data-sources-and-preprocessing.html#fnref4">↩</a></p></li>
+<li id="fn5"><p><strong>eMODIS NDVI C6</strong> – distributed by USGS Earth Resources Observation and Science (EROS) Center. Satellite-derived vegetation products generated from the Moderate Resolution Imaging Spectroradiometer (MODIS). These products, known as <em>eMODIS</em>, respond to operational land monitoring applications requiring near-real time Normalized Difference Vegetation Index (NDVI) data for comparison against historical records. Real-time and historical NDVI products are composited in 10-day intervals every 5 days on a Geographic mapping grid.<a href="data-sources-and-preprocessing.html#fnref5">↩</a></p></li>
+<li id="fn6"><p>NOAA Climate Prediction Center <strong>Africa Rainfall Climatology (version 2)</strong> – this data is a result of a project to create a satellite-estimated precipitation climatology over the Africa domain. This climatology has been created to compliment the daily operational rainfall estimate product (RFE) in order to generate anomaly fields over Africa over various timescales. In contrast to the RFE, where inputs include SSMI, AMSUB, half-hourly GPI, and GTS data, ARC uses only 3-hourly GPI and GTS data, exclusively This is due to the absence of microwave-derived estimates over a long-term historical record, and the large amount of data which makes up the operational half-hourly GPI input. As such, the ARC algorithm itself has been slightly modified in order to maintain a homogeneous and stable climate data record. GTS rain gauge data used in both static and daily-updating climatology products is of the same source, though inputs used to create GPI estimates differ slightly in source. For creation of the climatological GPI, 3-hourly Meteosat data was obtained directly from Eumetsat’s archived data group, while daily-updating products use 3-hourly data pulled from NOAA’s Meteosat data feed. Data resolution and specifications of the ARC dataset are identical to that of the RFE.<a href="data-sources-and-preprocessing.html#fnref6">↩</a></p></li>
+<li id="fn7"><p><strong>Rainfall Estimator</strong> for data over Africa – daily precipitation is obtained by merging GTS gauge observations and 3 kinds of satellite estimates (GPI,SSM/I and AMSU). Units are in millimeters (mm). The RFE algorithm is based on the PingPing Xie method currently being employed as an operational product at the NOAA/Climate Prediction Center in association with USAID/FEWS-NET. Maps of daily, dekadal, and monthly rainfall estimates, as well as documentation on the RFE algorithm methodology may be found at <a href="http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml" class="uri">http://www.cpc.ncep.noaa.gov/products/fews/rfe.shtml</a>.<a href="data-sources-and-preprocessing.html#fnref7">↩</a></p></li>
 </ol>
 </div>
             </section>
@@ -459,7 +458,7 @@ gitbook.start({
 "size": 1
 },
 "edit": {
-"link": "https://github.com/mbacou/2017-abt/blob/master/R/01-preprocess.Rmd",
+"link": "https://github.com/mbacou/2017-agresults/blob/master/R/01-preprocess.Rmd",
 "text": "Edit"
 },
 "download": null,

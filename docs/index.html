@@ -63,7 +63,6 @@
 
 <ul class="summary">
 <li><a href="./"><img src="fig/logo.png" width="180px" /></a></li>
-
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Survey Sampling</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#nigeria"><i class="fa fa-check"></i><b>1.1</b> Nigeria</a></li>
@@ -80,7 +79,7 @@
 <li class="chapter" data-level="2.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#soil-characteristics"><i class="fa fa-check"></i><b>2.3</b> Soil Characteristics</a></li>
 <li class="chapter" data-level="2.4" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#market-access"><i class="fa fa-check"></i><b>2.4</b> Market Access</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="data-summaries.html"><a href="data-summaries.html"><i class="fa fa-check"></i><b>3</b> Data summaries</a></li>
+<li class="chapter" data-level="3" data-path="data-summaries.html"><a href="data-summaries.html"><i class="fa fa-check"></i><b>3</b> Data Summaries</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -108,8 +107,8 @@
 <h1><span class="header-section-number">Section 1</span> Survey Sampling</h1>
 <p><strong>Abstract</strong><br />
 Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series.</p>
-<p>The tables and maps below provide details of biophysical, socio-economics, and market-based characteristics of farm households interviewed as part of AgResults’ baseline and endlines surveys in Nigeria, Kenya, and Uganda.</p>
-<p>In particular we highlight sampled households with missing and/or invalid spatial locations. In the case of missing coordinates a location is imputed using the centroid of this household’s administrative unit (LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.</p>
+<p>The tables and maps below provide details of biophysical, socio-economics, and market-based characteristics of farm households interviewed as part of AgResults’ baseline and endline surveys in Nigeria, Kenya, and Uganda.</p>
+<p>All statistics are derived using the geospatial locations of survey respondents. However these locations are sometimes missing or invalid. In the case of missing coordinates we collect spatial statistics at the centroid of the matching administrative unit (the lowest level unit that may be mapped with any confidence, i.e. LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.</p>
 <div id="nigeria" class="section level2">
 <h2><span class="header-section-number">1.1</span> Nigeria</h2>
 <p><strong>2,065</strong> households are sampled in Nigeria. There are <strong>81</strong> households missing coordinates and <strong>414 possibly invalid</strong> locations.</p>
@@ -829,17 +828,17 @@ All
 </tr>
 </tbody>
 </table>
-<p>There are <strong>414 households</strong> with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map below.</p>
+<p>There are <strong>414 households</strong> with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). For documentatio purposes households with problematic locations are highlighted on the map below.</p>
 <div class="figure"><span id="fig:nga-odd"></span>
-<img src="fig/nga-odd-1.png" alt="Households Located outside of their recorded LGA, Nigeria" width="1800" />
+<img src="fig/nga-odd-1.png" alt="Households with Invalid GPS Locations, Nigeria" width="1800" />
 <p class="caption">
-Fig. 1.1: Households Located outside of their recorded LGA, Nigeria
+Fig. 1.1: Households with Invalid GPS Locations, Nigeria
 </p>
 </div>
 </div>
 <div id="kenya" class="section level2">
 <h2><span class="header-section-number">1.2</span> Kenya</h2>
-<p><strong>5235 households</strong> are sampled in Kenya. There are <strong>30</strong> households missing coordinates and <strong><code>nrow(ken.odd)</code> possibly invalid</strong> locations.</p>
+<p><strong>5,235 households</strong> are sampled in Kenya. There are <strong>30</strong> households missing coordinates and <strong><code>nrow(ken.odd)</code> possibly invalid</strong> locations.</p>
 <table class="Rtable">
 <caption>
 <span id="tab:ken-na">Tab. 1.2: </span> Survey Sampling across Counties and missing Household Locations
@@ -1330,7 +1329,7 @@ Fig. 1.2: Households Locations across Counties, Kenya
 </div>
 <div id="uganda" class="section level2">
 <h2><span class="header-section-number">1.3</span> Uganda</h2>
-<p><strong><code>prettyNum(nrow(uga.hh))</code> households</strong> are sampled in Uganda. There are <strong><code>uga.hh[is.na(X), .N]</code></strong> households missing coordinates and <strong><code>nrow(uga.odd)</code> possibly invalid</strong> locations.</p>
+<p><strong><code>format(nrow(uga.hh), big.mark=&quot;,&quot;)</code> households</strong> are sampled in Uganda. There are <strong><code>uga.hh[is.na(X), .N]</code></strong> households missing coordinates and <strong><code>nrow(uga.odd)</code> possibly invalid</strong> locations.</p>
 
 </div>
 </div>
@@ -1369,7 +1368,7 @@ gitbook.start({
 "size": 1
 },
 "edit": {
-"link": "https://github.com/mbacou/2017-abt/blob/master/R/index.Rmd",
+"link": "https://github.com/mbacou/2017-agresults/blob/master/R/index.Rmd",
 "text": "Edit"
 },
 "download": null,

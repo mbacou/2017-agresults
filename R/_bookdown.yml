@@ -1,6 +1,6 @@
 new_session: no
 output_dir: ../docs
-edit: https://github.com/mbacou/2017-abt/blob/master/R/%s
+edit: https://github.com/mbacou/2017-agresults/blob/master/R/%s
 language:
   label:
     fig:    "Fig. "

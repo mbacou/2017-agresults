@@ -250,7 +250,7 @@ m.nga <- tm_shape(nga.l2) +
   tm_shape(tmp, is.master=T, projection="eck4") +
   tm_dots(col="calc_lga", shape=25, alpha=.5, border.col="white",
     legend.show=T, size=.6, palette=viridis(22),
-    title="Nigeria\nHousehold Locations\n(uncertain)") +
+    title="Nigeria\nHousehold Locations\n(invalid)") +
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60)) +
   tm_layout(legend.outside=T)
 
@@ -366,9 +366,9 @@ save.image("./tmp/2017-agresults.RData")
 **Abstract**  
 Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series.
 
-The tables and maps below provide details of biophysical, socio-economics, and market-based characteristics of farm households interviewed as part of AgResults' baseline and endlines surveys in Nigeria, Kenya, and Uganda.
+The tables and maps below provide details of biophysical, socio-economics, and market-based characteristics of farm households interviewed as part of AgResults' baseline and endline surveys in Nigeria, Kenya, and Uganda.
 
-In particular we highlight sampled households with missing and/or invalid spatial locations. In the case of missing coordinates a location is imputed using the centroid of this household's administrative unit (LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.
+All statistics are derived using the geospatial locations of survey respondents. However these locations are sometimes missing or invalid. In the case of missing coordinates we collect spatial statistics at the centroid of the matching administrative unit (the lowest level unit that may be mapped with any confidence, i.e. LGA for Nigeria, county for Kenya, and district for Uganda). Note that another approach would be to derive average statistics over the entire administrative unit, however this approach is more resource-intensive.
 
 ## Nigeria
 
@@ -386,10 +386,10 @@ html(tabular(Factor(State)*(Factor(LGA)*DropEmpty()+1)+1~Heading("Nigeria Househ
 
 ```
 
-There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). Households with problematic locations are highlighted on the map below.
+There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall within their recorded LGA. In the majority of instances the distance is negligeable (under 10km) and this might not affect any of the spatial estimates. In a few instances the errors are troublesome (over 40km). For documentatio purposes households with problematic locations are highlighted on the map below.
 
 
-```{r nga-odd, fig.cap="Households Located outside of their recorded LGA, Nigeria", fig.height=6, fig.width=6}
+```{r nga-odd, fig.cap="Households with Invalid GPS Locations, Nigeria", fig.height=6, fig.width=6}
 
 # Are all locations in the correct LGA
 tmap_mode("plot")
@@ -399,7 +399,7 @@ m.nga
 
 ## Kenya
 
-**`r prettyNum(nrow(ken.hh))` households** are sampled in Kenya. There are **`r ken.hh[is.na(X), .N]`** households missing coordinates and **` nrow(ken.odd)` possibly invalid** locations.
+**`r format(nrow(ken.hh), big.mark=",")` households** are sampled in Kenya. There are **`r ken.hh[is.na(X), .N]`** households missing coordinates and **` nrow(ken.odd)` possibly invalid** locations.
 
 
 ```{r ken-na, results="asis"}
@@ -425,5 +425,5 @@ m.ken
 
 ## Uganda
 
-**` prettyNum(nrow(uga.hh))` households** are sampled in Uganda. There are **` uga.hh[is.na(X), .N]`** households missing coordinates and **` nrow(uga.odd)` possibly invalid** locations.
+**` format(nrow(uga.hh), big.mark=",")` households** are sampled in Uganda. There are **` uga.hh[is.na(X), .N]`** households missing coordinates and **` nrow(uga.odd)` possibly invalid** locations.
 

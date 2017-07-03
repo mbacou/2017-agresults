@@ -1,4 +1,4 @@
-# Data summaries
+# Data Summaries
 
 ```{r extract, eval=F}
 
