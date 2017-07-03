@@ -8,8 +8,7 @@ bookdown::gitbook:
     toc:
       collapse: subsection
       scroll_highlight: yes
-      before: |
-          <li><a href="./">2017-AgResults</a></li>
+      before: '<li><a href="./">2017-AGRESULTS</a></li>'
     toolbar:
       position: fixed
     fontsettings:
