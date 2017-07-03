@@ -56,7 +56,7 @@ pplot <- function(..., note=NULL, alpha=.1) {
   pirateplot(..., pal="black", jitter.val=.07,
     cex.names=.8, cex.axis=.8, gl.lty=3, back.col="white",
     point.o=min(alpha, .1), point.pch=16, point.cex=.5,
-    bean.f.col="white", bean.lwd=.2,
+    bean.f.col="white", bean.lwd=.4,
     inf.lwd=.2, inf.f.col="blue", inf.f.o=.3,
     quant=.5, quant.col="limegreen", quant.lwd=1.2, quant.length=.9,
     avg.line.col="red", avg.line.lwd=1.2)

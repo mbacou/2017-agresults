@@ -330,11 +330,11 @@ FEWSNET spatial data layers are distributed through multiple channels, primarily
 
 To the author's knowledge there is no Web service or API to facilitate programmatic access to all of FEWSNET data archives, only public FTP locations[^thredds]:
 
-- **FEWSNET/USGS**  
+- **FEWS/USGS**  
   https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/  
   Contains RFE[^rfe], PET[^pet], ETa[^eta], NDVI[^ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions in Africa.
 
-- **FEWSNET/NOAA**  
+- **FEWS/NOAA**  
   ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
   Contains daily ARC2[^arc2] and RFE[^rfe] rainfall estimates for Africa at 10km resolution
   

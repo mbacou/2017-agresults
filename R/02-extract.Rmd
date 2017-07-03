@@ -1,6 +1,6 @@
 # Data Summaries
 
-This section provides visual summaries for a sample of variables. All estimates below are across surveyed household locations. Complete results are available in **STATA format** on (Huddle)[https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list].
+This section provides visual summaries for a sample of variables. All estimates below are across surveyed household locations. Complete results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
 
 <u>Note</u>: the *violin* (pirate) plots below show **median** line in **red**, **mean** line in **green**, and the **blue** region is the inferred **95% confidence interval** of the mean.
 
