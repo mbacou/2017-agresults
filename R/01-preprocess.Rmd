@@ -222,7 +222,7 @@ m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
   title="CHIRPS v2.0\nMay 2017\n(mm)",
   breaks=seq(0,760,40), labels=na2null(seq(0,720,40)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-chirps.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
+save_tmap(m, "./docs/out/fews-chirps.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
 
 # RFE
 tmp <- fews[varCode=="rfe" & status==T, raster(last(raster), crs=last(proj))]
@@ -232,7 +232,7 @@ m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
   title="RFE\nJune 2017\ndekade 2\n(mm)",
   breaks=seq(0,168,8), labels=na2null(seq(0,160,8)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-rfe.png", width=6, height=3.6)
+save_tmap(m, "./docs/out/fews-rfe.png", width=6, height=3.6)
 
 # PET
 tmp <- fews[varCode=="pet" & status==T, raster(last(raster), crs=last(proj))]
@@ -243,7 +243,7 @@ m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.pet(255),
   title="PET\nJune, 20 2017\n(mm)",
   breaks=seq(100,960,40), labels=na2null(seq(100,920,40)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-pet.png", width=6, height=3.6)
+save_tmap(m, "./docs/out/fews-pet.png", width=6, height=3.6)
 
 # ETa
 tmp <- fews[varCode=="eta" & status==T, raster(last(raster), crs=last(proj))]
@@ -253,9 +253,10 @@ m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et(255),
   title="ETa\nJune 2017\ndekade 2\n(mm)",
   breaks=seq(0,130,10), labels=na2null(seq(0,120,10)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-eta.png", width=6, height=3.6)
+save_tmap(m, "./docs/out/fews-eta.png", width=6, height=3.6)
 
-# ET_ANOM - should be percent of median 1,100
+# ET_ANOM - should be percent of median 1-100
+# The anomalies are the ratio of ETa and median ETa, expressed as a percent value
 tmp <- fews[varCode=="et_anom" & status==T, raster(last(raster), crs=last(proj))]
 colortable(tmp) <- logical(0)
 maxValue(crop(tmp, pts))
@@ -263,34 +264,45 @@ m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et_anom(255),
   title="ET Anomaly\nJune 2017\ndekade 2\n(percent)",
   breaks=seq(0,285,15), labels=na2null(seq(0,270,15)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-et_anom.png", width=6, height=3.6)
+save_tmap(m, "./docs/out/fews-et_anom.png", width=6, height=3.6)
 
 # NDVI
+# eMODIS NDVI data are stretched (mapped) linearly (to byte values) as follows:
+# [-1.0, 1.0] -> [0, 200] - Invalid Values: 201 - 255 
+# NDVI = (value - 100) / 100 
+# example: [ (150 - 100) / 100 = 0.5 NDVI ] 
+# Anomaly / Difference Classification: 
+# The absolute difference and anomaly images are stretched from - 0.3 to 0.3 NDVI. The
+# area of relatively no difference is approximately -0.05 - 0.05.
 tmp <- fews[varCode=="ndvi_east" & status==T, raster(last(raster), crs=last(proj))]
 tmp1 <- fews[varCode=="ndvi_west" & status==T, raster(last(raster), crs=last(proj))]
 colortable(tmp) <- logical(0)
 colortable(tmp1) <- logical(0)
 minValue(tmp)
 maxValue(tmp)
-minValue(tmp1)
-maxValue(tmp1)
-# => 0-255, does not look correct, like image has been stretched, should be 0,1
 tmp <- crop(tmp, ken.l2)
 tmp1 <- crop(tmp1, nga.l2)
-tmp <- tmp/255
-tmp1 <- tmp1/255
+# Correct stretch
+tmp[tmp > 200] <- NA
+tmp1[tmp1 > 200] <- NA
+tmp <- (tmp - 100) / 100
+tmp1 <- (tmp1 - 100) / 100
 spplot(tmp, palette=pal.ndvi)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
   title="NDVI\nJune 2017\ndekade 2\n(index)",
-  breaks=seq(0,1.05,.05), labels=na2null(seq(0,1,.05)*c(1, NA))) +
+  breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi(255),
     legend.show=F,
-    breaks=seq(0,1.05,.05), labels=na2null(seq(0,1,.05)*c(1, NA))) + p
+    breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-ndvi.png", width=6, height=3.6)
+save_tmap(m, "./docs/out/fews-ndvi.png", width=6, height=3.6)
 
-# NDVI_ANOM (-0.4 to 0.4)
+# NDVI_ANOM
+# Percent of Normal
+# The percent of normal data are expressed as a percent, where values between 95 and
+# 105 indicate average conditions. Values below 95 represent below average vegetation 
+# conditions, while those above 105 represent above average conditions.
 tmp <- fews[varCode=="ndvi_anom_east" & status==T, raster(last(raster), crs=last(proj))]
 tmp1 <- fews[varCode=="ndvi_anom_west" & status==T, raster(last(raster), crs=last(proj))]
 colortable(tmp) <- logical(0)
@@ -311,7 +323,7 @@ m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi_pct(255),
     legend.show=F,
     breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) + p
 
-save_tmap(m, "./out/fews-ndvi_anom.png", width=6, height=3.6)
+save_tmap(m, "./docs/out/fews-ndvi_anom.png", width=6, height=3.6)
 
 
 ```

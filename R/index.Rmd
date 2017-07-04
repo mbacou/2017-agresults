@@ -1,5 +1,5 @@
 ---
-title: "Geospatial Characteristics of Program Beneficiaries"
+title: "Geospatial Characteristics of Program Beneficiaries (Documentation)"
 author: "[BACOU, Melanie](http://github.com/mbacou) for [AgResults](http://agresults.org/) (Abt Associates)"
 date: "Last updated on `r Sys.Date()`. DO NOT USE OR CITE"
 description: "Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series."
