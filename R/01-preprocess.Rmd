@@ -286,7 +286,7 @@ tmp[tmp > 200 | tmp <= 0] <- NA
 tmp1[tmp1 > 200 | tmp1 <= 0] <- NA
 tmp <- (tmp - 100) / 100
 tmp1 <- (tmp1 - 100) / 100
-spplot(tmp1, palette=pal.ndvi)
+spplot(tmp1, col.regions=pal.ndvi)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
   title="NDVI\nJune 2017\ndekade 2\n(index)",
@@ -357,7 +357,7 @@ In this study all spatial estimates are derived from raw data at the following l
 - `eta` actual ET (dekadal, mm, 0.01 degree/~1km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/  
 - `et_anom` ET Anomaly (monthly, percent of median, 0.01 degree/~1km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/  
 - `ndvi` (dekadal, daily mean, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/  
-- `ndvi_anom` NDVI Anomaly (dekadal, percent of median, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/  
+- `ndvi_anom` NDVI Anomaly (dekadal, percent of normal, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/  
 
 Note that `SPEI`/`SPI` (standardized precipitation indices) are *not* available from FEWS database (see missing downloads at https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/). An alternative source is [SPEIBase v2.4](http://digital.csic.es/handle/10261/128892) (2016), but this database does not include the last 2 years 2015-2017 yet and the 0.5 degree resolution is a little coarse for this study.
 
