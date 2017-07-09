@@ -109,7 +109,7 @@
 <div id="header">
 <h1 class="title">Geospatial Characteristics of Program Beneficiaries (Documentation)</h1>
 <h4 class="author"><em><a href="http://github.com/mbacou">BACOU, Melanie</a> for <a href="http://agresults.org/">AgResults</a> (Abt Associates)</em></h4>
-<h4 class="date"><em>Last updated on 2017-07-04. DO NOT USE OR CITE</em></h4>
+<h4 class="date"><em>Last updated on 2017-07-09. DO NOT USE OR CITE</em></h4>
 </div>
 <div id="survey-sampling" class="section level1">
 <h1><span class="header-section-number">Section 1</span> Survey Sampling</h1>
@@ -844,15 +844,13 @@ Fig. 1.1: Households with Invalid GPS Locations, Nigeria
 </div>
 <div id="kenya" class="section level2">
 <h2><span class="header-section-number">1.2</span> Kenya</h2>
-<p>In Kenya data was collected over 2 rounds with some attrition, and household locations do not necessarily match across rounds. We use a general approach to impute missing and/or conflicting coordinates:</p>
+<p>In Kenya data was collected over 2 rounds with some attrition, and household locations do not necessarily match across rounds. We use a general approach to impute missing, invalid, and/or conflicting coordinates:</p>
 <ol style="list-style-type: decimal">
-<li>if both GPS locations seem valid, we use the middle point<br />
-</li>
-<li>if only 1 of the 2 locations is valid, we use that one<br />
-</li>
-<li>if no location is valid (both fall outside of a recorded administrative unit), we use this unit centroid.</li>
+<li>if both GPS locations seem valid (i.e. they are located in the reported county), we use their middle point (coded <code>mean</code> in table  below)</li>
+<li>if only 1 of the 2 locations is valid, we use that one (coded <code>bl1</code> or <code>bl2</code>)</li>
+<li>if no location is valid (both fall outside of a recorded administrative unit), we use that administrative unit centroid (coded <code>centroid</code>).</li>
 </ol>
-<p><strong>5,235 households</strong> are sampled in Kenya. There are <strong>470</strong> households missing coordinates and <strong><code>nrow(ken.odd)</code> possibly invalid</strong> locations. Details in the table below.</p>
+<p><strong>5,235 households</strong> are sampled in Kenya. There is a total of <strong>88</strong> households with missing or invalid coordinates. Table  below shows a breakown of imputed household locations across Kenya’s 8 regions and 47 counties. Note that we could not locate a map of Kenya’s sub-counties.</p>
 <div class="figure"><span id="fig:ken-hh"></span>
 <img src="fig/ken-hh-1.png" alt="Households Locations across Counties, Kenya" width="1800" />
 <p class="caption">

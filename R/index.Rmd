@@ -269,7 +269,7 @@ setattr(nga.odd, "var.labels",
 write.dta(nga.odd, "./out/2017-abt-nga_odd.dta", version=12L, convert.factors="string")
 
 # Make and save map
-tmp <- nga.pts[nga.odd$hhid %in% nga.odd$hhid,]
+tmp <- nga.pts[nga.pts$hhid %in% nga.odd$hhid,]
 
 m.nga <- tm_shape(nga.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
@@ -292,14 +292,17 @@ save_tmap(m.nga, "./out/2017-abt-nga_odd.pdf", width=5, units="in")
 #####################################################################################
 # 2017.07.03: received corrected admin details from Betsy
 # 2017.07.01: received admin details but file is no good
-# 2017.07.01: asked Katie for a recent map of Kenya's subcounties
-
+# 2017.07.01: asked Katie for a recent map of Kenya's subcountie
+#
 # This survey includes 2 rounds of data collection with replacements
 # so some hhlds are only present in round #1 and some in round #2.
 # The general imputation approach is:
-# 1) if both GPS locations seem valid, then use middle point 
-# 2) if only 1 of the 2 locations is valid, use that one 
-# 3) if no location is valid (both fall outside of that unit), use the unit centroid
+# 1) Use Kenya's county map (subcounties do not seem available) to get a hhld's county
+# 2) compare reported county with county obtained in 1)
+# 3) impute point locations using following rules:
+#   a. if both GPS locations seem valid, then use middle point 
+#   b. if only 1 of the 2 locations is valid, use that one 
+#   c. if no location is valid (both fall outside of that unit), use the unit centroid
 
 # Load KEN coords
 ken.hh <- read.dta("./data/gis_kenya_for consultant.dta")
@@ -331,15 +334,19 @@ BL2_A06	VIllage (baseline data collection round 2)
 ken.hh <- ken.hh[, .SD, .SDcols=ken.lbl$varCode]
 setnames(ken.hh, tolower(names(ken.hh)))
 ken.lbl[, varCode := tolower(varCode)]
+ken.hh <- ken.hh[, lapply(.SD, function(x) ifelse(x=="", NA, x))]
 
 # Validate admin details
-# Missing?
-ken.hh[is.na(X), .N]
-# [1] 30
-
-# Merge survey labels into Kenya county map `ken.l2`
-
-# Validate all locations
+ken.hh[, gps_status := "round 1 & 2"]
+# Missing
+ken.hh[is.na(gps_la*gps_lo) & is.na(bl2_gps_la*bl2_gps_lo), gps_status := "missing"]
+# Attrition
+ken.hh[gps_status!="missing" & is.na(gps_la), gps_status := "round 2"]
+ken.hh[gps_status!="missing" & is.na(bl2_gps_la), gps_status := "round 1"]
+ken.hh[, gps_status := factor(gps_status, levels=c("missing", "round 1", "round 2", "round 1 & 2"))]
+summary(ken.hh$gps_status)
+# missing     round 1     round 2 round 1 & 2 
+#      30        1076         440        3689 
 
 # Use the latest county map from CELL5M
 load("~/Projects/hc-cell5m/rdb/g2.rda")
@@ -360,49 +367,156 @@ tmp <- data.table(coordinates(ken.l2))
 setnames(tmp, c("X", "Y"))
 ken.l2.pts <- cbind(tmp, ken.l2.pts)
 
-# Check to make sure existing coords fall in expected county
-ken.pts <- SpatialPointsDataFrame(ken.hh[!is.na(X), .(X,Y)], data.frame(ken.hh[!is.na(X)]),
+# Transform
+ken.pts <- rbind(
+  ken.hh[, .(hhid, round=1, X=gps_lo, Y=gps_la)], 
+  ken.hh[, .(hhid, round=2, X=bl2_gps_lo, Y=bl2_gps_la)])
+ken.pts <- ken.pts[!is.na(X*Y)]
+ken.pts <- SpatialPointsDataFrame(ken.pts[, .(X,Y)], data.frame(ken.pts),
   proj4string=CRS("+init=epsg:4326"))
 
-tmp <- data.table(extract(ken.l2, ken.pts))
-tmp <- cbind(tmp[, c(3:8)], ken.pts@data)
-
-# Merge admin details back into `ken.hh`
+# Extract and merge `ken.l2` counties back in `ken.hh`
+tmp <- extract(ken.l2, ken.pts)
+tmp <- data.table(cbind(ken.pts@data, tmp[, 3:8]))
 setnames(tmp, tolower(names(tmp)))
-setkey(tmp, hhid)
+tmp <- melt(tmp, id.vars=c("hhid", "round"))
+tmp <- dcast(tmp, hhid~variable+round)
 setkey(ken.hh, hhid)
-ken.hh <- tmp[, .SD, .SDcols=1:7][ken.hh]
-setcolorder(ken.hh, c(7:13, 6,3,5,2,4,1))
+setkey(tmp, hhid)
+ken.hh <- tmp[, .SD, .SDcols=-c(2:5)][ken.hh]
 
+# Recode `adm2_name` to match svyL2Nm
+ken.hh[!a02 %in% tolower(unique(c(adm2_name_1, adm2_name_2))), .N, by=a02]
+#           a02  N
+# 1: transnzoia 60
+ken.hh[!bl2_a02 %in% tolower(unique(c(adm2_name_1, adm2_name_2))), .N, by=bl2_a02]
+#       bl2_a02  N
+# 1: transnzoia 52
+ken.hh[a02=="transnzoia", a02 := tolower("Trans Nzoia")]
+ken.hh[bl2_a02=="transnzoia", bl2_a02 := tolower("Trans Nzoia")]
 
-# Impute loc_status, X_imp, Y_imp
-# Use coords from round #2 if available, else round #1
-ken.hh[, X := ifelse(is.na(bl2_gps_lo), gps_lo, bl2_gps_lo)]
-ken.hh[, Y := ifelse(is.na(bl2_gps_la), gps_la, bl2_gps_la)]
+# Impute all locations
+ken.hh[gps_status %in% c("round 1", "round 1 & 2"), 
+  gps_status_bl1 := a02==tolower(adm2_name_1)]
+ken.hh[gps_status %in% c("round 2", "round 1 & 2"), 
+  gps_status_bl2 := bl2_a02==tolower(adm2_name_2)]
 
+# For TRUE*TRUE, FALSE*FALSE or NA*NA are there discrepancies across counties?
+ken.hh[gps_status_bl1==gps_status_bl2 & a01!=bl2_a01, .N, 
+  by=.(a01, bl2_a01, adm1_name_1, adm1_name_2)]
+#           a01    bl2_a01 adm1_name_1 adm1_name_2  N
+# 1: north rift south rift Rift Valley Rift Valley  9
+# 2: south rift north rift Rift Valley Rift Valley 53
+ken.hh[(gps_status_bl1==gps_status_bl2 | gps_status=="missing") & a02!=bl2_a02, hhid, 
+  by=.(a01, a02, bl2_a01, bl2_a02, gps_status)]
+#        a01   a02 bl2_a01 bl2_a02  gps_status     hhid
+# 1: eastern kitui eastern makueni round 1 & 2 13047915
+# This could mean that this particular hhld moved between the 2 rounds
 
+# Distance between 2 recorded locations in meter
+spts_3857 <- function(x,y) spTransform(
+  SpatialPoints(data.frame(x,y), proj4string=CRS("+init=epsg:3857")), 
+  CRS("+init=epsg:3857"))
 
+ken.hh[gps_status_bl1*gps_status_bl2==1, 
+  gps_meter := rgeos::gDistance(
+    spts_3857(gps_lo, gps_la), 
+    spts_3857(bl2_gps_lo, bl2_gps_la), byid=T)]
+summary(ken.hh$gps_meter)
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ # 0.0001  0.6563  1.4644  1.3368  1.8207  3.1439    1700 
+ken.hh[hhid==13047915, .(gps_meter, adm2_name_1, adm2_name_2)]
+#    gps_meter adm2_name_1 adm2_name_2
+# 1:  2.405639       Kitui     Makueni
+# Does not seem like much, is it on the border between the 2 counties? (check in QGIS)
+# In any case we will take the middle point between the 2 locations
+
+# Bring in county centroids
+ken.hh[, (8:13) := lapply(.SD, as.integer), .SDcols=8:13]
+setkey(ken.hh, adm2_code_1)
+setkey(ken.l2.pts, adm2_code)
+ken.hh[ken.l2.pts, `:=`(X_l2=i.X, Y_l2=i.Y)]
+setkey(ken.hh, adm2_code_2)
+ken.hh[ken.l2.pts, `:=`(X_l2=i.X, Y_l2=i.Y)]
+ken.hh[is.na(X_l2), .N, by=.(a02, bl2_a02, gps_status)]
+#    a02 bl2_a02 gps_status  N
+# 1:  NA   narok    missing  6
+# 2:  NA    meru    missing 12
+# 3:  NA makueni    missing  3
+# 4:  NA   kitui    missing  9
+ken.l2.pts[, svyL2Nm := tolower(adm2_name)]
+setkey(ken.hh, bl2_a02)
+setkey(ken.l2.pts, svyL2Nm)
+ken.hh[ken.l2.pts, `:=`(X_drop=i.X, Y_drop=i.Y)]
+ken.hh[is.na(X_l2), `:=`(X_l2=X_drop, Y_l2=Y_drop)]
+ken.hh[, `:=`(X_drop=NULL, Y_drop=NULL)]
+
+# Impute X_imp, Y_imp
+ken.hh[, .N, keyby=.(gps_status_bl1, gps_status_bl2)]
+#    gps_status_bl1 gps_status_bl2    N
+# 1:             NA             NA   30
+# 2:             NA          FALSE    5
+# 3:             NA           TRUE  435
+# 4:          FALSE             NA   27
+# 5:          FALSE          FALSE   26
+# 6:          FALSE           TRUE   47
+# 7:           TRUE             NA 1049
+# 8:           TRUE          FALSE   81
+# 9:           TRUE           TRUE 3535
+ken.hh[, gps_status := factor(paste0(gps_status_bl1, gps_status_bl2), 
+  levels=c("NANA", "NAFALSE", "NATRUE", "FALSENA", "FALSEFALSE", "FALSETRUE", "TRUENA", "TRUEFALSE", "TRUETRUE"))]
+levels(ken.hh$gps_status) <- c("centroid", "centroid", "bl2", "centroid", "centroid", "bl2", "bl1", "bl1", "mean")
+ken.hh[, .N, keyby=gps_status]
+#   gps_status    N
+# 1:   centroid   88
+# 2:        bl2  482
+# 3:        bl1 1130
+# 4:       mean 3535
+ken.hh[gps_status=="mean", `:=`(
+  X_imp = rowMeans(cbind(gps_lo, bl2_gps_lo), na.rm=T),
+  Y_imp = rowMeans(cbind(gps_la, bl2_gps_la), na.rm=T))]
+ken.hh[gps_status=="bl1", `:=`(X_imp = gps_lo, Y_imp = gps_la)]
+ken.hh[gps_status=="bl2", `:=`(X_imp = bl2_gps_lo, Y_imp = bl2_gps_la)]
+ken.hh[gps_status=="centroid", `:=`(X_imp = X_l2, Y_imp = Y_l2)]
+
+# Verify
+ken.hh[is.na(X_imp*Y_imp), .N]
+# [1] 0 => OK
+
+# Clean up GADM codes/names
+ken.hh <- ken.hh[, .SD, .SDcols=!names(ken.hh) %like% "adm"]
+
+# Merge GADM names again using imputed coords
+ken.pts <- SpatialPointsDataFrame(ken.hh[, .(X_imp, Y_imp)], data.frame(ken.hh),
+  proj4string=CRS("+init=epsg:4326"))
+
+# Extract and merge `ken.l2` counties back in `ken.hh`
+tmp <- extract(ken.l2, ken.pts)
+setnames(tmp, tolower(names(tmp)))
+ken.hh <- cbind(ken.hh, tmp[, 3:8])
 
 # Export to STATA
 setattr(ken.hh, "var.labels", 
   c("household id",
     "latitude (round #1)", "longitude (round #1)",
     "latitude (round #2)", "longitude (round #2)",
-    "longitude (for mapping)", "latitude (for mapping)",
-    "GAUL county code", "GAUL county name", "GAUL province code", "GAUL province name",
-    "GAUL country code", "GAUL country name"))
+    "region (bl1)", "county (bl1)", "subcounty (bl1)", 
+    "location (bl1)", "sublocation (bl1)", "village (bl1)",
+    "region (bl2)", "county (bl2)", "subcounty (bl2)", 
+    "location (bl2)", "sublocation (bl2)", "village (bl2)",
+    "GPS location imputed with", "bl1 GPS location is valid", "bl2 GPS location is valid",
+    "distance between bl1 and bl2 locations (meter)",
+    "longitude (county centroid)", "latitude (county centroid)",
+    "longitude (imputed)", "latitude (imputed)",
+    "GAUL country name", "GAUL region name", "GAUL county name",
+    "GAUL country code", "GAUL region code", "GAUL county code"))
 write.dta(ken.hh, "./out/2017-abt-ken_hh.dta", version=12L, convert.factors="string")
 
 # Make and save maps
-ken.pts <- SpatialPointsDataFrame(ken.hh[!is.na(X), .(X,Y)], data.frame(ken.hh[!is.na(X)]),
-  proj4string=CRS("+init=epsg:4326"))
-ken.pts$adm2_name <- factor(as.character(ken.pts$adm2_name))
-
 m.ken <- tm_shape(ken.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
   tm_shape(ken.pts, is.master=T, projection="eck4") +
-  tm_dots(col="adm2_name", shape=4, alpha=.5, size=.3,
-    legend.show=T, max.categories=24,
+  tm_dots(col="gps_status", shape=4, alpha=.4, size=.2, pal=viridis(4),
     title="Kenya\nSurveyed\nHousehold\nLocations") +
   tm_shape(ken.l2) +
   tm_text("ADM2_NAME", col="grey30", size="AREA", root=4) +
@@ -412,11 +526,8 @@ m.ken <- tm_shape(ken.l2) +
 save_tmap(m.ken, "./out/2017-abt-ken_hh.pdf", width=7, units="in")
 
 # Also save county and coords for QGIS
-shapefile(ken.l2, "./maps/ken-abt-17_L2.shp")
-shapefile(ken.pts, "./maps/ken-abt-17_hh.shp")
-
-
-
+shapefile(ken.l2, "./maps/ken-abt-17_L2.shp", overwrite=T)
+shapefile(ken.pts, "./maps/ken-abt-17_hh.shp", overwrite=T)
 
 ```
 
@@ -432,7 +543,7 @@ shapefile(ken.pts, "./maps/ken-abt-17_hh.shp")
 
 ```{r save, eval=FALSE}
 
-rm(tmp, x, i)
+rm(tmp, x, i, spts_3857)
 save.image("./tmp/2017-agresults.RData")
 
 ```
@@ -462,40 +573,38 @@ There are **`r nrow(nga.odd)` households** with GPS coordinates that do not fall
 
 ```{r nga-odd, fig.cap="Households with Invalid GPS Locations, Nigeria", fig.height=6, fig.width=6}
 
-# Are all locations in the correct LGA
-tmap_mode("plot")
 m.nga
 
 ```
 
 ## Kenya
 
-In Kenya data was collected over 2 rounds with some attrition, and household locations do not necessarily match across rounds. We use a general approach to impute missing and/or conflicting coordinates:
+In Kenya data was collected over 2 rounds with some attrition, and household locations do not necessarily match across rounds. We use a general approach to impute missing, invalid, and/or conflicting coordinates:
 
-1) if both GPS locations seem valid, we use the middle point   
-2) if only 1 of the 2 locations is valid, we use that one   
-3) if no location is valid (both fall outside of a recorded administrative unit), we use this unit centroid.  
+1) if both GPS locations seem valid (i.e. they are located in the reported county), we use their middle point (coded `mean` in table \ref{tab:ken-na} below)
+2) if only 1 of the 2 locations is valid, we use that one  (coded `bl1` or `bl2`) 
+3) if no location is valid (both fall outside of a recorded administrative unit), we use that administrative unit centroid (coded `centroid`).  
 
-**`r format(nrow(ken.hh), big.mark=",")` households** are sampled in Kenya. There are **`r ken.hh[is.na(gps_la), .N]`** households missing coordinates and **` nrow(ken.odd)` possibly invalid** locations. Details in the table below.
+**`r format(nrow(ken.hh), big.mark=",")` households** are sampled in Kenya. There is a total of  **`r ken.hh[gps_status=="centroid", .N]`** households with missing or invalid coordinates. Table \ref{teb:ken-na} below shows a breakown of imputed household locations across Kenya's 8 regions and 47 counties. Note that we could not locate a map of Kenya's sub-counties.
 
 
 ```{r ken-na, eval=F, results="asis"}
 
 # How many NAs?
-tmp <- ken.hh[, .(N=.N, miss=sum(is.na(X))), 
-  keyby=.(adm1_name=as.character(adm1_name), adm2_name=as.character(adm2_name))]
-tmp[is.na(adm1_name), `:=`(adm1_name=" N/A", adm2_name=" N/A")]
+tmp <- ken.hh[, .N, keyby=.(
+  Region=as.character(adm1_name), 
+  County=as.character(adm2_name), 
+  Status=gps_status)]
 
 table_options(HTMLcaption="(#tab:ken-na) Survey Sampling across Counties and missing Household Locations")
-html(tabular((`Province`=Factor(adm1_name))*((`County`=Factor(adm2_name))*DropEmpty()+1)+1~Heading("Kenya Household GPS Locations")*(Heading("Obs.")*N+Heading("Missing")*miss)*Format(big.mark=",")*Heading()*sum, data=tmp), rmarkdown=T)
+html(tabular(Factor(Region)*(Factor(County)*DropEmpty()+1)+1~Format(big.mark=",")*Heading("Kenya Household GPS Locations")*(Status+1)*Heading()*(N*sum), 
+  data=tmp), rmarkdown=T)
 
 ```
 
 
 ```{r ken-hh, fig.cap="Households Locations across Counties, Kenya", fig.height=6, fig.width=6}
 
-# Are all locations in the correct LGA
-tmap_mode("plot")
 m.ken
 
 ```

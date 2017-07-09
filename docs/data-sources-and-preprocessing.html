@@ -353,15 +353,19 @@ Fig. 2.10: Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim.
 <div id="irrisat" class="section level4">
 <h4><span class="header-section-number">2.1.2.2</span> IrriSAT</h4>
 <p><a href="https://irrisat-cloud.appspot.com/">IrriSAT</a> is a weather based irrigation scheduling service which is used to inform farmers how much water their crop has used and how much how much irrigation they need to apply. Information is produced daily, and can work across large spatial scales. The IrriSAT methodology uses satellite images to determine a Normalized Difference Vegetation Index (NDVI) for each field, from which the plant canopy size can be determined and a specific crop coefficient (Kc) can be estimated.</p>
-<p>IrriSAT provides a <a href="https://irrisat-cloud.appspot.com/api">web API</a> to batch retrieve daily NDVI and Kc at specified locations.</p>
+<p>IrriSAT provides a <a href="https://irrisat-cloud.appspot.com/api">web API</a> to batch retrieve daily NDVI and Kc at user-specified locations.</p>
 <pre><code>irrisat.services.data.cropgrowth()</code></pre>
 </div>
+<div id="awhere" class="section level4">
+<h4><span class="header-section-number">2.1.2.3</span> aWhere</h4>
+<p><a href="http://awhere.com/">aWhere</a> is a US for-profit with simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an <a href="http://blog.awhere.com/using-awheres-open-source-weather-data-tools">R client</a> to access their APIs. The service is <em>not</em> free (and acccording to their literature it is not meant to collect data at hundred or thousands of point locations). Similar information is available <em>for free</em> from AfSIS (see below).</p>
+</div>
 <div id="cru-ts-4.00" class="section level4">
-<h4><span class="header-section-number">2.1.2.3</span> CRU TS 4.00</h4>
+<h4><span class="header-section-number">2.1.2.4</span> CRU TS 4.00</h4>
 <p><a href="http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/" class="uri">http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/</a></p>
 </div>
 <div id="era-interim-jan-1979present" class="section level4">
-<h4><span class="header-section-number">2.1.2.4</span> ERA-Interim (Jan 1979–present)</h4>
+<h4><span class="header-section-number">2.1.2.5</span> ERA-Interim (Jan 1979–present)</h4>
 <p><a href="">ERA-Interim</a> is a global atmospheric reanalysis from 1979, continuously updated in real time. The operational analysis is produced four times a day at 00:00, 06:00, 12:00 and 18:00 UTC. It has spatial resolution of about 16 km. The first layer of soil is 0-7cm. Normally we should correct for altitude.</p>
 <table>
 <caption><span id="tab:unnamed-chunk-2">Tab. 2.2: </span>ERA Interim Soil Temperature at 0-7cm (request details)</caption>
@@ -446,6 +450,24 @@ Fig. 2.10: Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim.
 </div>
 <div id="soil-characteristics" class="section level2">
 <h2><span class="header-section-number">2.3</span> Soil Characteristics</h2>
+<p>Data on soil characteristics is obtained from ISRIC Africa Soil Information Service (<a href="http://www.isric.org/projects/africa-soil-information-service-afsis">AfSIS</a>). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at <a href="http://geonode.isric.org/" class="uri">http://geonode.isric.org/</a> with a web viewer at <a href="https://www.soilgrids.org/" class="uri">https://www.soilgrids.org/</a>. A <a href="https://rest.soilgrids.org/query.html">REST SoilGrids API</a> allows retrieving data at point locations. We are retrieving the following layers:</p>
+<ul>
+<li><code>ORCDRC</code> soil organic carbon content<br />
+</li>
+<li><code>TAXGWRBMajor</code> predicted most probable soil class</li>
+</ul>
+<div class="figure"><span id="fig:afsis-taxnwrb"></span>
+<img src="./out/afsis-taxnwrb.png" alt="Dominant Soil Texture. Source: AfSIS 250m."  />
+<p class="caption">
+Fig. 2.11: Dominant Soil Texture. Source: AfSIS 250m.
+</p>
+</div>
+<div class="figure"><span id="fig:afsis-orcdrc"></span>
+<img src="./out/afsis-orcdrc.png" alt="Soil organic Carbon Content (depth 5-10cm). Source: AfSIS 250m."  />
+<p class="caption">
+Fig. 2.12: Soil organic Carbon Content (depth 5-10cm). Source: AfSIS 250m.
+</p>
+</div>
 </div>
 <div id="market-access" class="section level2">
 <h2><span class="header-section-number">2.4</span> Market Access</h2>
@@ -455,13 +477,13 @@ Fig. 2.10: Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim.
 <div class="figure"><span id="fig:hc-tt220k"></span>
 <img src="./out/tt10_20k.png" alt="IFPRI/HarvestChoice Travel Time to 20K Market (hrs, circa 2010)"  />
 <p class="caption">
-Fig. 2.11: IFPRI/HarvestChoice Travel Time to 20K Market (hrs, circa 2010)
+Fig. 2.13: IFPRI/HarvestChoice Travel Time to 20K Market (hrs, circa 2010)
 </p>
 </div>
 <div class="figure"><span id="fig:hc-tt100k"></span>
 <img src="./out/tt10_100k.png" alt="IFPRI/HarvestChoice Travel Time to 100K Market (hrs, circa 2010)"  />
 <p class="caption">
-Fig. 2.12: IFPRI/HarvestChoice Travel Time to 100K Market (hrs, circa 2010)
+Fig. 2.14: IFPRI/HarvestChoice Travel Time to 100K Market (hrs, circa 2010)
 </p>
 </div>
 </div>

@@ -199,7 +199,7 @@ fews[varCode %like% "ndvi", res := 0.002413]
 ```{r fews-plot, eval=F}
 
 #####################################################################################
-# Prepare plots
+# Plot all layers, fix units
 #####################################################################################
 
 # Combine all hhld locations
@@ -207,13 +207,15 @@ pts <- rbind(
   nga.pts[, c("hhid", "adm0_name")], 
   ken.pts[, c("hhid", "adm0_name")])
 
-# Default map aesthetics
+# Default tmap aesthetics
 p <- tm_shape(pts, is.master=T, projection="eck4") + 
   tm_dots(col="grey10", shape=4, alpha=.3, size=.08) +
   tm_facets("adm0_name", nrow=1, free.coords=T, free.scales=T) +
   tm_scale_bar(position=c("right", "bottom"), breaks=c(0,20,40,60,80)) +
   tm_layout(legend.outside=T, legend.text.size=.8,
     attr.outside=T, title.size=.8)
+
+na2null <- function(x) ifelse(is.na(x), "", x)
 
 # CHIRPS
 tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=last(proj))]
@@ -271,9 +273,6 @@ save_tmap(m, "./docs/out/fews-et_anom.png", width=6, height=3.6)
 # [-1.0, 1.0] -> [0, 200] - Invalid Values: 201 - 255 
 # NDVI = (value - 100) / 100 
 # example: [ (150 - 100) / 100 = 0.5 NDVI ] 
-# Anomaly / Difference Classification: 
-# The absolute difference and anomaly images are stretched from - 0.3 to 0.3 NDVI. The
-# area of relatively no difference is approximately -0.05 - 0.05.
 tmp <- fews[varCode=="ndvi_east" & status==T, raster(last(raster), crs=last(proj))]
 tmp1 <- fews[varCode=="ndvi_west" & status==T, raster(last(raster), crs=last(proj))]
 colortable(tmp) <- logical(0)
@@ -282,24 +281,25 @@ minValue(tmp)
 maxValue(tmp)
 tmp <- crop(tmp, ken.l2)
 tmp1 <- crop(tmp1, nga.l2)
-# Correct stretch
-tmp[tmp > 200] <- NA
-tmp1[tmp1 > 200] <- NA
+# TODO correct stretch, seems 0 values might be NA as well
+tmp[tmp > 200 | tmp <= 0] <- NA
+tmp1[tmp1 > 200 | tmp1 <= 0] <- NA
 tmp <- (tmp - 100) / 100
 tmp1 <- (tmp1 - 100) / 100
-spplot(tmp, palette=pal.ndvi)
+spplot(tmp1, palette=pal.ndvi)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
   title="NDVI\nJune 2017\ndekade 2\n(index)",
   breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi(255),
-    legend.show=F,
-    breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) + p
+    legend.show=F, breaks=seq(-1,1.1,0.1)) + p
 
 save_tmap(m, "./docs/out/fews-ndvi.png", width=6, height=3.6)
 
 # NDVI_ANOM
 # Percent of Normal
+# The absolute difference and anomaly images are stretched from - 0.3 to 0.3 NDVI. The
+# area of relatively no difference is approximately -0.05 - 0.05.
 # The percent of normal data are expressed as a percent, where values between 95 and
 # 105 indicate average conditions. Values below 95 represent below average vegetation 
 # conditions, while those above 105 represent above average conditions.
@@ -314,14 +314,13 @@ maxValue(tmp)
 minValue(tmp1)
 maxValue(tmp1)
 # => 0-255, 100 should be normal
-spplot(tmp)
+spplot(tmp, col.regions=pal.ndvi_pct)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi_pct(255),
   title="NDVI Anomaly\nJune 2017\ndekade 2\n(percent of normal)",
   breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi_pct(255),
-    legend.show=F,
-    breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) + p
+    legend.show=F, breaks=seq(0,210,10)) + p
 
 save_tmap(m, "./docs/out/fews-ndvi_anom.png", width=6, height=3.6)
 
@@ -550,17 +549,19 @@ include_graphics("./out/wc-bio15.png")
 ```
 
 
-
-
 #### IrriSAT
 
 [IrriSAT](https://irrisat-cloud.appspot.com/) is a weather based irrigation scheduling service which is used to inform farmers how much water their crop has used and how much how much irrigation they need to apply. Information is produced daily, and can work across large spatial scales. The IrriSAT methodology uses satellite images to determine a Normalized Difference Vegetation Index (NDVI) for each field, from which the plant canopy size can be determined and a specific crop coefficient (Kc) can be estimated.
 
-IrriSAT provides a [web API](https://irrisat-cloud.appspot.com/api) to batch retrieve daily NDVI and Kc at specified locations.
+IrriSAT provides a [web API](https://irrisat-cloud.appspot.com/api) to batch retrieve daily NDVI and Kc at user-specified locations.
 
 ```
 irrisat.services.data.cropgrowth()
 ```
+
+#### aWhere
+
+[aWhere](http://awhere.com/) is a US for-profit with simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an [R client](http://blog.awhere.com/using-awheres-open-source-weather-data-tools) to access their APIs. The service is *not* free (and acccording to their literature it is not meant to collect data at hundred or thousands of point locations). Similar information is available *for free* from AfSIS (see below).
 
 #### CRU TS 4.00
 
@@ -615,7 +616,51 @@ Aside from SPEIBase, drought events are also tracked by NASA EONET. There's an R
 
 ## Soil Characteristics
 
+```{r afsis, eval=FALSE}
 
+# All layers are projected!
+# +proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +units=m +ellps=WGS84 +datum=WGS84
+# A REST API is available for point queries
+# https://rest.soilgrids.org/query?lon=5.39&lat=51.57&attributes=ORCDRC,CEC&depths=sl1
+# FTP location at ftp://ftp.soilgrids.org/data/recent/
+# Downloaded manually (not too many layers)
+
+afsis.prj <- "+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +units=m +ellps=WGS84 +datum=WGS84"
+tmp <- raster("~/Projects/hc-data/AfSIS/TAXNWRB_250m_ll.tif")
+minValue(tmp)
+# [1] 0
+maxValue(tmp)
+# [1] 255 => stretched again? Need documentation
+spplot(tmp)
+tmp <- crop(tmp, pts)
+
+proj4string(tmp) <- afsis.prj
+tmp <- projectRaster(tmp, proj4string(pts))
+
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
+  title="Dominant Soil Texture (AfSIS 250m)") + p
+
+save_tmap(m, "./docs/out/afsis-taxnwrb.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
+
+
+```
+
+Data on soil characteristics is obtained from ISRIC Africa Soil Information Service ([AfSIS](http://www.isric.org/projects/africa-soil-information-service-afsis)). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at http://geonode.isric.org/ with a web viewer at https://www.soilgrids.org/. A [REST SoilGrids API](https://rest.soilgrids.org/query.html) allows retrieving data at point locations. We are retrieving the following layers:
+
+- `ORCDRC` soil organic carbon content  
+- `TAXGWRBMajor` predicted most probable soil class
+
+```{r afsis-taxnwrb, fig.cap="Dominant Soil Texture. Source: AfSIS 250m."}
+
+include_graphics("./out/afsis-taxnwrb.png")
+
+```
+
+```{r afsis-orcdrc, fig.cap="Soil organic Carbon Content (depth 5-10cm). Source: AfSIS 250m."}
+
+include_graphics("./out/afsis-orcdrc.png")
+
+```
 
 ## Market Access
 

@@ -18,15 +18,18 @@ gha <- getData("GADM", country="GHA", level=0)
 tmp <- fews[varCode=="ndvi_west" & status==T, raster(last(raster), crs=last(proj))]
 tmp1 <- fews[varCode=="eta" & status==T, raster(last(raster), crs=last(proj))]
 maxValue(tmp)
+hist(tmp[tmp])
 tmp <- crop(tmp, gha)
 tmp1 <- crop(tmp1, gha)
 tmp[tmp > 200] <- NA
+tmp[tmp==0] <- NA
 tmp <- (tmp - 100) / 100
 plot(tmp)
-plot(tmp1)
+spplot(tmp)
+plot(tmp, legend=T)
 
 png("../2017-agra-aasr/out/gha-ndvi-eta_2017.06.d2.png",
-  width=6, height=3.6, units="in", res=220, pointsize=9)
+  width=7, height=3.8, units="in", res=220, pointsize=8)
 
 print(spplot(tmp, col.regions=pal.ndvi,
   xlab=list("FEWS/USGS NDVI\nJune 2017, dekade 2 (-1,1 index)", cex=.8)),
