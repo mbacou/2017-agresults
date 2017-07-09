@@ -597,7 +597,7 @@ tmp <- ken.hh[, .N, keyby=.(
   Status=gps_status)]
 
 table_options(HTMLcaption="(#tab:ken-na) Survey Sampling across Counties and missing Household Locations")
-html(tabular(Factor(Region)*(Factor(County)*DropEmpty()+1)+1~Format(big.mark=",")*Heading("Kenya Household GPS Locations")*(Status+1)*Heading()*(N*sum), 
+html(tabular(Factor(Region)*(Factor(County)*DropEmpty()+1)+1~Format(big.mark=",")*Heading("Kenya Household GPS Locations")*(Status+1)*Heading()*N*Heading()*sum, 
   data=tmp), rmarkdown=T)
 
 ```
