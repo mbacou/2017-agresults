@@ -851,6 +851,706 @@ Fig. 1.1: Households with Invalid GPS Locations, Nigeria
 <li>if no location is valid (both fall outside of a recorded administrative unit), we use that administrative unit centroid (coded <code>centroid</code>).</li>
 </ol>
 <p><strong>5,235 households</strong> are sampled in Kenya. There is a total of <strong>88</strong> households with missing or invalid coordinates. Table  below shows a breakown of imputed household locations across Kenya’s 8 regions and 47 counties. Note that we could not locate a map of Kenya’s sub-counties.</p>
+<table class="Rtable">
+<caption>
+<span id="tab:ken-na">Tab. 1.2: </span> Survey Sampling across Counties and missing Household Locations
+</caption>
+<thead>
+<tr class="center">
+<th>
+ 
+</th>
+<th>
+ 
+</th>
+<th colspan="5">
+Kenya Household GPS Locations
+</th>
+</tr>
+<tr class="center">
+<th>
+ 
+</th>
+<th>
+ 
+</th>
+<th colspan="4">
+Status
+</th>
+<th>
+ 
+</th>
+</tr>
+<tr class="center">
+<th>
+ 
+</th>
+<th>
+ 
+</th>
+<th>
+centroid
+</th>
+<th>
+bl2
+</th>
+<th>
+bl1
+</th>
+<th>
+mean
+</th>
+<th>
+All
+</th>
+</tr>
+<tr class="center">
+<th>
+Region
+</th>
+<th>
+County
+</th>
+<th>
+sum
+</th>
+<th>
+sum
+</th>
+<th>
+sum
+</th>
+<th>
+sum
+</th>
+<th>
+sum
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="center">
+<th class="left">
+Central
+</th>
+<th class="left">
+Kirinyaga
+</th>
+<td>
+    3
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+<td>
+    4
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Murang’a
+</th>
+<td>
+    1
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+    4
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+<td>
+    1
+</td>
+<td>
+    5
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Coast
+</th>
+<th class="left">
+Kilifi
+</th>
+<td>
+    1
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Taita Taveta
+</th>
+<td>
+    1
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+    2
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+<td>
+    2
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Eastern
+</th>
+<th class="left">
+Embu
+</th>
+<td>
+ 
+</td>
+<td>
+  124
+</td>
+<td>
+  259
+</td>
+<td>
+  582
+</td>
+<td>
+  965
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kitui
+</th>
+<td>
+   11
+</td>
+<td>
+  151
+</td>
+<td>
+  247
+</td>
+<td>
+  583
+</td>
+<td>
+  992
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Machakos
+</th>
+<td>
+   13
+</td>
+<td>
+   17
+</td>
+<td>
+  111
+</td>
+<td>
+  737
+</td>
+<td>
+  878
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Makueni
+</th>
+<td>
+    4
+</td>
+<td>
+   78
+</td>
+<td>
+  192
+</td>
+<td>
+  601
+</td>
+<td>
+  875
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Meru
+</th>
+<td>
+   13
+</td>
+<td>
+   69
+</td>
+<td>
+  208
+</td>
+<td>
+  624
+</td>
+<td>
+  914
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Tharaka
+</th>
+<td>
+    7
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    7
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   48
+</td>
+<td>
+  439
+</td>
+<td>
+1,017
+</td>
+<td>
+3,127
+</td>
+<td>
+4,631
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Nairobi
+</th>
+<th class="left">
+Nairobi
+</th>
+<td>
+    1
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+    1
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+<td>
+    0
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Rift Valley
+</th>
+<th class="left">
+Baringo
+</th>
+<td>
+ 
+</td>
+<td>
+    7
+</td>
+<td>
+    7
+</td>
+<td>
+   53
+</td>
+<td>
+   67
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Bomet
+</th>
+<td>
+   14
+</td>
+<td>
+   12
+</td>
+<td>
+   15
+</td>
+<td>
+   45
+</td>
+<td>
+   86
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kajiado
+</th>
+<td>
+    1
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kericho
+</th>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+   11
+</td>
+<td>
+   31
+</td>
+<td>
+   42
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Laikipia
+</th>
+<td>
+ 
+</td>
+<td>
+ 
+</td>
+<td>
+   12
+</td>
+<td>
+   49
+</td>
+<td>
+   61
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Nakuru
+</th>
+<td>
+    7
+</td>
+<td>
+ 
+</td>
+<td>
+    5
+</td>
+<td>
+   55
+</td>
+<td>
+   67
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Nandi
+</th>
+<td>
+    5
+</td>
+<td>
+    1
+</td>
+<td>
+    9
+</td>
+<td>
+   50
+</td>
+<td>
+   65
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Narok
+</th>
+<td>
+    6
+</td>
+<td>
+   21
+</td>
+<td>
+   41
+</td>
+<td>
+   22
+</td>
+<td>
+   90
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Trans Nzoia
+</th>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+<td>
+    8
+</td>
+<td>
+   51
+</td>
+<td>
+   60
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Uasin Gishu
+</th>
+<td>
+ 
+</td>
+<td>
+    1
+</td>
+<td>
+    5
+</td>
+<td>
+   51
+</td>
+<td>
+   57
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   33
+</td>
+<td>
+   43
+</td>
+<td>
+  113
+</td>
+<td>
+  407
+</td>
+<td>
+  596
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+</th>
+<th class="left">
+All
+</th>
+<td>
+   88
+</td>
+<td>
+  482
+</td>
+<td>
+1,130
+</td>
+<td>
+3,535
+</td>
+<td>
+5,235
+</td>
+</tr>
+</tbody>
+</table>
 <div class="figure"><span id="fig:ken-hh"></span>
 <img src="fig/ken-hh-1.png" alt="Households Locations across Counties, Kenya" width="1800" />
 <p class="caption">

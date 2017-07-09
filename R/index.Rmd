@@ -588,7 +588,7 @@ In Kenya data was collected over 2 rounds with some attrition, and household loc
 **`r format(nrow(ken.hh), big.mark=",")` households** are sampled in Kenya. There is a total of  **`r ken.hh[gps_status=="centroid", .N]`** households with missing or invalid coordinates. Table \ref{teb:ken-na} below shows a breakown of imputed household locations across Kenya's 8 regions and 47 counties. Note that we could not locate a map of Kenya's sub-counties.
 
 
-```{r ken-na, eval=F, results="asis"}
+```{r ken-na, results="asis"}
 
 # How many NAs?
 tmp <- ken.hh[, .N, keyby=.(
