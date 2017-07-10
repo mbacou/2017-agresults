@@ -1,28 +1,71 @@
 # Data Summaries
 
-This section provides visual summaries for a sample of variables. All estimates below are across surveyed household locations. Complete results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
+This section provides visual summaries for a sample of variables. All estimates below are for surveyed households (after imputing missing/invalid locations). Complete results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
 
 <u>Note</u>: the *violin* (pirate) plots below show **median** line in **red**, **mean** line in **green**, and the **blue** region is the inferred **95% confidence interval** of the mean.
 
 
 ```{r extract, eval=FALSE}
 
-# 30 obs not imputed for KEN
-# Just do NGA for now, not to confuse things, but code below will run for whatever
-# locations are in `pts`
-pts <- nga.pts
+# Limit to whatever locations are in `pts`
+nga.pts$ISO3 <- "NGA"
+ken.pts$ISO3 <- "KEN"
+uga.pts$ISO3 <- "UGA"
+
+pts <- rbind(
+  nga.pts[, c("hhid", "ISO3", "adm0_name", "adm1_name", "adm2_name")], 
+  ken.pts[, c("hhid", "ISO3", "adm0_name", "adm1_name", "adm2_name")])
+
+pts.lbl <- c("household id", "ISO3 country code",
+  "GADM admin level-0", "GADM admin level-1", "GADM admin level-2")
+
+bio.lbl <- c(
+  "Annual Mean Temperature",
+  "Mean Diurnal Range (Mean of monthly (max temp - min temp))",
+  "Isothermality (BIO2/BIO7) (* 100)",
+  "Temperature Seasonality (standard deviation *100)",
+  "Max Temperature of Warmest Month",
+  "Min Temperature of Coldest Month",
+  "Temperature Annual Range (BIO5-BIO6)",
+  "Mean Temperature of Wettest Quarter",
+  "Mean Temperature of Driest Quarter",
+  "Mean Temperature of Warmest Quarter",
+  "Mean Temperature of Coldest Quarter",
+  "Annual Precipitation",
+  "Precipitation of Wettest Month",
+  "Precipitation of Driest Month",
+  "Precipitation Seasonality (Coefficient of Variation)",
+  "Precipitation of Wettest Quarter",
+  "Precipitation of Driest Quarter",
+  "Precipitation of Warmest Quarter",
+  "Precipitation of Coldest Quarter")
 
 #####################################################################################
 # Travel Times
 #####################################################################################
 pts.tt <- extract(tt, pts)
-pts.tt <- data.table(cbind(
-  pts@data[, c("hhid", "adm0_name", "adm1_name", "adm2_name")], pts.tt))
-pts.tt[, ISO3 := "NGA"]
+pts.tt <- data.table(cbind(pts@data, pts.tt))
+rm(tt)
+
+# Export to STATA (1 file per country)
+pts.tt.lbl <- c(pts.lbl, c(
+  "travel time to 20K market (hrs)",
+  "travel time to 50K market (hrs)",
+  "travel time to 100K market (hrs)",
+  "travel time to 250K market (hrs)",
+  "travel time to 500K market (hrs)"))
+
+for(i in c("NGA", "KEN")) write.dta(
+  setattr(pts.tt[ISO3==i], "var.labels", pts.tt.lbl),
+  paste0("./out/2017-agresults-", i, "_traveltime.dta"), 
+  convert.factors="string", version=12L)
 
 #####################################################################################
 # AfSIS
 #####################################################################################
+# Use REST API at https://rest.soilgrids.org/
+r <- REST.SoilGrids(c("ORCDRC","TAXGWRB"))
+pts.soil <- extract(r, pts)
 
 
 
@@ -30,13 +73,71 @@ pts.tt[, ISO3 := "NGA"]
 #####################################################################################
 # WorldClim Biovars
 #####################################################################################
-# Download tile and extract single point data
-# Note that tiles are cached locally
-tmp <- data.table(coordinates(pts))
-setnames(tmp, c("X", "Y"))
-pts.wc <- list(nrow(tmp))
-pts.wc <- lapply(tmp, function(x) )
+# Download tile and extract single point data, tiles are cached locally
+# For Nigeria we need tiles #26 "bio1_26"
+# For Kenya we need tiles #27 and #37 "bio1_27"
+# Each of the 19 bioclim variables is available in a .bil raster
+vars <- paste0("bio", 1:19)
 
+# Nigeria (#26)
+nga.wc <- lapply(vars, function(x) {
+  r <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_26.bil"))
+  tmp <- extract(r, pts[pts$ISO3=="NGA",])
+  tmp <- data.table(tmp)
+  setnames(tmp, x)
+  return(tmp)
+})
+
+# Combine all vars
+nga.wc <- do.call(cbind, nga.wc)
+nga.wc <- cbind(pts@data[pts$adm0_name=="Nigeria",], nga.wc)
+
+# Kenya (#27, #37)
+ken.wc <- lapply(vars, function(x) {
+  r27 <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_27.bil"))
+  r37 <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_37.bil"))
+  tmp27 <- extract(r27, pts[pts$ISO3=="KEN",])
+  tmp37 <- extract(r37, pts[pts$ISO3=="KEN",])
+  tmp <- data.table(rowMeans(cbind(tmp27, tmp37), na.rm=T))
+  setnames(tmp, x)
+  return(tmp)
+})
+
+# Combine all vars
+ken.wc <- do.call(cbind, ken.wc)
+ken.wc <- cbind(pts@data[pts$ISO3=="KEN",], ken.wc)
+
+# TODO Uganda
+
+# Combine all countries
+pts.wc <- rbind(nga.wc, ken.wc)
+rm(ken.wc, nga.wc, uga.wc)
+
+
+#####################################################################################
+# Add SRTM Altitude and Slope
+pts.srtm <- lapply(c("NGA", "KEN"), function(x) {
+  r <- getData("alt", country=x, mask=F, path="~/Projects/hc-data/SRTM")
+  tmp1 <- extract(r, pts[pts$ISO3==x,])
+  slope <- terrain(r, opt=c("slope"), unit="degrees")
+  tmp2 <- extract(slope, pts[pts$ISO3==x,])
+  tmp <- data.table(cbind(tmp1, tmp2))
+  setnames(tmp, c("alt", "slope"))
+  return(tmp)
+  })
+
+pts.srtm <- rbindlist(pts.srtm)
+pts.wc <- data.table(cbind(pts.wc, pts.srtm))
+rm(pts.srtm)
+
+# Export WorldClim and SRTM to STATA (1 file per country)
+pts.wc.lbl <- c(pts.lbl, bio.lbl,
+  "altitude (meter)", "slope (degree)")
+
+for(i in c("NGA", "KEN")) write.dta(
+  setattr(pts.wc[ISO3==i], "var.labels", pts.wc.lbl),
+  paste0("./out/2017-agresults-", i, "_biovars.dta"), 
+  convert.factors="string", version=12L)
 
 
 #####################################################################################
@@ -46,15 +147,26 @@ pts.wc <- lapply(tmp, function(x) )
 
 ```
 
+```{r pts-save, eval=FALSE}
+
+rm(i, x, dir, url, tmp, log, pet, tmp1, tmp2, r, slope, m, vars)
+save.image("./tmp/2017-agresults.RData")
+
+```
+
+
 ## Climatic Indicators
 
 ```{r wc, eval=F, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States (1970-2000, percent std. dev.) Source: WorldClim."}
 
 par(mfrow=c(1,2))
-pplot(bio4~adm1_name, data=pts.wc, 
-  ylab="Temperature Seasonality (percent std. dev.)", xlab=NA)
-pplot(bio415~adm1_name, data=pts.wc, 
-  ylab="Precipitation Seasonality (percent, std. dev.)", xlab=NA)
+for (i in c("NGA", "KEN")) {
+pplot(bio4~adm1_name, data=pts.wc[ISO3==i], 
+  ylab="Temperature Seasonality (100*std. dev.)", xlab=NA)
+pplot(bio15~adm1_name, data=pts.wc[ISO3==i], 
+  ylab="Precipitation Seasonality (coeff of var.)", xlab=NA)
+}
+
 
 ```
 
@@ -64,13 +176,15 @@ pplot(bio415~adm1_name, data=pts.wc,
 
 ## Market Access
 
-```{r tt10, fig.cap="Distribution of Travel Times to Market at Household Locations across States (hrs). Source: IFPRI/HarvestChoice."}
+```{r tt10, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
 
 par(mfrow=c(1,2))
-pplot(tt10_20k~adm1_name, data=pts.tt, 
+for (i in c("NGA", "KEN")) {
+pplot(tt10_20k~adm1_name, data=pts.tt[ISO3==i], 
   ylab="Travel Time to 20K Market (hrs)", xlab=NA)
-pplot(tt10_100k~adm1_name, data=pts.tt, 
+pplot(tt10_100k~adm1_name, data=pts.tt[ISO3==i], 
   ylab="Travel Time to 100K Market (hrs)", xlab=NA)
+}
 
 ```
 

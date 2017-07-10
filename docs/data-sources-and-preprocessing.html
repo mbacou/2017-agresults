@@ -275,9 +275,9 @@ Fig. 2.7: NDVI (June 2017, 0-1 index)
 </p>
 </div>
 <div class="figure"><span id="fig:fews-ndvianom"></span>
-<img src="./out/fews-ndvi_anom.png" alt="NDVI Anomaly (June 2017, percent of median)"  />
+<img src="./out/fews-ndvi_anom.png" alt="NDVI Anomaly (June 2017, percent of 10-year median 2007-2016)"  />
 <p class="caption">
-Fig. 2.8: NDVI Anomaly (June 2017, percent of median)
+Fig. 2.8: NDVI Anomaly (June 2017, percent of 10-year median 2007-2016)
 </p>
 </div>
 </div>
@@ -358,80 +358,21 @@ Fig. 2.10: Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim.
 </div>
 <div id="awhere" class="section level4">
 <h4><span class="header-section-number">2.1.2.3</span> aWhere</h4>
-<p><a href="http://awhere.com/">aWhere</a> is a US for-profit with simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an <a href="http://blog.awhere.com/using-awheres-open-source-weather-data-tools">R client</a> to access their APIs. The service is <em>not</em> free (and acccording to their literature it is not meant to collect data at hundred or thousands of point locations). Similar information is available <em>for free</em> from AfSIS (see below).</p>
+<p><a href="http://awhere.com/">aWhere</a> is a US for-profit that provides simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an <a href="http://blog.awhere.com/using-awheres-open-source-weather-data-tools">R client</a> to access their Web APIs. The service is <em>not</em> free (and acccording to their literature it is not meant to collect data for hundred or thousands of point locations). Similar information is available <em>for free</em> from AfSIS and WorldGrids (see below).</p>
 </div>
-<div id="cru-ts-4.00" class="section level4">
-<h4><span class="header-section-number">2.1.2.4</span> CRU TS 4.00</h4>
+<div id="university-of-east-anglia-cru-ts-v4.00" class="section level4">
+<h4><span class="header-section-number">2.1.2.4</span> University of East Anglia CRU TS v4.00</h4>
 <p><a href="http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/" class="uri">http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/</a></p>
 </div>
-<div id="era-interim-jan-1979present" class="section level4">
-<h4><span class="header-section-number">2.1.2.5</span> ERA-Interim (Jan 1979–present)</h4>
-<p><a href="">ERA-Interim</a> is a global atmospheric reanalysis from 1979, continuously updated in real time. The operational analysis is produced four times a day at 00:00, 06:00, 12:00 and 18:00 UTC. It has spatial resolution of about 16 km. The first layer of soil is 0-7cm. Normally we should correct for altitude.</p>
-<table>
-<caption><span id="tab:unnamed-chunk-2">Tab. 2.2: </span>ERA Interim Soil Temperature at 0-7cm (request details)</caption>
-<thead>
-<tr class="header">
-<th align="left">Key</th>
-<th align="left">Value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Stream</td>
-<td align="left">Atmospheric model</td>
-</tr>
-<tr class="even">
-<td align="left">Area</td>
-<td align="left">15.0°N 2.0°E 6.0°S 43.0°E</td>
-</tr>
-<tr class="odd">
-<td align="left">Type</td>
-<td align="left">Analysis</td>
-</tr>
-<tr class="even">
-<td align="left">Dataset</td>
-<td align="left">interim_daily</td>
-</tr>
-<tr class="odd">
-<td align="left">Step</td>
-<td align="left">0</td>
-</tr>
-<tr class="even">
-<td align="left">Version</td>
-<td align="left">1</td>
-</tr>
-<tr class="odd">
-<td align="left">Type of level</td>
-<td align="left">Surface</td>
-</tr>
-<tr class="even">
-<td align="left">Time</td>
-<td align="left">06</td>
-</tr>
-<tr class="odd">
-<td align="left">Date</td>
-<td align="left">20150101 to 20170331</td>
-</tr>
-<tr class="even">
-<td align="left">Grid</td>
-<td align="left">0.125° x 0.125°</td>
-</tr>
-<tr class="odd">
-<td align="left">Parameter</td>
-<td align="left">Soil temperature level 1</td>
-</tr>
-<tr class="even">
-<td align="left">Class</td>
-<td align="left">ERA Interim</td>
-</tr>
-</tbody>
-</table>
+<div id="ecmwf-era5-20102016" class="section level4">
+<h4><span class="header-section-number">2.1.2.5</span> ECMWF ERA5 (2010–2016)</h4>
+<p><a href="https://climate.copernicus.eu/products/climate-reanalysis">ERA5</a> is a global atmospheric reanalysis (replacing ERA-Interim). ERA5 Climate reanalysis gives a numerical description of the recent climate, produced by combining models with observations. It contains estimates of atmospheric parameters such as air and soil temperature, pressure and wind at different altitudes, and surface parameters such as rainfall, soil moisture content, sea-surface temperature and wave height. ERA5 provides data at a considerably higher spatial and temporal resolution than its predecessor ERA-Interim: hourly analysis fields are available at a horizontal resolution of 31 km, and on 137 levels from the surface up to around 80 km. Data download is possible through a <a href="https://software.ecmwf.int/wiki/display/CKB/How+to+download+ERA5+data+via+the+ECMWF+Web+API">Web API</a>.</p>
 </div>
 </div>
 </div>
 <div id="drought" class="section level2">
 <h2><span class="header-section-number">2.2</span> Drought</h2>
-<p>Aside from SPEIBase, drought events are also tracked by NASA EONET. There’s an R package for this at <a href="http://enelmargen.org/nasadata/vignette_v0/" class="uri">http://enelmargen.org/nasadata/vignette_v0/</a>.</p>
+<p>Aside from <a href="http://digital.csic.es/handle/10261/128892">SPEIBase</a>, drought events are also tracked by NASA EONET. There’s an R package to query this repository at <a href="http://enelmargen.org/nasadata/vignette_v0/" class="uri">http://enelmargen.org/nasadata/vignette_v0/</a>.</p>
 <pre><code>
 {
 &quot;title&quot;: &quot;EONET Event Categories&quot;,
@@ -450,12 +391,68 @@ Fig. 2.10: Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim.
 </div>
 <div id="soil-characteristics" class="section level2">
 <h2><span class="header-section-number">2.3</span> Soil Characteristics</h2>
-<p>Data on soil characteristics is obtained from ISRIC Africa Soil Information Service (<a href="http://www.isric.org/projects/africa-soil-information-service-afsis">AfSIS</a>). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at <a href="http://geonode.isric.org/" class="uri">http://geonode.isric.org/</a> with a web viewer at <a href="https://www.soilgrids.org/" class="uri">https://www.soilgrids.org/</a>. A <a href="https://rest.soilgrids.org/query.html">REST SoilGrids API</a> allows retrieving data at point locations. We are retrieving the following layers:</p>
-<ul>
-<li><code>ORCDRC</code> soil organic carbon content<br />
-</li>
-<li><code>TAXGWRBMajor</code> predicted most probable soil class</li>
-</ul>
+<p>Data on soil characteristics is obtained from ISRIC Africa Soil Information Service (<a href="http://www.isric.org/projects/africa-soil-information-service-afsis">AfSIS</a>). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at <a href="http://geonode.isric.org/" class="uri">http://geonode.isric.org/</a> with a web viewer at <a href="https://www.soilgrids.org/" class="uri">https://www.soilgrids.org/</a>. The SoilGrids REST API provides support to access data, query and display it, without the need to download the complete grids. REST access to SoilGrids is available through the R <strong>GSIF package</strong>. The following layers are retrieved, and then queried using SoilGrids API (at all survey point locations).</p>
+<table>
+<caption><span id="tab:afsis-cat">Tab. 2.2: </span>Tally of Indicators and Raster Layers extracted from SoilGrids</caption>
+<thead>
+<tr class="header">
+<th align="left">Indicator</th>
+<th align="left">Label</th>
+<th align="center">Resolution</th>
+<th align="center">Rasters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ORCDRC_M_sl1_250m_ll</td>
+<td align="left">soil organic carbon content at 0 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="left">ORCDRC_M_sl2_250m_ll</td>
+<td align="left">soil organic carbon content at 5 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="left">ORCDRC_M_sl3_250m_ll</td>
+<td align="left">soil organic carbon content at 15 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="left">ORCDRC_M_sl4_250m_ll</td>
+<td align="left">soil organic carbon content at 30 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="left">ORCDRC_M_sl5_250m_ll</td>
+<td align="left">soil organic carbon content at 60 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="left">ORCDRC_M_sl6_250m_ll</td>
+<td align="left">soil organic carbon content at 100 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="left">ORCDRC_M_sl7_250m_ll</td>
+<td align="left">soil organic carbon content at 200 cm</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="left">TAXNWRB_250m_ll</td>
+<td align="left">soil class based on the World Reference Base</td>
+<td align="center">250m</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
 <div class="figure"><span id="fig:afsis-taxnwrb"></span>
 <img src="./out/afsis-taxnwrb.png" alt="Dominant Soil Texture. Source: AfSIS 250m."  />
 <p class="caption">
@@ -463,9 +460,9 @@ Fig. 2.11: Dominant Soil Texture. Source: AfSIS 250m.
 </p>
 </div>
 <div class="figure"><span id="fig:afsis-orcdrc"></span>
-<img src="./out/afsis-orcdrc.png" alt="Soil organic Carbon Content (depth 5-10cm). Source: AfSIS 250m."  />
+<img src="./out/afsis-orcdrc.png" alt="Soil organic Carbon Content (depth 0 cm). Source: SoilGrids 250m."  />
 <p class="caption">
-Fig. 2.12: Soil organic Carbon Content (depth 5-10cm). Source: AfSIS 250m.
+Fig. 2.12: Soil organic Carbon Content (depth 0 cm). Source: SoilGrids 250m.
 </p>
 </div>
 </div>

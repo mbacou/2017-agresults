@@ -21,6 +21,7 @@ library(data.table)
 library(stringr)
 library(viridis)
 library(tmap)
+library(GSIF)
 
 load("./tmp/2017-agresults.RData")
 
@@ -215,8 +216,10 @@ p <- tm_shape(pts, is.master=T, projection="eck4") +
   tm_layout(legend.outside=T, legend.text.size=.8,
     attr.outside=T, title.size=.8)
 
+# Helper for scales
 na2null <- function(x) ifelse(is.na(x), "", x)
 
+#####################################################################################
 # CHIRPS
 tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=last(proj))]
 tmp[tmp<0] <- NA
@@ -426,7 +429,7 @@ include_graphics("./out/fews-ndvi.png", dpi=300)
 
 ```
 
-```{r fews-ndvianom, fig.cap="NDVI Anomaly (June 2017, percent of median)", fig.width=6, fig.height=3.6}
+```{r fews-ndvianom, fig.cap="NDVI Anomaly (June 2017, percent of 10-year median 2007-2016)", fig.width=6, fig.height=3.6}
 
 include_graphics("./out/fews-ndvi_anom.png", dpi=300)
 
@@ -561,40 +564,19 @@ irrisat.services.data.cropgrowth()
 
 #### aWhere
 
-[aWhere](http://awhere.com/) is a US for-profit with simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an [R client](http://blog.awhere.com/using-awheres-open-source-weather-data-tools) to access their APIs. The service is *not* free (and acccording to their literature it is not meant to collect data at hundred or thousands of point locations). Similar information is available *for free* from AfSIS (see below).
+[aWhere](http://awhere.com/) is a US for-profit that provides simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an [R client](http://blog.awhere.com/using-awheres-open-source-weather-data-tools) to access their Web APIs. The service is *not* free (and acccording to their literature it is not meant to collect data for hundred or thousands of point locations). Similar information is available *for free* from AfSIS and WorldGrids (see below).
 
-#### CRU TS 4.00
+#### University of East Anglia CRU TS v4.00
 
 http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/
 
-#### ERA-Interim (Jan 1979--present)
+#### ECMWF ERA5 (2010--2016)
 
-[ERA-Interim]() is a global atmospheric reanalysis from 1979, continuously updated in real time. The operational analysis is produced four times a day at 00:00, 06:00, 12:00 and 18:00 UTC. It has spatial resolution of about 16 km. The first layer of soil is 0-7cm. Normally we should correct for altitude.
-
-```{r}
-
-tmp <- fread("
-Key:Value
-Stream:Atmospheric model
-Area:15.0°N 2.0°E 6.0°S 43.0°E
-Type:Analysis
-Dataset:interim_daily
-Step:0
-Version:1
-Type of level:Surface
-Time:06
-Date:20150101 to 20170331
-Grid:0.125° x 0.125°
-Parameter:Soil temperature level 1
-Class:ERA Interim", sep=":")
-
-kable(tmp, caption="ERA Interim Soil Temperature at 0-7cm (request details)")
-
-```
+[ERA5](https://climate.copernicus.eu/products/climate-reanalysis) is a global atmospheric reanalysis (replacing ERA-Interim). ERA5 Climate reanalysis gives a numerical description of the recent climate, produced by combining models with observations. It contains estimates of atmospheric parameters such as air and soil temperature, pressure and wind at different altitudes, and surface parameters such as rainfall, soil moisture content, sea-surface temperature and wave height. ERA5 provides data at a considerably higher spatial and temporal resolution than its predecessor ERA-Interim: hourly analysis fields are available at a horizontal resolution of 31 km, and on 137 levels from the surface up to around 80 km. Data download is possible through a [Web API](https://software.ecmwf.int/wiki/display/CKB/How+to+download+ERA5+data+via+the+ECMWF+Web+API).
 
 ## Drought
 
-Aside from SPEIBase, drought events are also tracked by NASA EONET. There's an R package for this at http://enelmargen.org/nasadata/vignette_v0/.
+Aside from [SPEIBase](http://digital.csic.es/handle/10261/128892), drought events are also tracked by NASA EONET. There's an R package to query this repository at http://enelmargen.org/nasadata/vignette_v0/.
 
 ```
 
@@ -618,37 +600,91 @@ Aside from SPEIBase, drought events are also tracked by NASA EONET. There's an R
 
 ```{r afsis, eval=FALSE}
 
-# All layers are projected!
+# All layers are projected => not in most recent version
 # +proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +units=m +ellps=WGS84 +datum=WGS84
-# A REST API is available for point queries
-# https://rest.soilgrids.org/query?lon=5.39&lat=51.57&attributes=ORCDRC,CEC&depths=sl1
-# FTP location at ftp://ftp.soilgrids.org/data/recent/
-# Downloaded manually (not too many layers)
+# A REST API is available for point queries at https://rest.soilgrids.org/.
+# FTP location at ftp://ftp.soilgrids.org/data/recent/.
+# Also note that soil legends are provided in GSIF::soil.legends().
+# Finally Soil Organic Carbon Stock needs the standard formula from the
+# GSIF package. Assuming the organic carbon content in permilles of 50 (5%), bulk
+# density of 1200 kg / per cubic meter, and 12% of coarse fragments for a volume of 30
+# by 100 by 100 cm, we would get OCSKGM(50, 1200, 12, 30).
+# Good tutorial at http://gsif.isric.org/doku.php?id=wiki%3Atutorial_soilgrids.
+data(soil.legends)
+pal.orcdrc <- soil.legends[["ORCDRC"]]$COLOR
+pal.orcdrc <- colorRampPalette(pal.orcdrc)
+pal.taxnwrb <- soil.legends[["TAXGWRB"]]
+rm(soil.legends)
 
-afsis.prj <- "+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +units=m +ellps=WGS84 +datum=WGS84"
-tmp <- raster("~/Projects/hc-data/AfSIS/TAXNWRB_250m_ll.tif")
+# Create catalog of AfSIS layers
+afsis <- data.table(varCode=c(
+  paste0("ORCDRC_M_sl", 1:7, "_250m_ll"), "TAXNWRB_250m_ll"))
+afsis[, `:=`(
+  varLabel = c(
+    "soil organic carbon content at 0 cm", 
+    "soil organic carbon content at 5 cm", 
+    "soil organic carbon content at 15 cm", 
+    "soil organic carbon content at 30 cm", 
+    "soil organic carbon content at 60 cm", 
+    "soil organic carbon content at 100 cm", 
+    "soil organic carbon content at 200 cm", 
+    "soil class based on the World Reference Base"),
+  unit = c(rep("permilles", 7), "class (WRB)"),
+  url = paste0("ftp://ftp.soilgrids.org/data/recent/", varCode, ".tif"),
+  date = as.Date("2017-02-01"),
+  raster = paste0("/home/mbacou/Projects/hc-data/AfSIS/", varCode, ".tif"),
+  proj = "+proj=longlat +datum=WGS84",
+  res = "250m")]
+  
+# ORCDRC
+GDALinfo(afsis[, first(raster)])
+tmp <- raster(afsis[, first(raster)], crs=afsis[, first(proj)])
 minValue(tmp)
-# [1] 0
+# [1] -32768
 maxValue(tmp)
-# [1] 255 => stretched again? Need documentation
-spplot(tmp)
-tmp <- crop(tmp, pts)
+# [1] 32767
+proj4string(tmp) <- proj4string(pts)
+NAvalue(tmp) <- -0.001
+# Not clear how to best set missing and invalid values (-32768)
+spplot(crop(tmp, ken.pts), col.regions=pal.orcdrc)
 
-proj4string(tmp) <- afsis.prj
-tmp <- projectRaster(tmp, proj4string(pts))
+m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.orcdrc(255),
+  breaks=seq(0,220,10), labels=na2null(seq(0,210,10)*c(1, NA)),
+  title="Soil Organic Carbon\n(0 cm depth, permilles)") + p
 
-m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
-  title="Dominant Soil Texture (AfSIS 250m)") + p
+save_tmap(m, "./docs/out/afsis-orcdrc.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
+
+# TAXNWRB
+GDALinfo(afsis[, last(raster)])
+tmp <- raster(afsis[, last(raster)], crs=afsis[, last(proj)])
+minValue(tmp)
+# [1] -32768
+maxValue(tmp)
+# [1] 32767
+NAvalue(tmp) <- -0.001
+spplot(crop(tmp, ken.pts), at=pal.txgwrb$Number, col.regions=pal.taxnwrb$COLOR)
+
+m <- tm_shape(crop(tmp, pts)) + tm_raster(names(tmp), pal=pal.taxnwrb$COLOR,
+  breaks=pal.taxnwrb$Number, labels=pal.taxnwrb$Code,
+  title="Soil Classification\nPredicted Most Probable\nClass (NWRB)") + p
 
 save_tmap(m, "./docs/out/afsis-taxnwrb.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
 
 
 ```
 
-Data on soil characteristics is obtained from ISRIC Africa Soil Information Service ([AfSIS](http://www.isric.org/projects/africa-soil-information-service-afsis)). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at http://geonode.isric.org/ with a web viewer at https://www.soilgrids.org/. A [REST SoilGrids API](https://rest.soilgrids.org/query.html) allows retrieving data at point locations. We are retrieving the following layers:
+Data on soil characteristics is obtained from ISRIC Africa Soil Information Service ([AfSIS](http://www.isric.org/projects/africa-soil-information-service-afsis)). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at http://geonode.isric.org/ with a web viewer at https://www.soilgrids.org/. The SoilGrids REST API provides support to access data, query and display it, without the need to download the complete grids. REST access to SoilGrids is available through the R **GSIF package**. The following layers are retrieved, and then queried using SoilGrids API (at all survey point locations).
 
-- `ORCDRC` soil organic carbon content  
-- `TAXGWRBMajor` predicted most probable soil class
+```{r afsis-cat}
+
+kable(afsis[, .(
+  Label=varLabel,
+  Resolution=res,
+  Rasters=.N), keyby=.(Indicator=varCode)],
+  align=c("l", "l", "c", "c"),
+  caption="Tally of Indicators and Raster Layers extracted from SoilGrids")
+
+```
 
 ```{r afsis-taxnwrb, fig.cap="Dominant Soil Texture. Source: AfSIS 250m."}
 
@@ -656,7 +692,7 @@ include_graphics("./out/afsis-taxnwrb.png")
 
 ```
 
-```{r afsis-orcdrc, fig.cap="Soil organic Carbon Content (depth 5-10cm). Source: AfSIS 250m."}
+```{r afsis-orcdrc, fig.cap="Soil organic Carbon Content (depth 0 cm). Source: SoilGrids 250m."}
 
 include_graphics("./out/afsis-orcdrc.png")
 

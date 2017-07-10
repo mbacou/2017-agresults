@@ -16,7 +16,7 @@ cover-image: fig/cover.jpg
 csl: apa.csl
 link-citations: yes
 nocite: |
-  @mathew2016drought, @santiago2016speibase
+  @mathew2016drought, @santiago2016speibase, @hengl2017soilgrids
 ---
 
 # Survey Sampling
