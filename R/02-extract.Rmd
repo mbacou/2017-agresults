@@ -155,9 +155,11 @@ save.image("./tmp/2017-agresults.RData")
 ```
 
 
-## Climatic Indicators
+## Bioclimatic Indicators
 
-```{r wc, eval=F, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States (1970-2000, percent std. dev.) Source: WorldClim."}
+Distribution of 2 long-term bioclimatic indicators at AgResults' household locations in Nigeria and Kenya.
+
+```{r wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States (1970-2000, percent std. dev.) Source: WorldClim."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
