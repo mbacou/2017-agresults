@@ -274,7 +274,7 @@ tmp <- nga.pts[nga.pts$hhid %in% nga.odd$hhid,]
 m.nga <- tm_shape(nga.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
   tm_shape(tmp, is.master=T, projection="eck4") +
-  tm_dots(col="calc_lga", shape=4, alpha=.5, legend.show=T, size=.3,
+  tm_dots(col="calc_lga", shape=4, alpha=.9, legend.show=T, size=.3,
     title="Nigeria\nSurveyed\nHousehold\nLocations\n(invalid)") +
   tm_shape(nga.l2) +
   tm_text("svyL2Nm", col="grey30", size="AREA", root=4) +  
@@ -517,7 +517,7 @@ m.ken <- tm_shape(ken.l2) +
   tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
   tm_shape(ken.pts, is.master=T, projection="eck4") +
   tm_dots(col="gps_status", shape=4, alpha=.4, size=.2, pal=viridis(4),
-    title="Kenya\nSurveyed\nHousehold\nLocations") +
+    title="Kenya\nSurveyed\nHousehold\nLocations\n(imputed)") +
   tm_shape(ken.l2) +
   tm_text("ADM2_NAME", col="grey30", size="AREA", root=4) +
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60,80)) +
