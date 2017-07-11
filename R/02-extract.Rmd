@@ -4,13 +4,18 @@ All results are available in **STATA format** on [Huddle](https://abtassociates.
 
 STATA files are organized by country, by source, and by periodicity:
 
-- `2017-agresults-{ISO3}-biovars.dta` -- 1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)
-- `2017-agresults-{ISO3}-traveltime.dta` -- travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)
-- `2017-agresults-{ISO3}-soil.dta` -- soil organic carbon content and most probable soil class (source: SoilGrids)
-- `2017-agresults-{ISO3}-monthly.dta` -- 2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)
-- `2017-agresults-{ISO3}-dekadal.dta` -- 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
+- `2017-agresults-{ISO3}-biovars.dta` --  
+  1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)
+- `2017-agresults-{ISO3}-traveltime.dta` --  
+  travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)
+- `2017-agresults-{ISO3}-soil.dta` --  
+  soil organic carbon content and most probable soil class (source: SoilGrids)
+- `2017-agresults-{ISO3}-monthly.dta` --  
+  2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)
+- `2017-agresults-{ISO3}-dekadal.dta` --  
+  2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
 
-All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
+All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/2978247).
 
 
 ```{r, eval=F}
@@ -30,7 +35,7 @@ lbl[, varCode := tolower(varCode)]
 kable(lbl[, .(
   Variable=varCode, 
   Description=varLabel,
-  Period=period, Unit=unit, File=file, Start=start, End=end, Resolution=res)],
+  Period=period, Unit=unit, Start=start, End=end, Resolution=res)],
   align="llcclccc", caption="Codebook of Extracted Variables")
 
 ```
@@ -383,8 +388,6 @@ save.image("./tmp/2017-agresults.RData")
 
 
 ## Bioclimatic Indicators
-
-For documentation's purposes we graph the distributions of a sample of indicators across household locations.
 
 <u>Note</u>: NDVI values below -0.3 should be null.
 
