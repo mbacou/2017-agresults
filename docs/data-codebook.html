@@ -110,8 +110,18 @@
             <section class="normal" id="section-">
 <div id="data-codebook" class="section level1">
 <h1><span class="header-section-number">Section 3</span> Data Codebook</h1>
+<p>All results are available in <strong>STATA format</strong> on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>. This section only shows summaries for a sample of indicators.</p>
+<p>STATA files are organized by country, by source, and by periodicity:</p>
+<ul>
+<li><code>2017-agresults-{ISO3}-biovars.dta</code> – 1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)</li>
+<li><code>2017-agresults-{ISO3}-traveltime.dta</code> – travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)</li>
+<li><code>2017-agresults-{ISO3}-soil.dta</code> – soil organic carbon content and most probable soil class (source: SoilGrids)</li>
+<li><code>2017-agresults-{ISO3}-monthly.dta</code> – 2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)</li>
+<li><code>2017-agresults-{ISO3}-dekadal.dta</code> – 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)</li>
+</ul>
+<p>All extracted indicators are listed below. This table is also on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>.</p>
 <table>
-<caption><span id="tab:unnamed-chunk-3">Tab. 3.1: </span>Codebook of Indicators</caption>
+<caption><span id="tab:unnamed-chunk-3">Tab. 3.1: </span>Codebook of Extracted Variables</caption>
 <thead>
 <tr class="header">
 <th align="left">Variable</th>
@@ -139,39 +149,19 @@
 <td align="left">iso3</td>
 <td align="left">ISO3 country code</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
+<td align="center">class</td>
+<td align="left">all</td>
+<td align="center">circa 2015</td>
 <td align="center"></td>
 <td align="center"></td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://www.gadm.org/" class="uri">http://www.gadm.org/</a></td>
-<td align="left">class</td>
-<td align="center">all</td>
-<td align="center">c</td>
-<td align="left">irca 2015</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">adm0_name</td>
 <td align="left">GADM admin level-0</td>
 <td align="center"></td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://www.gadm.org/" class="uri">http://www.gadm.org/</a></td>
-<td align="left"></td>
-<td align="center">all</td>
-<td align="center">ci</td>
-<td align="left">rca 2015</td>
-<td align="center"></td>
+<td align="left">all</td>
+<td align="center">circa 2015</td>
 <td align="center"></td>
 <td align="center"></td>
 </tr>
@@ -180,864 +170,433 @@
 <td align="left">GADM admin level-1</td>
 <td align="center"></td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
+<td align="left">all</td>
+<td align="center">circa 2015</td>
 <td align="center"></td>
 <td align="center"></td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://www.gadm.org/" class="uri">http://www.gadm.org/</a></td>
-<td align="left"></td>
-<td align="center">all</td>
-<td align="center">ci</td>
-<td align="left">rca 2015</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">adm2_name</td>
 <td align="left">GADM admin level-2</td>
 <td align="center"></td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://www.gadm.org/" class="uri">http://www.gadm.org/</a></td>
-<td align="left"></td>
-<td align="center">all</td>
-<td align="center">ci</td>
-<td align="left">rca 2015</td>
-<td align="center"></td>
+<td align="left">all</td>
+<td align="center">circa 2015</td>
 <td align="center"></td>
 <td align="center"></td>
 </tr>
 <tr class="even">
 <td align="left">chirps</td>
 <td align="left">CHIRPS v2 rainfall estimates (monthly, mm)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">month (total)</td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_monthly.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">5/15/2017</td>
+<td align="center">0.05 degree (~5 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/ month (total) mm 2017-agresults-{ISO</td>
-<td align="center">3}_monthly.dta 1</td>
-<td align="center">/1/2015 5/15/2017</td>
-<td align="left">0.05 degree (~5 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">et_anom</td>
 <td align="left">SSEBop evapotranspiration anomaly (monthly, percent of 2007-2016 median)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/ month percent 2017-agresults-{ISO3}_monthly.dta 1/1/2015</td>
-<td align="center">5/15/2017 0.009</td>
-<td align="center">652 degree (~1 km)</td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">month</td>
+<td align="center">percent</td>
+<td align="left">2017-agresults-{ISO3}_monthly.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">5/15/2017</td>
+<td align="center">0.009652 degree (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">eta</td>
 <td align="left">SSEBop actual evapotranspiration (ETa) (dekadal, mm)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">dekad</td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_dekadal.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">6/11/2017</td>
+<td align="center">0.009652 degree (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/ dekad mm 2017-agresults-{ISO3}_dekadal</td>
-<td align="center">.dta 1/1/2015</td>
-<td align="center">6/11/2017 0.009652</td>
-<td align="left">degree (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">ndvi_anom</td>
 <td align="left">eMODIS C6 NDVI anomaly (dekadal, percent of 2007-2016 median)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/dekadal/ dekad percent 2017-agresults-{ISO3}_dekadal.dta</td>
-<td align="center">1/1/2015 6/11/20</td>
-<td align="center">17 0.002413 degree (~</td>
-<td align="left">250 m)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">dekad</td>
+<td align="center">percent</td>
+<td align="left">2017-agresults-{ISO3}_dekadal.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">6/11/2017</td>
+<td align="center">0.002413 degree (~250 m)</td>
 </tr>
 <tr class="even">
 <td align="left">ndvi</td>
 <td align="left">eMODIS C6 smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">dekad</td>
+<td align="center">index -1,1</td>
+<td align="left">2017-agresults-{ISO3}_dekadal.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">6/11/2017</td>
+<td align="center">0.002413 degree (~250 m)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/ dekad index -1,1 2017-agresults-{ISO3}_dekadal.dta 1/1/2015 6/</td>
-<td align="center">11/2017 0.002413 deg</td>
-<td align="center">ree (~250 m)</td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">pet</td>
 <td align="left">potential evapotranspiration (PET) (daily, mm)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/global/daily/pet/downloads/daily/ dekad (daily means) mm 2017-agresults-{ISO3}_d</td>
-<td align="center">ekadal.dta 1/1/2</td>
-<td align="center">015 6/30/2017</td>
-<td align="left">1 degree (~100 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">dekad (daily means)</td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_dekadal.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">6/30/2017</td>
+<td align="center">1 degree (~100 km)</td>
 </tr>
 <tr class="even">
 <td align="left">rfe</td>
 <td align="left">FEWS rainfall estimates (RFE) (dekadal, mm)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">dekad (total)</td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_dekadal.dta</td>
+<td align="center">1/1/2015</td>
+<td align="center">6/11/2017</td>
+<td align="center">0.1 degree (~10 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://edcintl.cr.usgs" class="uri">https://edcintl.cr.usgs</a></td>
-<td align="left">.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/ dekad (total) mm 2017-agresults-{ISO3</td>
-<td align="center">}_dekadal.dta 1/</td>
-<td align="center">1/2015 6/11/2017</td>
-<td align="left">0.1 degree (~10 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">orcdrc_m_sl1_250m_ll</td>
 <td align="left">Soil organic carbon content at 0 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{IS</td>
-<td align="center">O3}_soil.dta c</td>
-<td align="center">irca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="even">
 <td align="left">orcdrc_m_sl2_250m_ll</td>
 <td align="left">Soil organic carbon content at 5 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{IS</td>
-<td align="center">O3}_soil.dta c</td>
-<td align="center">irca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">orcdrc_m_sl3_250m_ll</td>
 <td align="left">Soil organic carbon content at 15 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{ISO</td>
-<td align="center">3}_soil.dta ci</td>
-<td align="center">rca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="even">
 <td align="left">orcdrc_m_sl4_250m_ll</td>
 <td align="left">Soil organic carbon content at 30 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{ISO</td>
-<td align="center">3}_soil.dta ci</td>
-<td align="center">rca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">orcdrc_m_sl5_250m_ll</td>
 <td align="left">Soil organic carbon content at 60 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{ISO</td>
-<td align="center">3}_soil.dta ci</td>
-<td align="center">rca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="even">
 <td align="left">orcdrc_m_sl6_250m_ll</td>
 <td align="left">Soil organic carbon content at 100 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{ISO3</td>
-<td align="center">}_soil.dta cir</td>
-<td align="center">ca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">orcdrc_m_sl7_250m_ll</td>
 <td align="left">Soil organic carbon content at 200 cm depth</td>
 <td align="center"></td>
+<td align="center">permilles</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ permilles 2017-agresults-{ISO3</td>
-<td align="center">}_soil.dta cir</td>
-<td align="center">ca 2016</td>
-<td align="left">250 m</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="even">
 <td align="left">taxnwrb_250m_ll</td>
 <td align="left">Most probable soil class based on the World Reference Base</td>
 <td align="center"></td>
+<td align="center">class (WRB)</td>
+<td align="left">2017-agresults-{ISO3}_soil.dta</td>
+<td align="center">circa 2016</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">250 m</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="ftp://ftp.soilgrids.org" class="uri">ftp://ftp.soilgrids.org</a></td>
-<td align="left">/data/recent/ class (WRB) 2017-agresults-{ISO3}_soil.dta</td>
-<td align="center">circa 2016</td>
-<td align="center">250 m</td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio1</td>
 <td align="left">Annual Mean Temperature</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree</td>
-<td align="center">2017-agresults-{ISO3}_b</td>
-<td align="center">iovars.dta 1970</td>
-<td align="left">2000 30 arc-second (~1</td>
-<td align="center">km)</td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio2</td>
 <td align="left">Mean Diurnal Range (Mean of monthly (max temp - min temp))</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agresults-{ISO3}_biovars.dta</td>
-<td align="center">1970 20</td>
-<td align="center">00 30 arc-second</td>
-<td align="left">(~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio3</td>
 <td align="left">Isothermality (BIO2/BIO7) (* 100)</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 100 * Celsius degree 2017-agres</td>
-<td align="center">ults-{ISO3}_biovars.dta</td>
-<td align="center">1970 2</td>
-<td align="left">000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">100 * Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio4</td>
 <td align="left">Temperature Seasonality (standard deviation *100)</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">100 * Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 100 * Celsius degree 2017-agresults-{ISO3}_biov</td>
-<td align="center">ars.dta 1970</td>
-<td align="center">2000 30 ar</td>
-<td align="left">c-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio5</td>
 <td align="left">Max Temperature of Warmest Month</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agre</td>
-<td align="center">sults-{ISO3}_biovars.dt</td>
-<td align="center">a 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio6</td>
 <td align="left">Min Temperature of Coldest Month</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agre</td>
-<td align="center">sults-{ISO3}_biovars.dt</td>
-<td align="center">a 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio7</td>
 <td align="left">Temperature Annual Range (BIO5-BIO6)</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agresult</td>
-<td align="center">s-{ISO3}_biovars.dta</td>
-<td align="center">1970 2000</td>
-<td align="left">30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio8</td>
 <td align="left">Mean Temperature of Wettest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agresul</td>
-<td align="center">ts-{ISO3}_biovars.dta</td>
-<td align="center">1970 200</td>
-<td align="left">0 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio9</td>
 <td align="left">Mean Temperature of Driest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agresu</td>
-<td align="center">lts-{ISO3}_biovars.dta</td>
-<td align="center">1970 20</td>
-<td align="left">00 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio10</td>
 <td align="left">Mean Temperature of Warmest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agresul</td>
-<td align="center">ts-{ISO3}_biovars.dta</td>
-<td align="center">1970 200</td>
-<td align="left">0 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio11</td>
 <td align="left">Mean Temperature of Coldest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 Celsius degree 2017-agresul</td>
-<td align="center">ts-{ISO3}_biovars.dta</td>
-<td align="center">1970 200</td>
-<td align="left">0 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">Celsius degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio12</td>
 <td align="left">Annual Precipitation</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm</td>
-<td align="center">2017-agresults-{ISO3</td>
-<td align="center">}_biovars.dta 1</td>
-<td align="left">970 2000 30 arc-second (</td>
-<td align="center">~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio13</td>
 <td align="left">Precipitation of Wettest Month</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-ag</td>
-<td align="center">results-{ISO3}_biovars.</td>
-<td align="center">dta 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio14</td>
 <td align="left">Precipitation of Driest Month</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-a</td>
-<td align="center">gresults-{ISO3}_biovars</td>
-<td align="center">.dta 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio15</td>
 <td align="left">Precipitation Seasonality (Coefficient of Variation)</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-agresults-{ISO3}_biovars</td>
-<td align="center">.dta 1970</td>
-<td align="center">2000 30 arc-s</td>
-<td align="left">econd (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio16</td>
 <td align="left">Precipitation of Wettest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-agre</td>
-<td align="center">sults-{ISO3}_biovars.dt</td>
-<td align="center">a 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio17</td>
 <td align="left">Precipitation of Driest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-agr</td>
-<td align="center">esults-{ISO3}_biovars.d</td>
-<td align="center">ta 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">bio18</td>
 <td align="left">Precipitation of Warmest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-agre</td>
-<td align="center">sults-{ISO3}_biovars.dt</td>
-<td align="center">a 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">bio19</td>
 <td align="left">Precipitation of Coldest Quarter</td>
 <td align="center"></td>
-<td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://worldclim.org/ve" class="uri">http://worldclim.org/ve</a></td>
-<td align="left">rsion2 mm 2017-agre</td>
-<td align="center">sults-{ISO3}_biovars.dt</td>
-<td align="center">a 1970</td>
-<td align="left">2000 30 arc-second (~1 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">mm</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">1970</td>
+<td align="center">2000</td>
+<td align="center">30 arc-second (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">alt</td>
 <td align="left">Altitude (SRTM 90m)</td>
 <td align="center"></td>
+<td align="center">meter</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">circa 2006</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">(~90 m)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="http://www.cgiar-csi.or" class="uri">http://www.cgiar-csi.or</a></td>
-<td align="left">g/data/srtm-90m-digital-elevation-database-v4-1 meter</td>
-<td align="center">2017-agresults-{ISO</td>
-<td align="center">3}_biovars.dta cir</td>
-<td align="left">ca 2006 (~90 m)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">slope</td>
 <td align="left">Slope (SRTM 90m)</td>
 <td align="center"></td>
+<td align="center">degree</td>
+<td align="left">2017-agresults-{ISO3}_biovars.dta</td>
+<td align="center">circa 2006</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="http://www.cgiar-csi.or" class="uri">http://www.cgiar-csi.or</a></td>
-<td align="left">g/data/srtm-90m-digital-elevation-database-v4-1 degree</td>
-<td align="center">2017-agresults-{</td>
-<td align="center">ISO3}_biovars.dta</td>
-<td align="left">circa 2006 (~90</td>
-<td align="center">m)</td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">(~90 m)</td>
 </tr>
 <tr class="even">
 <td align="left">tt10_20k</td>
 <td align="left">Travel time to nearest 20K market</td>
 <td align="center"></td>
+<td align="center">hrs</td>
+<td align="left">2017-agresults-{ISO3}_traveltime.dta</td>
+<td align="center">circa 2010</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">5 arc-minute (~10 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://dataverse.harva" class="uri">https://dataverse.harva</a></td>
-<td align="left">rd.edu/dataset.xhtml?persistentId=<a href="doi:10.7910/DVN/YKDWJD" class="uri">doi:10.7910/DVN/YKDWJD</a> hrs 2017-agres</td>
-<td align="center">ults-{ISO3}_traveltime.</td>
-<td align="center">dta circa 2010</td>
-<td align="left">5 arc-minute (~10 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">tt10_50k</td>
 <td align="left">Travel time to nearest 50K market</td>
 <td align="center"></td>
+<td align="center">hrs</td>
+<td align="left">2017-agresults-{ISO3}_traveltime.dta</td>
+<td align="center">circa 2010</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://dataverse.harva" class="uri">https://dataverse.harva</a></td>
-<td align="left">rd.edu/dataset.xhtml?persistentId=<a href="doi:10.7910/DVN/YKDWJD" class="uri">doi:10.7910/DVN/YKDWJD</a> hrs 2017-agres</td>
-<td align="center">ults-{ISO3}_traveltime.</td>
-<td align="center">dta circa 2010</td>
-<td align="left">5 arc-minute (~10 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">5 arc-minute (~10 km)</td>
 </tr>
 <tr class="even">
 <td align="left">tt10_100k</td>
 <td align="left">Travel time to nearest 100K market</td>
 <td align="center"></td>
+<td align="center">hrs</td>
+<td align="left">2017-agresults-{ISO3}_traveltime.dta</td>
+<td align="center">circa 2010</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">5 arc-minute (~10 km)</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://dataverse.harva" class="uri">https://dataverse.harva</a></td>
-<td align="left">rd.edu/dataset.xhtml?persistentId=<a href="doi:10.7910/DVN/YKDWJD" class="uri">doi:10.7910/DVN/YKDWJD</a> hrs 2017-agresu</td>
-<td align="center">lts-{ISO3}_traveltime.d</td>
-<td align="center">ta circa 2010</td>
-<td align="left">5 arc-minute (~10 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
 <td align="left">tt10_250k</td>
 <td align="left">Travel time to nearest 250K market</td>
 <td align="center"></td>
+<td align="center">hrs</td>
+<td align="left">2017-agresults-{ISO3}_traveltime.dta</td>
+<td align="center">circa 2010</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://dataverse.harva" class="uri">https://dataverse.harva</a></td>
-<td align="left">rd.edu/dataset.xhtml?persistentId=<a href="doi:10.7910/DVN/YKDWJD" class="uri">doi:10.7910/DVN/YKDWJD</a> hrs 2017-agresu</td>
-<td align="center">lts-{ISO3}_traveltime.d</td>
-<td align="center">ta circa 2010</td>
-<td align="left">5 arc-minute (~10 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">5 arc-minute (~10 km)</td>
 </tr>
 <tr class="even">
 <td align="left">tt10_500k</td>
 <td align="left">Travel time to nearest 500K market</td>
 <td align="center"></td>
+<td align="center">hrs</td>
+<td align="left">2017-agresults-{ISO3}_traveltime.dta</td>
+<td align="center">circa 2010</td>
 <td align="center"></td>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://dataverse.harva" class="uri">https://dataverse.harva</a></td>
-<td align="left">rd.edu/dataset.xhtml?persistentId=<a href="doi:10.7910/DVN/YKDWJD" class="uri">doi:10.7910/DVN/YKDWJD</a> hrs 2017-agresu</td>
-<td align="center">lts-{ISO3}_traveltime.d</td>
-<td align="center">ta circa 2010</td>
-<td align="left">5 arc-minute (~10 km)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">5 arc-minute (~10 km)</td>
 </tr>
 </tbody>
 </table>
-<p><u>Note</u>: NDVI values below -0.3</p>
 </div>
             </section>
 

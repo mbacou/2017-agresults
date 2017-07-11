@@ -1,5 +1,18 @@
 # Data Codebook
 
+All results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list). This section only shows summaries for a sample of indicators.
+
+STATA files are organized by country, by source, and by periodicity:
+
+- `2017-agresults-{ISO3}-biovars.dta` -- 1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)
+- `2017-agresults-{ISO3}-traveltime.dta` -- travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)
+- `2017-agresults-{ISO3}-soil.dta` -- soil organic carbon content and most probable soil class (source: SoilGrids)
+- `2017-agresults-{ISO3}-monthly.dta` -- 2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)
+- `2017-agresults-{ISO3}-dekadal.dta` -- 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
+
+All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
+
+
 ```{r, eval=F}
 
 lbl <- rbind(data.table(varCode=names(pts), varLabel=pts.lbl),
@@ -16,9 +29,9 @@ lbl[, varCode := tolower(varCode)]
 
 kable(lbl[, .(
   Variable=varCode, 
-  Description=paste0(varLabel, "\n", url),
+  Description=varLabel,
   Period=period, Unit=unit, File=file, Start=start, End=end, Resolution=res)],
-  align="llcclccc", caption="Codebook of Indicators")
+  align="llcclccc", caption="Codebook of Extracted Variables")
 
 ```
 
@@ -367,19 +380,6 @@ rm(i, x, dir, url, tmp, log, pet, tmp1, tmp2, r, slope, m, vars)
 save.image("./tmp/2017-agresults.RData")
 
 ```
-
-
-All results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list). This section only shows summaries for a sample of indicators.
-
-STATA files are organized by country, by source, and by periodicity:
-
-- `2017-agresults-{ISO3}-biovars.dta` -- 1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)
-- `2017-agresults-{ISO3}-traveltime.dta` -- travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)
-- `2017-agresults-{ISO3}-soil.dta` -- soil organic carbon content and most probable soil class (source: SoilGrids)
-- `2017-agresults-{ISO3}-monthly.dta` -- 2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)
-- `2017-agresults-{ISO3}-dekadal.dta` -- 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
-
-All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
 
 
 ## Bioclimatic Indicators
