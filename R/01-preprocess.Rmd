@@ -36,7 +36,7 @@ fews <- list(
   ),
   rfe = list(
     varLabel = "FEWS rainfall estimates (RFE) (dekadal, mm)",
-    time = "dekade",
+    time = "dekad",
     unit = "mm",
     files = paste0("a", levels(interaction(15:17, str_pad(1:12, 2, "left", 0), 1:3, sep="", lex.order=T)), "rb.zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/"
@@ -50,7 +50,7 @@ fews <- list(
   ),
   eta = list(
     varLabel = "SSEBop actual evapotranspiration (ETa) (dekadal, mm)",
-    time = "dekade",
+    time = "dekad",
     unit = "mm",
     files = paste0("d", levels(interaction(2015:2017, str_pad(1:12, 2, "left", 0), 1:3, sep="", lex.order=T)), ".zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/eta/downloads/"
@@ -64,28 +64,28 @@ fews <- list(
   ),
   ndvi_west = list(
     varLabel = "eMODIS TERRA smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)",
-    time = "dekade",
+    time = "dekad",
     unit = "index 0-1",
     files = paste0("wa", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), ".zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/west/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/"
   ),
   ndvi_anom_west = list(
     varLabel = "eMODIS TERRA NDVI anomaly (dekadal, percent of median)",
-    time = "dekade",
+    time = "dekad",
     unit = "percent",
     files = paste0("wa", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), "pct.zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/west/dekadal/emodis/ndvi_c6/percentofmedian/downloads/dekadal/"
   ),
   ndvi_east = list(
     varLabel = "eMODIS TERRA smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)",
-    time = "dekade",
+    time = "dekad",
     unit = "index 0-1",
     files = paste0("ea", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), ".zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/temporallysmoothedndvi/downloads/dekadal/"
   ),
   ndvi_anom_east = list(
     varLabel = "eMODIS TERRA NDVI anomaly (dekadal, percent of median)",
-    time = "dekade",
+    time = "dekad",
     unit = "percent",
     files = paste0("ea", levels(interaction(15:17, str_pad(1:36, 2, "left", 0), sep="", lex.order=T)), "pct.zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/dekadal/"
@@ -138,7 +138,7 @@ fews[status==F, .N, by=varCode]
 
 # Fill in approx dates
 fews[, date := NULL]
-fews[time=="dekade", 
+fews[time=="dekad", 
   date := rep(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), each=3)+c(0,10,20),
   by=varCode]
 fews[time=="month", 
@@ -234,7 +234,7 @@ tmp <- fews[varCode=="rfe" & status==T, raster(last(raster), crs=last(proj))]
 tmp[tmp<0] <- NA
 colortable(tmp) <- logical(0)
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
-  title="RFE\nJune 2017\ndekade 2\n(mm)",
+  title="RFE\nJune 2017\ndekad 2\n(mm)",
   breaks=seq(0,168,8), labels=na2null(seq(0,160,8)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-rfe.png", width=6, height=3.6)
@@ -255,7 +255,7 @@ tmp <- fews[varCode=="eta" & status==T, raster(last(raster), crs=last(proj))]
 tmp[tmp<0] <- NA
 maxValue(crop(tmp, pts))
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et(255),
-  title="ETa\nJune 2017\ndekade 2\n(mm)",
+  title="ETa\nJune 2017\ndekad 2\n(mm)",
   breaks=seq(0,130,10), labels=na2null(seq(0,120,10)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-eta.png", width=6, height=3.6)
@@ -266,7 +266,7 @@ tmp <- fews[varCode=="et_anom" & status==T, raster(last(raster), crs=last(proj))
 colortable(tmp) <- logical(0)
 maxValue(crop(tmp, pts))
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et_anom(255),
-  title="ET Anomaly\nJune 2017\ndekade 2\n(percent)",
+  title="ET Anomaly\nJune 2017\ndekad 2\n(percent)",
   breaks=seq(0,285,15), labels=na2null(seq(0,270,15)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-et_anom.png", width=6, height=3.6)
@@ -293,7 +293,7 @@ tmp1 <- (tmp1 - 100) / 100
 spplot(tmp1, col.regions=pal.ndvi)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
-  title="NDVI\nJune 2017\ndekade 2\n(index)",
+  title="NDVI\nJune 2017\ndekad 2\n(index)",
   breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi(255),
     legend.show=F, breaks=seq(-1,1.1,0.1)) + p
@@ -321,7 +321,7 @@ maxValue(tmp1)
 spplot(tmp, col.regions=pal.ndvi_pct)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi_pct(255),
-  title="NDVI Anomaly\nJune 2017\ndekade 2\n(percent of normal)",
+  title="NDVI Anomaly\nJune 2017\ndekad 2\n(percent of normal)",
   breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi_pct(255),
     legend.show=F, breaks=seq(0,210,10)) + p
@@ -338,7 +338,7 @@ save.image("./tmp/2017-agresults.RData")
 
 ```
 
-FEWS spatial data layers are distributed through multiple channels, primarily USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWS' climatic indicators, e.g.:
+FEWS spatial grids are distributed through multiple channels, primarily USGS and NOAA data portals. There is a series of interactive viewers and tools to explore and download slices of FEWS' bioclimatic indicators, e.g.:
 
 - http://ewx.chg.ucsb.edu:8080/EWX/index.html
 - https://earlywarning.usgs.gov/fews/mapviewer/index.php?region=af
@@ -353,7 +353,7 @@ To the author's knowledge there is no Web service or API to facilitate programma
   ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
   Contains daily ARC2[^arc2] and RFE[^rfe] rainfall estimates for Africa at 10km resolution
   
-In this study all spatial estimates are derived from raw data at the following locations:
+In this study all spatial estimates are derived from grids acquired at the following locations:
 
 - `chirps` (monthly, mm, 0.05 degree/~5km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/  
 - `rfe` (dekadal, mm, 0.1 degree/~10km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/rfe/dekadrainfall/downloads/dekadal/  
@@ -364,6 +364,8 @@ In this study all spatial estimates are derived from raw data at the following l
 - `ndvi_anom` NDVI Anomaly (dekadal, percent of normal, 250m) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/east/dekadal/emodis/ndvi_c6/percentofmedian/downloads/  
 
 Note that `SPEI`/`SPI` (standardized precipitation indices) are *not* available from FEWS database (see missing downloads at https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/dekadal/spi/). An alternative source is [SPEIBase v2.4](http://digital.csic.es/handle/10261/128892) (2016), but this database does not include the last 2 years 2015-2017 yet and the 0.5 degree resolution is a little coarse for this study.
+
+USGS also warns that the most recent 3 dekadal grids are not always corrected for cloud cover (cloud mask produces misleading zero values).
 
 
 ```{r fews-cat}
@@ -550,7 +552,7 @@ include_graphics("./out/wc-bio15.png")
 
 ### Other Sources
 
-There are other sources of current climatic conditions. They are listed here for information, but not used in this study currently.
+There are other sources of current climatic conditions. They are listed here for reference, but not used.
 
 #### IrriSAT
 
@@ -576,7 +578,7 @@ http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/
 
 ## Drought
 
-Aside from [SPEIBase](http://digital.csic.es/handle/10261/128892), drought events are also tracked by NASA EONET. NASA EONET API documentation is at https://eonet.sci.gsfc.nasa.gov/docs/v2.1. There's an R package to query this repository at http://enelmargen.org/nasadata/vignette_v0/. The source of actual drought incidence is also tracked by SEDAC Global Drought Hazard Frequency and Distribution v1 1980-2000) that is quite old.
+Aside from [SPEIBase](http://digital.csic.es/handle/10261/128892), drought events are also tracked by NASA EONET. NASA EONET API documentation is at https://eonet.sci.gsfc.nasa.gov/docs/v2.1. There's an R package to query this repository at http://enelmargen.org/nasadata/vignette_v0/. The source of actual drought incidence is also tracked by SEDAC Global Drought Hazard Frequency and Distribution v1 1980-2000), but this source is quite old.
 
 ```
 
@@ -673,7 +675,7 @@ save_tmap(m, "./docs/out/afsis-taxnwrb.png", width=6, height=3.6, units="in", fa
 
 ```
 
-Data on soil characteristics is obtained from ISRIC Africa Soil Information Service ([AfSIS](http://www.isric.org/projects/africa-soil-information-service-afsis)). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at http://geonode.isric.org/ with a web viewer at https://www.soilgrids.org/. The SoilGrids REST API provides support to access data, query and display it, without the need to download the complete grids. REST access to SoilGrids is available through the R **GSIF package**. The following layers are retrieved, and then queried using SoilGrids API (at all survey point locations).
+Data on soil characteristics is obtained from ISRIC and the Africa Soil Information Service ([AfSIS](http://www.isric.org/projects/africa-soil-information-service-afsis)). AfSIS generates maps of soil properties at 250m and 1km resolution using legacy soil profile data (from about 12,000 locations in Africa) combined with remote sensing information (climate, land cover, population density, biodiversity, and other covariates). All indicators are available for download at http://geonode.isric.org/ with a web viewer at https://www.soilgrids.org/. The SoilGrids REST API provides support to access data, query and display it, without the need to download the complete grids. REST access to SoilGrids is available through R **GSIF package** (but too slow to query thousands of points). The following grids were acquired instead:
 
 ```{r afsis-cat}
 

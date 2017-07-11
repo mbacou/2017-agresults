@@ -283,6 +283,12 @@ m.nga <- tm_shape(nga.l2) +
 
 save_tmap(m.nga, "./out/2017-abt-nga_odd.pdf", width=5, units="in")
 
+#####################################################################################
+# Export imputed GPS
+
+
+
+
 ```
 
 ```{r ken, eval=FALSE}

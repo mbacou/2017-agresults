@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="data-sources-and-preprocessing.html">
+<link rel="prev" href="data-codebook.html">
 <link rel="next" href="references.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -83,11 +83,12 @@
 <li class="chapter" data-level="2.4.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#ciesingrump"><i class="fa fa-check"></i><b>2.4.2</b> CIESIN/GRUMP</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="data-summaries.html"><a href="data-summaries.html"><i class="fa fa-check"></i><b>3</b> Data Summaries</a><ul>
-<li class="chapter" data-level="3.1" data-path="data-summaries.html"><a href="data-summaries.html#bioclimatic-indicators"><i class="fa fa-check"></i><b>3.1</b> Bioclimatic Indicators</a></li>
-<li class="chapter" data-level="3.2" data-path="data-summaries.html"><a href="data-summaries.html#soil-characteristics-1"><i class="fa fa-check"></i><b>3.2</b> Soil Characteristics</a></li>
-<li class="chapter" data-level="3.3" data-path="data-summaries.html"><a href="data-summaries.html#drought-1"><i class="fa fa-check"></i><b>3.3</b> Drought</a></li>
-<li class="chapter" data-level="3.4" data-path="data-summaries.html"><a href="data-summaries.html#market-access-1"><i class="fa fa-check"></i><b>3.4</b> Market Access</a></li>
+<li class="chapter" data-level="3" data-path="data-codebook.html"><a href="data-codebook.html"><i class="fa fa-check"></i><b>3</b> Data Codebook</a></li>
+<li class="chapter" data-level="4" data-path="data-summaries.html"><a href="data-summaries.html"><i class="fa fa-check"></i><b>4</b> Data Summaries</a><ul>
+<li class="chapter" data-level="4.1" data-path="data-summaries.html"><a href="data-summaries.html#bioclimatic-indicators"><i class="fa fa-check"></i><b>4.1</b> Bioclimatic Indicators</a></li>
+<li class="chapter" data-level="4.2" data-path="data-summaries.html"><a href="data-summaries.html#soil-characteristics-1"><i class="fa fa-check"></i><b>4.2</b> Soil Characteristics</a></li>
+<li class="chapter" data-level="4.3" data-path="data-summaries.html"><a href="data-summaries.html#market-access-1"><i class="fa fa-check"></i><b>4.3</b> Market Access</a></li>
+<li class="chapter" data-level="4.4" data-path="data-summaries.html"><a href="data-summaries.html#drought-1"><i class="fa fa-check"></i><b>4.4</b> Drought</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
@@ -108,67 +109,106 @@
 
             <section class="normal" id="section-">
 <div id="data-summaries" class="section level1">
-<h1><span class="header-section-number">Section 3</span> Data Summaries</h1>
-<p>This section provides visual summaries for a sample of variables. All estimates below are for surveyed households (after imputing missing/invalid locations). Complete results are available in <strong>STATA format</strong> on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>.</p>
-<p><u>Note</u>: the <em>violin</em> (pirate) plots below show <strong>median</strong> line in <strong>red</strong>, <strong>mean</strong> line in <strong>green</strong>, and the <strong>blue</strong> region is the inferred <strong>95% confidence interval</strong> of the mean.</p>
+<h1><span class="header-section-number">Section 4</span> Data Summaries</h1>
+<p>Below are distribution graphs of a sample of indicators<a href="#fn8" class="footnoteRef" id="fnref8"><sup>8</sup></a>. All estimates below are at surveyed household locations (after imputing missing/invalid locations as described in <a href="./index.html">Section 1</a>).</p>
+<p>All results are available in <strong>STATA format</strong> on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>. This section only shows summaries for a sample of indicators.</p>
+<p>STATA files are organized by country, by source, and by periodicity:</p>
+<ul>
+<li><code>2017-agresults-{ISO3}-biovars.dta</code> – 1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)</li>
+<li><code>2017-agresults-{ISO3}-traveltime.dta</code> – travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)</li>
+<li><code>2017-agresults-{ISO3}-soil.dta</code> – soil organic carbon content and most probable soil class (source: SoilGrids)</li>
+<li><code>2017-agresults-{ISO3}-monthly.dta</code> – 2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)</li>
+<li><code>2017-agresults-{ISO3}-dekadal.dta</code> – 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)</li>
+</ul>
+<p>All extracted indicators are listed below. This table is also on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>.</p>
 <div id="bioclimatic-indicators" class="section level2">
-<h2><span class="header-section-number">3.1</span> Bioclimatic Indicators</h2>
-<p>Distribution of 2 long-term bioclimatic indicators at AgResults’ household locations in Nigeria and Kenya.</p>
+<h2><span class="header-section-number">4.1</span> Bioclimatic Indicators</h2>
+<p>For documentation’s purposes we graph the distributions of a sample of indicators across household locations.</p>
+<div class="figure"><span id="fig:res-fews"></span>
+<img src="fig/res-fews-1.png" alt="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions." width="2100" />
+<p class="caption">
+Fig. 4.1: Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions.
+</p>
+</div>
+<div class="figure"><span id="fig:res-fews"></span>
+<img src="fig/res-fews-2.png" alt="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions." width="2100" />
+<p class="caption">
+Fig. 4.1: Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions.
+</p>
+</div>
+<div class="figure"><span id="fig:res-fews"></span>
+<img src="fig/res-fews-3.png" alt="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions." width="2100" />
+<p class="caption">
+Fig. 4.1: Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions.
+</p>
+</div>
+<div class="figure"><span id="fig:res-fews"></span>
+<img src="fig/res-fews-4.png" alt="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions." width="2100" />
+<p class="caption">
+Fig. 4.1: Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions.
+</p>
+</div>
 <div class="figure"><span id="fig:res-wc"></span>
 <img src="fig/res-wc-1.png" alt="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim." width="2100" />
 <p class="caption">
-Fig. 3.1: Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim.
+Fig. 4.2: Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim.
 </p>
 </div>
 <div class="figure"><span id="fig:res-wc"></span>
 <img src="fig/res-wc-2.png" alt="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim." width="2100" />
 <p class="caption">
-Fig. 3.1: Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim.
+Fig. 4.2: Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim.
 </p>
 </div>
-<p>Distribution of last dekade’s rainfall and NDVI at household locations.</p>
 </div>
 <div id="soil-characteristics-1" class="section level2">
-<h2><span class="header-section-number">3.2</span> Soil Characteristics</h2>
+<h2><span class="header-section-number">4.2</span> Soil Characteristics</h2>
 <div class="figure"><span id="fig:res-afsis"></span>
 <img src="fig/res-afsis-1.png" alt="Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m." width="2100" />
 <p class="caption">
-Fig. 3.2: Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m.
+Fig. 4.3: Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m.
 </p>
 </div>
 <div class="figure"><span id="fig:res-afsis"></span>
 <img src="fig/res-afsis-2.png" alt="Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m." width="2100" />
 <p class="caption">
-Fig. 3.2: Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m.
+Fig. 4.3: Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m.
 </p>
 </div>
 </div>
-<div id="drought-1" class="section level2">
-<h2><span class="header-section-number">3.3</span> Drought</h2>
-</div>
 <div id="market-access-1" class="section level2">
-<h2><span class="header-section-number">3.4</span> Market Access</h2>
+<h2><span class="header-section-number">4.3</span> Market Access</h2>
 <div class="figure"><span id="fig:res-tt"></span>
 <img src="fig/res-tt-1.png" alt="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice." width="2100" />
 <p class="caption">
-Fig. 3.3: Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice.
+Fig. 4.4: Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice.
 </p>
 </div>
 <div class="figure"><span id="fig:res-tt"></span>
 <img src="fig/res-tt-2.png" alt="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice." width="2100" />
 <p class="caption">
-Fig. 3.3: Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice.
+Fig. 4.4: Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice.
 </p>
 </div>
+</div>
+<div id="drought-1" class="section level2">
+<h2><span class="header-section-number">4.4</span> Drought</h2>
+<p>[in progress]</p>
 
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="8">
+<li id="fn8"><p>The <em>violin</em> (also called “pirate”) plots in this document show <strong>median</strong> line in <strong>red</strong>, <strong>mean</strong> line in <strong>green</strong>, and the <strong>blue</strong> region is the inferred <strong>95% confidence interval</strong> of the mean.<a href="data-summaries.html#fnref8">↩</a></p></li>
+</ol>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="data-sources-and-preprocessing.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="data-codebook.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>

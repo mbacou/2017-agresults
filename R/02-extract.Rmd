@@ -1,8 +1,33 @@
+# Data Codebook
+
+```{r, eval=F}
+
+lbl <- rbind(data.table(varCode=names(pts), varLabel=pts.lbl),
+  unique(fews, by="varCode"), afsis, 
+  data.table(varCode=paste0("bio", 1:19), varLabel=bio.lbl), fill=T)
+fwrite(lbl, "./out/2017-agresults-GIS_codebook.csv")
+# Made corrections by hand
+lbl <- fread("./out/2017-agresults-GIS_codebook.csv")
+lbl[, varCode := tolower(varCode)]
+
+```
+
+```{r}
+
+kable(lbl[, .(
+  Variable=varCode, 
+  Description=paste0(varLabel, "\n", url),
+  Period=period, Unit=unit, File=file, Start=start, End=end, Resolution=res)],
+  align="llcclccc", caption="Codebook of Indicators")
+
+```
+
+
 # Data Summaries
 
-This section provides visual summaries for a sample of variables. All estimates below are for surveyed households (after imputing missing/invalid locations). Complete results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
+Below are distribution graphs of a sample of indicators[^violin]. All estimates below are at surveyed household locations (after imputing missing/invalid locations as described in [Section 1](./index.html)).
 
-<u>Note</u>: the *violin* (pirate) plots below show **median** line in **red**, **mean** line in **green**, and the **blue** region is the inferred **95% confidence interval** of the mean.
+[^violin]: The *violin* (also called "pirate") plots in this document show **median** line in **red**, **mean** line in **green**, and the **blue** region is the inferred **95% confidence interval** of the mean.
 
 
 ```{r extract, eval=FALSE}
@@ -80,6 +105,10 @@ tmp <- lapply(seq(1, nrow(pts), 100)[21:30],
     df <- df[, c(3:9, 128, 145:146)]
     return(df)
   })
+
+# Test and log bug on GitHub with NA values returned below
+tmp <- pts[pts$hhid %in% c(10418, 110421),])
+
 
 ###############################################
 # SoilGrids API is a little slow for over 7,000 points, can we extract from disk
@@ -226,19 +255,108 @@ for(i in c("NGA", "KEN")) write.dta(
 # We need to iterate through all FEWS grids catalogued in `fews`, noting that missing 
 # and invalid values will need extra correction. In general all r[r<0] should be NA, 
 # aside from `ndvi_anom` et `et_anom` but that step takes time, maybe best to
-# post-process (stretch, scale and nil) these values.
-# We've also checked that FEWS layer projections are as expected.
+# post-process (stretch and nil).
+# Also checked that all FEWS layers are now unprojected (RFE grids are projected).
+# Also note that the last available NDVI dekad #17 has not been corrected for cloud
+# cover hence the large percentage of zero values. They should be converted to NA 
+# (see e-mail from <mbudde@usgs.gov> 2017.07.11).
+fews[status==F, raster := NA]
+tmp.fews <- fews[status==T]
+r <- raster(tmp.fews[1, raster], crs=tmp.fews[1, proj])
+proj_aea <- proj4string(r)
 
+tmp <- lapply(1:nrow(tmp.fews), function(x) {
+  cat(tmp.fews[x, dest], "\n")
+  r <- raster(tmp.fews[x, raster], crs=tmp.fews[x, proj])
+  res <- extract(r, 
+    if(proj4string(r)==proj_aea) spTransform(pts, proj4string(r)) else pts)
+  return(res)
+})
+  
+pts.fews <- data.table(do.call(cbind, tmp))
+setnames(pts.fews, tmp.fews[, paste0(varCode, "_", format(date, "%Y%m%d"))])
+pts.fews <- data.table(cbind(pts@data, pts.fews))
 
+# Post-process
+# 1) NDVI combine East and West extracts
+pts.ndvi <- pts.fews[, .SD, .SDcols=c(1:5, which(names(pts.fews) %like% "ndvi"))]
+pts.fews <- pts.fews[, .SD, .SDcols=which(!names(pts.fews) %like% "ndvi")]
+pts.ndvi <- melt(pts.ndvi, id.vars=1:5)
+pts.ndvi[, variable := str_replace(variable, fixed("ndvi_anom"), "ndvi-anom")]
+pts.ndvi[, c("var", "zone", "date") := tstrsplit(variable, "_", fixed=TRUE)]
+pts.ndvi[, date := as.Date(date, "%Y%m%d")]
+pts.ndvi <- pts.ndvi[!is.na(value)]
+pts.ndvi[, .N, by=.(hhid, var, date)][N>1]
+pts.ndvi[, `:=`(variable=NULL, zone=NULL)]
 
+# 2) NDVI stretch and nil cloud cover of last dekad
+pts.ndvi[date=="2017-06-11", value := ifelse(value==0, NA, value)]
+pts.ndvi[var=="ndvi", value := (value-100)/100]
+pts.ndvi <- dcast(pts.ndvi, ...~var, value.var="value")
+setnames(pts.ndvi, "ndvi-anom", "ndvi_anom")
 
-# Export FEWS results to STATA (1 file per country)
-pts.fews.lbl <- c(pts.lbl, 
-  "altitude (meter)", "slope (degree)")
+# 3) Daily PET to dekadal means
+pts.pet <- pts.fews[, .SD, .SDcols=c(1:5, which(names(pts.fews) %like% "pet"))]
+pts.fews <- pts.fews[, .SD, .SDcols=which(!names(pts.fews) %like% "pet")]
+pts.pet <- melt(pts.pet, id.vars=1:5)
+pts.pet[, c("var", "date") := tstrsplit(variable, "_", fixed=TRUE)]
+pts.pet[, date := as.Date(date, "%Y%m%d")]
+# Roll by dekad and take the mean (from 2015-01-01 to 2017-06-30)
+# make sure to match the other dekads (day -01, -11, -21)
+pts.pet[, dekad := cut(mday(date), c(0,10,20,32), labels=c("d1", "d2", "d3"))]
+pts.pet <- pts.pet[, .(value = mean(value, na.rm=T)), 
+  by=.(hhid, ISO3, adm0_name, adm1_name, adm2_name, 
+    year=year(date), month=month(date), dekad)]
+pts.pet[, date := 
+    as.Date(paste(year, month, dplyr::recode(dekad, d1=1, d2=11, d3=21), sep="-")))]
+pts.pet[, `:=`(year=NULL, month=NULL, dekad=NULL)]
+setnames(pts.pet, "value", "pet")
+
+# 4) Move monthly `chirps` and `et_anom` vars to separate table
+pts.monthly <- pts.fews[, .SD, .SDcols=c(1:5, which(
+  names(pts.fews) %like% "chirps" | names(pts.fews) %like% "et_anom"))]
+pts.fews <- pts.fews[, .SD, .SDcols=-which(
+  names(pts.fews) %like% "chirps" | names(pts.fews) %like% "et_anom")]
+
+pts.monthly <- melt(pts.monthly, id.vars=1:5)
+pts.monthly[, variable := str_replace(variable, fixed("et_anom"), "et-anom")]
+pts.monthly[, c("var", "date") := tstrsplit(variable, "_", fixed=TRUE)]
+pts.monthly[, date := as.Date(date, "%Y%m%d")]
+pts.monthly[, variable := NULL]
+pts.monthly <- dcast(pts.monthly, ...~var, value.var="value")
+
+# 5) Recombine all dekadal vars `pts.ndvi`, `pts.pet`, `pts.fews`
+pts.fews <- melt(pts.fews, id.vars=1:5)
+pts.fews[, c("var", "date") := tstrsplit(variable, "_", fixed=TRUE)]
+pts.fews[, date := as.Date(date, "%Y%m%d")]
+pts.fews[, variable := NULL]
+pts.fews <- dcast(pts.fews, ...~var, value.var="value")
+
+setkey(pts.fews, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
+setkey(pts.ndvi, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
+setkey(pts.pet, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
+pts.dekadal <- pts.fews[pts.ndvi][pts.pet]
+
+# Export all FEWS results to STATA (1 file per country)
+pts.dekadal.lbl <- c(pts.lbl, "date",
+  "SSEBop actual evapotranspiration (ETa) (dekadal, mm)", 
+  "FEWS rainfall estimates (RFE) (dekadal, mm)",
+  "eMODIS TERRA smoothed normalized difference vegetation index (NDVI) (dekadal, -1,-1)",
+  "eMODIS TERRA NDVI anomaly (dekadal, percent of normal)",
+  "potential evapotranspiration (PET) (monthly, mm)")
 
 for(i in c("NGA", "KEN")) write.dta(
-  setattr(pts.fews[ISO3==i], "var.labels", pts.fews.lbl),
-  paste0("./out/2017-agresults-", i, "_fews.dta"), 
+  setattr(pts.dekadal[ISO3==i], "var.labels", pts.dekadal.lbl),
+  paste0("./out/2017-agresults-", i, "_dekadal.dta"), 
+  convert.factors="string", version=12L)
+
+pts.monthly.lbl <- c(pts.lbl, "date",
+  "CHIRPS v2 rainfall estimates (monthly, mm)", 
+  "SSEBop evapotranspiration anomaly (monthly, percent of median)")
+
+for(i in c("NGA", "KEN")) write.dta(
+  setattr(pts.monthly[ISO3==i], "var.labels", pts.monthly.lbl),
+  paste0("./out/2017-agresults-", i, "_monthly.dta"), 
   convert.factors="string", version=12L)
 
 ```
@@ -251,32 +369,50 @@ save.image("./tmp/2017-agresults.RData")
 ```
 
 
+All results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list). This section only shows summaries for a sample of indicators.
+
+STATA files are organized by country, by source, and by periodicity:
+
+- `2017-agresults-{ISO3}-biovars.dta` -- 1970-2000 baseline bioclimatic indicators (source: WorldClim), altitude and slope (source: SRTM)
+- `2017-agresults-{ISO3}-traveltime.dta` -- travel time to nearest market (5 market sizes) (source: IFPRI/HarvestChoice)
+- `2017-agresults-{ISO3}-soil.dta` -- soil organic carbon content and most probable soil class (source: SoilGrids)
+- `2017-agresults-{ISO3}-monthly.dta` -- 2015-2017 monthly bioclimatic indicators (source: FEWSNET/USGS/MODIS)
+- `2017-agresults-{ISO3}-dekadal.dta` -- 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
+
+All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list).
+
+
 ## Bioclimatic Indicators
 
-Distribution of 2 long-term bioclimatic indicators at AgResults' household locations in Nigeria and Kenya.
+For documentation's purposes we graph the distributions of a sample of indicators across household locations.
+
+<u>Note</u>: NDVI values below -0.3 should be null.
+
+```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions."}
+
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+  pplot(rfe~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="Dekadal Rainfall Estimate (mm, FEWSNET/RFE)", xlab=NA)
+  pplot(chirps~adm1_name, data=pts.monthly[ISO3==i & date=="2017-05-15"], 
+    ylab="Monthly Rainfall (mm, CHIRPS)", xlab=NA)
+  pplot(ndvi~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.3,1))
+  pplot(ndvi_anom~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="NDVI Anomaly (percent of 2007-2016 median, eMODIS C6)", xlab=NA)
+}
+
+```
+
 
 ```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
-pplot(bio4~adm1_name, data=pts.wc[ISO3==i], 
-  ylab="Temperature Seasonality (100*std. dev.)", xlab=NA)
-pplot(bio15~adm1_name, data=pts.wc[ISO3==i], 
-  ylab="Precipitation Seasonality (coeff of var.)", xlab=NA)
-}
-
-```
-
-Distribution of last dekade's rainfall and NDVI at household locations.
-
-```{r res-fews, eval=F, fig.cap="Distribution of Precipitation and NDVI at Household Locations across States/Regions (last dekade) Source: FEWSNET."}
-
-par(mfrow=c(1,2))
-for (i in c("NGA", "KEN")) {
-pplot(chirps~adm1_name, data=pts.fews[ISO3==i], 
-  ylab="Precipitation (CHIRPS)", xlab=NA)
-pplot(ndvi~adm1_name, data=pts.fews[ISO3==i], 
-  ylab="NDVI (smoothed, MODISC6)", xlab=NA)
+  pplot(I(bio4/100)~adm1_name, data=pts.wc[ISO3==i], 
+    ylab="Temperature Seasonality (celsius, std. dev.)", xlab=NA)
+  pplot(bio15~adm1_name, data=pts.wc[ISO3==i], 
+    ylab="Precipitation Seasonality (mm, coeff of var.)", xlab=NA)
 }
 
 ```
@@ -295,8 +431,6 @@ pplot(orcdrc_m_sl4_250m_ll~adm1_name, data=pts.soil[ISO3==i],
 
 ```
 
-## Drought
-
 ## Market Access
 
 ```{r res-tt, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
@@ -310,4 +444,8 @@ pplot(tt10_100k~adm1_name, data=pts.tt[ISO3==i],
 }
 
 ```
+
+## Drought
+
+[in progress]
 
