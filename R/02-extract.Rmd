@@ -17,6 +17,8 @@ STATA files are organized by country, by source, and by periodicity:
 
 All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/2978247).
 
+<u>Note</u>: NDVI values below -0.3 should be null.
+
 
 ```{r, eval=F}
 
@@ -392,8 +394,6 @@ save.image("./tmp/2017-agresults.RData")
 
 ## Bioclimatic Indicators
 
-<u>Note</u>: NDVI values below -0.3 should be null.
-
 ```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions."}
 
 par(mfrow=c(1,2))
@@ -405,7 +405,7 @@ for (i in c("NGA", "KEN")) {
   pplot(ndvi~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
     ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.1,1))
   pplot(ndvi_anom~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
-    ylab="NDVI Anomaly (percent of 2007-2016 median, eMODIS C6)", xlab=NA, ylim=c(50,150))
+    ylab="NDVI Anomaly (percent of median, eMODIS C6)", xlab=NA, ylim=c(50,150))
 }
 
 ```
@@ -425,7 +425,7 @@ for (i in c("NGA", "KEN")) {
 
 ## Soil Characteristics
 
-```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m."}
+```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (permilles) Source: SoilGrids 250m."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
