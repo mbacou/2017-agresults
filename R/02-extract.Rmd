@@ -61,14 +61,94 @@ for(i in c("NGA", "KEN")) write.dta(
   convert.factors="string", version=12L)
 
 #####################################################################################
-# AfSIS
+# AfSIS/SoilGrids
 #####################################################################################
 # Use REST API at https://rest.soilgrids.org/
-r <- REST.SoilGrids(c("ORCDRC","TAXGWRB"))
-pts.soil <- extract(r, pts)
+# Note that `rjson` is required (`jsonlite` won't do)
+library(rjson)
+library(sp)
+# Test 2 points, could also add aluminum concentration `ALUM3S`
+r <- REST.SoilGrids(c("ORCDRC","TAXNWRB"))
+# => lots of random errors to return just 100 point batches
+tmp <- over(r, pts[1:2,])
+
+# Query SoilGrids API in batches of 100 points (73 batches)
+# anything bigger seems to error out. Batch #11 errors individually.
+tmp <- lapply(seq(1, nrow(pts), 100)[21:30], 
+  function(x) {
+    df <- over(r, pts[x:min((x+99), nrow(pts)),])
+    df <- df[, c(3:9, 128, 145:146)]
+    return(df)
+  })
+
+###############################################
+# SoilGrids API is a little slow for over 7,000 points, can we extract from disk
+# instead, and then post-process NA and invalid values?
+tmp <- lapply(1:nrow(afsis), function(x) {
+  r <- raster(afsis[x, raster])
+  res <- extract(r, pts)
+  cat("done", x, "\n")
+  return(res)
+})
+  
+pts.soil <- data.table(do.call(cbind, tmp))
+setnames(pts.soil, tolower(afsis$varCode))
+pts.soil <- data.table(cbind(pts@data, pts.soil))
+
+# Post-process
+summary(pts.soil)
+# => looks OK
+# What's the codification for `taxnwrb_250m_ll`
+# This is available in rgdal::GDALinfo(afsis[, last(raster)])
+# Use column MINIMUM as integer
+afsis.lbl <- fread("ftp://ftp.soilgrids.org/legends/TAXNWRB.txt")
+setkey(afsis.lbl, MINIMUM)
+setkey(pts.soil, taxnwrb_250m_ll)
+pts.soil[afsis.lbl, taxnwrb_250m_class := i.NAME]
+pts.soil[, .N, by=taxnwrb_250m_class]
+#            taxnwrb_250m_class    N
+#  1:                        NA    2
+#  2:           Haplic Acrisols 3217
+#  3:            Vetic Acrisols    4
+#  4:         Aluandic Andosols  185
+#  5:        Ferralic Arenosols   44
+#  6:       Hypoluvic Arenosols    3
+#  7:        Ferralic Cambisols   74
+#  8:          Haplic Cambisols  184
+#  9:  Haplic Cambisols (Humic)    1
+# 10:         Haplic Ferralsols  453
+# 11:         Umbric Ferralsols    6
+# 12:           Mollic Gleysols    1
+# 13:          Haplic Leptosols    1
+# 14:          Lithic Leptosols    4
+# 15:         Rendzic Leptosols    3
+# 16:           Haplic Lixisols 1189
+# 17:           Haplic Luvisols  804
+# 18: Haplic Luvisols (Chromic)   19
+# 19:           Vertic Luvisols    6
+# 20:  Haplic Nitisols (Rhodic)  893
+# 21:          Haplic Phaeozems    1
+# 22:           Luvic Phaeozems   43
+# 23:             Aric Regosols    6
+# 24:          Calcic Vertisols   17
+# 25:          Haplic Vertisols  139
+# 26: Haplic Vertisols (Eutric)    1
+
+# Which 2 points are NA?
+pts.soil[is.na(taxnwrb_250m_class), hhid]
+# [1] 110418 110421 (Nigeria)
+tmap_mode("view")
+tm_shape(pts[pts$hhid %in% c(10418, 110421),]) + tm_dots()
+# => TODO they are in a water body, we should move them
 
 
+# Export to STATA (1 file per country)
+pts.soil.lbl <- c(pts.lbl, afsis[, varLabel], "soil class based on the WRB (label)")
 
+for(i in c("NGA", "KEN")) write.dta(
+  setattr(pts.soil[ISO3==i], "var.labels", pts.soil.lbl),
+  paste0("./out/2017-agresults-", i, "_soil.dta"), 
+  convert.factors="string", version=12L)
 
 #####################################################################################
 # WorldClim Biovars
@@ -143,7 +223,23 @@ for(i in c("NGA", "KEN")) write.dta(
 #####################################################################################
 # FEWSNET
 #####################################################################################
+# We need to iterate through all FEWS grids catalogued in `fews`, noting that missing 
+# and invalid values will need extra correction. In general all r[r<0] should be NA, 
+# aside from `ndvi_anom` et `et_anom` but that step takes time, maybe best to
+# post-process (stretch, scale and nil) these values.
+# We've also checked that FEWS layer projections are as expected.
 
+
+
+
+# Export FEWS results to STATA (1 file per country)
+pts.fews.lbl <- c(pts.lbl, 
+  "altitude (meter)", "slope (degree)")
+
+for(i in c("NGA", "KEN")) write.dta(
+  setattr(pts.fews[ISO3==i], "var.labels", pts.fews.lbl),
+  paste0("./out/2017-agresults-", i, "_fews.dta"), 
+  convert.factors="string", version=12L)
 
 ```
 
@@ -159,7 +255,7 @@ save.image("./tmp/2017-agresults.RData")
 
 Distribution of 2 long-term bioclimatic indicators at AgResults' household locations in Nigeria and Kenya.
 
-```{r wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States (1970-2000, percent std. dev.) Source: WorldClim."}
+```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
@@ -169,16 +265,41 @@ pplot(bio15~adm1_name, data=pts.wc[ISO3==i],
   ylab="Precipitation Seasonality (coeff of var.)", xlab=NA)
 }
 
+```
+
+Distribution of last dekade's rainfall and NDVI at household locations.
+
+```{r res-fews, eval=F, fig.cap="Distribution of Precipitation and NDVI at Household Locations across States/Regions (last dekade) Source: FEWSNET."}
+
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+pplot(chirps~adm1_name, data=pts.fews[ISO3==i], 
+  ylab="Precipitation (CHIRPS)", xlab=NA)
+pplot(ndvi~adm1_name, data=pts.fews[ISO3==i], 
+  ylab="NDVI (smoothed, MODISC6)", xlab=NA)
+}
 
 ```
 
 ## Soil Characteristics
 
+```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: SoilGrids 250m."}
+
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+pplot(orcdrc_m_sl1_250m_ll~adm1_name, data=pts.soil[ISO3==i], 
+  ylab="Soil Organic Carbon (0 cm, permilles)", xlab=NA)
+pplot(orcdrc_m_sl4_250m_ll~adm1_name, data=pts.soil[ISO3==i], 
+  ylab="Soil Organic Carbon (30 cm, permilles)", xlab=NA)
+}
+
+```
+
 ## Drought
 
 ## Market Access
 
-```{r tt10, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
+```{r res-tt, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {

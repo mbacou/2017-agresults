@@ -16,16 +16,16 @@ WorldClim is a repository of long-term climatic time-series for the period **197
 
 ```{r fews, eval=FALSE}
 
-library(raster)
-library(data.table)
 library(stringr)
 library(viridis)
+library(raster)
+library(data.table)
 library(tmap)
 library(GSIF)
 
 load("./tmp/2017-agresults.RData")
 
-# Make a neat catalog of FEWS indicators and locations
+# Catalog FEWS indicators and download points
 fews <- list(
   chirps = list(
     varLabel = "CHIRPS v2 rainfall estimates (monthly, mm)",
@@ -276,6 +276,7 @@ save_tmap(m, "./docs/out/fews-et_anom.png", width=6, height=3.6)
 # [-1.0, 1.0] -> [0, 200] - Invalid Values: 201 - 255 
 # NDVI = (value - 100) / 100 
 # example: [ (150 - 100) / 100 = 0.5 NDVI ] 
+# Seems to me all zero values are clouds (white legend), so should be NA too
 tmp <- fews[varCode=="ndvi_east" & status==T, raster(last(raster), crs=last(proj))]
 tmp1 <- fews[varCode=="ndvi_west" & status==T, raster(last(raster), crs=last(proj))]
 colortable(tmp) <- logical(0)
@@ -435,11 +436,7 @@ include_graphics("./out/fews-ndvi_anom.png", dpi=300)
 
 ```
 
-### Other Sources
-
-There are other sources of current climatic conditions. They are listed here for information, but not used in this study currently.
-
-#### WorldClim
+### WorldClim
 
 ```{r wc-plot, eval=FALSE}
 
@@ -551,6 +548,9 @@ include_graphics("./out/wc-bio15.png")
 
 ```
 
+### Other Sources
+
+There are other sources of current climatic conditions. They are listed here for information, but not used in this study currently.
 
 #### IrriSAT
 
@@ -576,7 +576,7 @@ http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/
 
 ## Drought
 
-Aside from [SPEIBase](http://digital.csic.es/handle/10261/128892), drought events are also tracked by NASA EONET. There's an R package to query this repository at http://enelmargen.org/nasadata/vignette_v0/.
+Aside from [SPEIBase](http://digital.csic.es/handle/10261/128892), drought events are also tracked by NASA EONET. NASA EONET API documentation is at https://eonet.sci.gsfc.nasa.gov/docs/v2.1. There's an R package to query this repository at http://enelmargen.org/nasadata/vignette_v0/. The source of actual drought incidence is also tracked by SEDAC Global Drought Hazard Frequency and Distribution v1 1980-2000) that is quite old.
 
 ```
 
@@ -637,7 +637,7 @@ afsis[, `:=`(
   res = "250m")]
   
 # ORCDRC
-GDALinfo(afsis[, first(raster)])
+rgdal::GDALinfo(afsis[, last(raster)])
 tmp <- raster(afsis[, first(raster)], crs=afsis[, first(proj)])
 minValue(tmp)
 # [1] -32768

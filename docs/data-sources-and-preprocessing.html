@@ -73,7 +73,8 @@
 <li class="chapter" data-level="2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html"><i class="fa fa-check"></i><b>2</b> Data Sources and Preprocessing</a><ul>
 <li class="chapter" data-level="2.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#climatic-indicators"><i class="fa fa-check"></i><b>2.1</b> Climatic Indicators</a><ul>
 <li class="chapter" data-level="2.1.1" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#fewsnet"><i class="fa fa-check"></i><b>2.1.1</b> FEWSNET</a></li>
-<li class="chapter" data-level="2.1.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#other-sources"><i class="fa fa-check"></i><b>2.1.2</b> Other Sources</a></li>
+<li class="chapter" data-level="2.1.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#worldclim"><i class="fa fa-check"></i><b>2.1.2</b> WorldClim</a></li>
+<li class="chapter" data-level="2.1.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#other-sources"><i class="fa fa-check"></i><b>2.1.3</b> Other Sources</a></li>
 </ul></li>
 <li class="chapter" data-level="2.2" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#drought"><i class="fa fa-check"></i><b>2.2</b> Drought</a></li>
 <li class="chapter" data-level="2.3" data-path="data-sources-and-preprocessing.html"><a href="data-sources-and-preprocessing.html#soil-characteristics"><i class="fa fa-check"></i><b>2.3</b> Soil Characteristics</a></li>
@@ -281,11 +282,8 @@ Fig. 2.8: NDVI Anomaly (June 2017, percent of 10-year median 2007-2016)
 </p>
 </div>
 </div>
-<div id="other-sources" class="section level3">
-<h3><span class="header-section-number">2.1.2</span> Other Sources</h3>
-<p>There are other sources of current climatic conditions. They are listed here for information, but not used in this study currently.</p>
-<div id="worldclim" class="section level4">
-<h4><span class="header-section-number">2.1.2.1</span> WorldClim</h4>
+<div id="worldclim" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> WorldClim</h3>
 <p>WorldClim <a href="http://worldclim.org/version2">version 2</a> has long-term average <strong>monthly</strong> climate data for minimum, mean, and maximum temperature and for precipitation for <strong>1970-2000</strong>:</p>
 <ul>
 <li><code>tmin</code> minimum temperature (°C)</li>
@@ -350,29 +348,32 @@ Fig. 2.10: Precipitation Seasonality (coef. var., 1970-2000). Source: WorldClim.
 </p>
 </div>
 </div>
+<div id="other-sources" class="section level3">
+<h3><span class="header-section-number">2.1.3</span> Other Sources</h3>
+<p>There are other sources of current climatic conditions. They are listed here for information, but not used in this study currently.</p>
 <div id="irrisat" class="section level4">
-<h4><span class="header-section-number">2.1.2.2</span> IrriSAT</h4>
+<h4><span class="header-section-number">2.1.3.1</span> IrriSAT</h4>
 <p><a href="https://irrisat-cloud.appspot.com/">IrriSAT</a> is a weather based irrigation scheduling service which is used to inform farmers how much water their crop has used and how much how much irrigation they need to apply. Information is produced daily, and can work across large spatial scales. The IrriSAT methodology uses satellite images to determine a Normalized Difference Vegetation Index (NDVI) for each field, from which the plant canopy size can be determined and a specific crop coefficient (Kc) can be estimated.</p>
 <p>IrriSAT provides a <a href="https://irrisat-cloud.appspot.com/api">web API</a> to batch retrieve daily NDVI and Kc at user-specified locations.</p>
 <pre><code>irrisat.services.data.cropgrowth()</code></pre>
 </div>
 <div id="awhere" class="section level4">
-<h4><span class="header-section-number">2.1.2.3</span> aWhere</h4>
+<h4><span class="header-section-number">2.1.3.2</span> aWhere</h4>
 <p><a href="http://awhere.com/">aWhere</a> is a US for-profit that provides simplified access to current (up to 30 months) global weather conditions at registered field locations. Recently aWhere launched an <a href="http://blog.awhere.com/using-awheres-open-source-weather-data-tools">R client</a> to access their Web APIs. The service is <em>not</em> free (and acccording to their literature it is not meant to collect data for hundred or thousands of point locations). Similar information is available <em>for free</em> from AfSIS and WorldGrids (see below).</p>
 </div>
 <div id="university-of-east-anglia-cru-ts-v4.00" class="section level4">
-<h4><span class="header-section-number">2.1.2.4</span> University of East Anglia CRU TS v4.00</h4>
+<h4><span class="header-section-number">2.1.3.3</span> University of East Anglia CRU TS v4.00</h4>
 <p><a href="http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/" class="uri">http://browse.ceda.ac.uk/browse/badc/cru/data/cru_ts/cru_ts_4.00/</a></p>
 </div>
 <div id="ecmwf-era5-20102016" class="section level4">
-<h4><span class="header-section-number">2.1.2.5</span> ECMWF ERA5 (2010–2016)</h4>
+<h4><span class="header-section-number">2.1.3.4</span> ECMWF ERA5 (2010–2016)</h4>
 <p><a href="https://climate.copernicus.eu/products/climate-reanalysis">ERA5</a> is a global atmospheric reanalysis (replacing ERA-Interim). ERA5 Climate reanalysis gives a numerical description of the recent climate, produced by combining models with observations. It contains estimates of atmospheric parameters such as air and soil temperature, pressure and wind at different altitudes, and surface parameters such as rainfall, soil moisture content, sea-surface temperature and wave height. ERA5 provides data at a considerably higher spatial and temporal resolution than its predecessor ERA-Interim: hourly analysis fields are available at a horizontal resolution of 31 km, and on 137 levels from the surface up to around 80 km. Data download is possible through a <a href="https://software.ecmwf.int/wiki/display/CKB/How+to+download+ERA5+data+via+the+ECMWF+Web+API">Web API</a>.</p>
 </div>
 </div>
 </div>
 <div id="drought" class="section level2">
 <h2><span class="header-section-number">2.2</span> Drought</h2>
-<p>Aside from <a href="http://digital.csic.es/handle/10261/128892">SPEIBase</a>, drought events are also tracked by NASA EONET. There’s an R package to query this repository at <a href="http://enelmargen.org/nasadata/vignette_v0/" class="uri">http://enelmargen.org/nasadata/vignette_v0/</a>.</p>
+<p>Aside from <a href="http://digital.csic.es/handle/10261/128892">SPEIBase</a>, drought events are also tracked by NASA EONET. NASA EONET API documentation is at <a href="https://eonet.sci.gsfc.nasa.gov/docs/v2.1" class="uri">https://eonet.sci.gsfc.nasa.gov/docs/v2.1</a>. There’s an R package to query this repository at <a href="http://enelmargen.org/nasadata/vignette_v0/" class="uri">http://enelmargen.org/nasadata/vignette_v0/</a>. The source of actual drought incidence is also tracked by SEDAC Global Drought Hazard Frequency and Distribution v1 1980-2000) that is quite old.</p>
 <pre><code>
 {
 &quot;title&quot;: &quot;EONET Event Categories&quot;,
