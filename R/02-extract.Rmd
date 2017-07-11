@@ -355,6 +355,9 @@ setkey(pts.ndvi, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
 setkey(pts.pet, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
 pts.dekadal <- pts.fews[pts.ndvi][pts.pet]
 
+# 6) Forgot to nil NDVI Invalid Values: 201 - 255 
+pts.dekadal[(100*ndvi)+100>200, ndvi := NA]
+
 # Export all FEWS results to STATA (1 file per country)
 pts.dekadal.lbl <- c(pts.lbl, "date",
   "SSEBop actual evapotranspiration (ETa) (dekadal, mm)", 
@@ -400,9 +403,9 @@ for (i in c("NGA", "KEN")) {
   pplot(chirps~adm1_name, data=pts.monthly[ISO3==i & date=="2017-05-15"], 
     ylab="Monthly Rainfall (mm, CHIRPS)", xlab=NA)
   pplot(ndvi~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
-    ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.3,1))
+    ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.1,1))
   pplot(ndvi_anom~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
-    ylab="NDVI Anomaly (percent of 2007-2016 median, eMODIS C6)", xlab=NA)
+    ylab="NDVI Anomaly (percent of 2007-2016 median, eMODIS C6)", xlab=NA, ylim=c(50,150))
 }
 
 ```
