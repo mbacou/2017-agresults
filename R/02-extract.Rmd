@@ -396,22 +396,25 @@ save.image("./tmp/2017-agresults.RData")
 
 ```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria States and Kenya Regions."}
 
-pplot(rfe~adm1_name*adm0_name, pts.dekadal[date=="2017-06-01"], 
-  ylab="Dekadal Rainfall Estimate (mm, FEWSNET/RFE)", xlab=NA)
-pplot(chirps~adm1_name*adm0_name, pts.monthly[date=="2017-05-15"], 
-  ylab="Monthly Rainfall (mm, CHIRPS)", xlab=NA)
-pplot(ndvi~adm1_name*adm0_name, pts.dekadal[date=="2017-06-01"], 
-  ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.1,1))
-pplot(ndvi_anom~adm1_name*adm0_name, pts.dekadal[date=="2017-06-01"], 
-  ylab="NDVI Anomaly (percent of median, eMODIS C6)", xlab=NA, ylim=c(50,150))
-pplot(eta~adm1_name*adm0_name, pts.dekadal[date=="2017-06-01"], 
-  ylab="Actual Evapotranspiration (mm, MODIS/SSEBop)", xlab=NA)
-pplot(pet~adm1_name*adm0_name, pts.dekadal[date=="2017-06-01"], 
-  ylab="Potential Evapotranspiration (mm, NOAA/GDAS)", xlab=NA)  
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+  pplot(rfe~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="Dekadal Rainfall Estimate (mm, FEWSNET/RFE)", xlab=NA)
+  pplot(chirps~adm1_name, pts.monthly[ISO3==i & date=="2017-05-15"], 
+    ylab="Monthly Rainfall (mm, CHIRPS)", xlab=NA)
+  pplot(ndvi~adm1_name*adm0_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.1,1))
+  pplot(ndvi_anom~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="NDVI Anomaly (percent of median, eMODIS C6)", xlab=NA, ylim=c(50,150))
+  pplot(eta~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="Actual Evapotranspiration (mm, MODIS/SSEBop)", xlab=NA)
+  pplot(pet~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="Potential Evapotranspiration (mm, NOAA/GDAS)", xlab=NA)  
+}
 
 ```
 
-We note from the above charts that NDVI and NDVI Anomaly values should be corrected on the left tail (might want to set all NDVI values below -0.3 to NA). These only affect the last 3 dekades (mostly).
+We note from the above charts that NDVI and NDVI Anomaly values should be corrected on the left tail (might want to set all NDVI values below -0.3 to NA). These only affect the last 3 dekads (mostly).
 
 ```{r}
 
@@ -420,7 +423,7 @@ kable(pts.dekadal[, .(
   `NDVI < -.3` = sum(ndvi < -0.3, na.rm=T),
   `NDVI Anomaly < 30%` = sum(ndvi_anom < 30, na.rm=T)), keyby=.(ISO3, date)][
     `NDVI < -.3` > 2 | `NDVI Anomaly < 30%` > 2],
-  caption="Dekades with NDVI values below -0.3")
+  caption="Dekads with NDVI values below -0.3")
 
 ```
 
@@ -428,10 +431,13 @@ kable(pts.dekadal[, .(
 
 ```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across Nigeria States/Kenya Regions (1970-2000) Source: WorldClim v2."}
 
-pplot(I(bio4/100)~adm1_name+adm0_name, pts.wc, 
-  ylab="Temperature Seasonality (celsius, std. dev.)", xlab=NA)
-pplot(bio15~adm1_name+adm0_name, pts.wc, 
-  ylab="Precipitation Seasonality (mm, coeff of var.)", xlab=NA)
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+  pplot(I(bio4/100)~adm1_name, pts.wc[ISO3==i], 
+    ylab="Temperature Seasonality (celsius, std. dev.)", xlab=NA)
+  pplot(bio15~adm1_name, pts.wc[ISO3==i], 
+    ylab="Precipitation Seasonality (mm, coeff of var.)", xlab=NA)
+}
 
 ```
 
@@ -441,10 +447,13 @@ There seems to be an anomaly with 30 cm and lower depth estimates (only whole in
 
 ```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (permilles) Source: SoilGrids 250m."}
 
-pplot(orcdrc_m_sl1_250m_ll~adm1_name+adm0_name, pts.soil, 
-  ylab="Soil Organic Carbon (0 cm, permilles)", xlab=NA)
-pplot(orcdrc_m_sl4_250m_ll~adm1_name+adm0_name, pts.soil, 
-  ylab="Soil Organic Carbon (30 cm, permilles)", xlab=NA)
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+  pplot(orcdrc_m_sl1_250m_ll~adm1_name, pts.soil[ISO3==i], 
+    ylab="Soil Organic Carbon (0 cm, permilles)", xlab=NA)
+  pplot(orcdrc_m_sl4_250m_ll~adm1_name, pts.soil[ISO3==i], 
+    ylab="Soil Organic Carbon (30 cm, permilles)", xlab=NA)
+}
 
 ```
 
@@ -452,10 +461,13 @@ pplot(orcdrc_m_sl4_250m_ll~adm1_name+adm0_name, pts.soil,
 
 ```{r res-tt, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
 
-pplot(tt10_20k~adm1_name+adm0_name, pts.tt, 
-  ylab="Travel Time to 20K Market (hrs)", xlab=NA, beside=F)
-pplot(tt10_100k~adm1_name+adm0_name, pts.tt, 
-  ylab="Travel Time to 100K Market (hrs)", xlab=NA)
+par(mfrow=c(1,2))
+for (i in c("NGA", "KEN")) {
+  pplot(tt10_20k~adm1_name, pts.tt[ISO3==i], 
+    ylab="Travel Time to 20K Market (hrs)", xlab=NA)
+  pplot(tt10_100k~adm1_name, pts.tt[ISO3==i], 
+    ylab="Travel Time to 100K Market (hrs)", xlab=NA)
+}
 
 ```
 
