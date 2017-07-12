@@ -402,7 +402,7 @@ for (i in c("NGA", "KEN")) {
     ylab="Dekadal Rainfall Estimate (mm, FEWSNET/RFE)", xlab=NA)
   pplot(chirps~adm1_name, pts.monthly[ISO3==i & date=="2017-05-15"], 
     ylab="Monthly Rainfall (mm, CHIRPS)", xlab=NA)
-  pplot(ndvi~adm1_name*adm0_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
+  pplot(ndvi~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
     ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.1,1))
   pplot(ndvi_anom~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
     ylab="NDVI Anomaly (percent of median, eMODIS C6)", xlab=NA, ylim=c(50,150))
