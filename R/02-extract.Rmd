@@ -15,7 +15,7 @@ STATA files are organized by country, by source, and by periodicity:
 - `2017-agresults-{ISO3}-dekadal.dta` --  
   2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
 
-All extracted indicators are listed below. This table is also on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/2978247).
+All extracted indicators are listed below. A complete codebook is on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/2978247).
 
 <u>Note</u>: NDVI values below -0.3 should be null.
 
@@ -297,7 +297,7 @@ pts.fews <- data.table(do.call(cbind, tmp))
 setnames(pts.fews, tmp.fews[, paste0(varCode, "_", format(date, "%Y%m%d"))])
 pts.fews <- data.table(cbind(pts@data, pts.fews))
 
-# Post-process
+# Post-process steps
 # 1) NDVI combine East and West extracts
 pts.ndvi <- pts.fews[, .SD, .SDcols=c(1:5, which(names(pts.fews) %like% "ndvi"))]
 pts.fews <- pts.fews[, .SD, .SDcols=which(!names(pts.fews) %like% "ndvi")]
@@ -309,19 +309,18 @@ pts.ndvi <- pts.ndvi[!is.na(value)]
 pts.ndvi[, .N, by=.(hhid, var, date)][N>1]
 pts.ndvi[, `:=`(variable=NULL, zone=NULL)]
 
-# 2) NDVI stretch and nil cloud cover of last dekad
+# 2) NDVI stretch and nil cloud cover of last dekads
 pts.ndvi[date=="2017-06-11", value := ifelse(value==0, NA, value)]
 pts.ndvi[var=="ndvi", value := (value-100)/100]
 pts.ndvi <- dcast(pts.ndvi, ...~var, value.var="value")
 setnames(pts.ndvi, "ndvi-anom", "ndvi_anom")
 
-# 3) Daily PET to dekadal means
+# 3) Roll up daily PET to dekadal means
 pts.pet <- pts.fews[, .SD, .SDcols=c(1:5, which(names(pts.fews) %like% "pet"))]
 pts.fews <- pts.fews[, .SD, .SDcols=which(!names(pts.fews) %like% "pet")]
 pts.pet <- melt(pts.pet, id.vars=1:5)
 pts.pet[, c("var", "date") := tstrsplit(variable, "_", fixed=TRUE)]
 pts.pet[, date := as.Date(date, "%Y%m%d")]
-# Roll by dekad and take the mean (from 2015-01-01 to 2017-06-30)
 # make sure to match the other dekads (day -01, -11, -21)
 pts.pet[, dekad := cut(mday(date), c(0,10,20,32), labels=c("d1", "d2", "d3"))]
 pts.pet <- pts.pet[, .(value = mean(value, na.rm=T)), 
@@ -357,8 +356,9 @@ setkey(pts.ndvi, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
 setkey(pts.pet, hhid, ISO3, adm0_name, adm1_name, adm2_name, date)
 pts.dekadal <- pts.fews[pts.ndvi][pts.pet]
 
-# 6) Forgot to nil NDVI Invalid Values: 201 - 255 
-pts.dekadal[(100*ndvi)+100>200, ndvi := NA]
+# 6) Forgot to nil NDVI invalid values: 201 - 255 
+# TODO check how many grids have uncorrected cloud cover
+pts.dekadal[(100*ndvi)+100 > 200, ndvi := NA]
 
 # Export all FEWS results to STATA (1 file per country)
 pts.dekadal.lbl <- c(pts.lbl, "date",
@@ -394,7 +394,9 @@ save.image("./tmp/2017-agresults.RData")
 
 ## Bioclimatic Indicators
 
-```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across States/Regions."}
+Note that NDVI and NDVI anomaly values should be corrected on the left tail.
+
+```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria's States and Kenya's Regions."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
@@ -411,7 +413,7 @@ for (i in c("NGA", "KEN")) {
 ```
 
 
-```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim."}
+```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim v2."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
@@ -424,6 +426,8 @@ for (i in c("NGA", "KEN")) {
 ```
 
 ## Soil Characteristics
+
+There seems to be an anomaly with 30 cm and lower depth estimates (only whole integer values). To be reported.
 
 ```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (permilles) Source: SoilGrids 250m."}
 
@@ -451,7 +455,5 @@ pplot(tt10_100k~adm1_name, data=pts.tt[ISO3==i],
 
 ```
 
-## Drought
 
-[in progress]
 
