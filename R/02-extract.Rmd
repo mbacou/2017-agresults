@@ -1,6 +1,6 @@
 # Data Codebook
 
-All results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list). This section only shows summaries for a sample of indicators.
+All results are available in **STATA format** on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list). The next section shows summary statistics for a sample of indicators.
 
 STATA files are organized by country, by source, and by periodicity:
 
@@ -16,8 +16,6 @@ STATA files are organized by country, by source, and by periodicity:
   2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)
 
 All extracted indicators are listed below. A complete codebook is on [Huddle](https://abtassociates.huddle.com/workspace/734056/files/#/2978247).
-
-<u>Note</u>: NDVI values below -0.3 should be null.
 
 
 ```{r, eval=F}
@@ -45,7 +43,7 @@ kable(lbl[, .(
 
 # Data Summaries
 
-Below are distribution graphs of a sample of indicators[^violin]. All estimates below are at surveyed household locations (after imputing missing/invalid locations as described in [Section 1](./index.html)).
+Below are summary graphs for a sample of indicators[^violin]. All estimates are at surveyed household locations (after imputing missing/invalid locations as described in [Section 1](./index.html)).
 
 [^violin]: The *violin* (also called "pirate") plots in this document show **median** line in **red**, **mean** line in **green**, and the **blue** region is the inferred **95% confidence interval** of the mean.
 
@@ -394,9 +392,7 @@ save.image("./tmp/2017-agresults.RData")
 
 ## Bioclimatic Indicators
 
-Note that NDVI and NDVI anomaly values should be corrected on the left tail.
-
-```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria's States and Kenya's Regions."}
+```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria States and Kenya Regions."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {
@@ -408,12 +404,29 @@ for (i in c("NGA", "KEN")) {
     ylab="NDVI (-1,1 index, eMODIS C6)", xlab=NA, ylim=c(-0.1,1))
   pplot(ndvi_anom~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
     ylab="NDVI Anomaly (percent of median, eMODIS C6)", xlab=NA, ylim=c(50,150))
+  pplot(eta~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="Actual Evapotranspiration (mm, MODIS/SSEBop)", xlab=NA)
+  pplot(pet~adm1_name, data=pts.dekadal[ISO3==i & date=="2017-06-01"], 
+    ylab="Potential Evapotranspiration (mm, NOAA/GDAS)", xlab=NA)  
 }
 
 ```
 
+We note from the above charts that NDVI and NDVI Anomaly values should be corrected on the left tail (might want to set all NDVI values below -0.3 to NA). These only affect the last 3 dekades (mostly).
 
-```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across States/Regions (1970-2000, percent std. dev.) Source: WorldClim v2."}
+```{r}
+
+# An aside on NDVI
+kable(pts.dekadal[, .(
+  `NDVI < -.3` = sum(ndvi < -0.3, na.rm=T),
+  `NDVI Anomaly < 30%` = sum(ndvi_anom < 30, na.rm=T)), by=.(ISO3, date)][
+    `NDVI < -.3` > 0 | `NDVI Anomaly < 30%` > 0],
+  caption="Dekades with NDVI values below -0.3")
+
+```
+
+
+```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across Nigeria States/Kenya Regions (1970-2000) Source: WorldClim v2."}
 
 par(mfrow=c(1,2))
 for (i in c("NGA", "KEN")) {

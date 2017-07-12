@@ -109,7 +109,7 @@
             <section class="normal" id="section-">
 <div id="data-codebook" class="section level1">
 <h1><span class="header-section-number">Section 3</span> Data Codebook</h1>
-<p>All results are available in <strong>STATA format</strong> on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>. This section only shows summaries for a sample of indicators.</p>
+<p>All results are available in <strong>STATA format</strong> on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/folder/1170295/list">Huddle</a>. The next section shows summary statistics for a sample of indicators.</p>
 <p>STATA files are organized by country, by source, and by periodicity:</p>
 <ul>
 <li><code>2017-agresults-{ISO3}-biovars.dta</code> –<br />
@@ -124,7 +124,6 @@ soil organic carbon content and most probable soil class (source: SoilGrids)</li
 2015-2017 dekadal bioclimatic indicators (source: FEWSNET/USGS/MODIS)</li>
 </ul>
 <p>All extracted indicators are listed below. A complete codebook is on <a href="https://abtassociates.huddle.com/workspace/734056/files/#/2978247">Huddle</a>.</p>
-<p><u>Note</u>: NDVI values below -0.3 should be null.</p>
 <table>
 <caption><span id="tab:unnamed-chunk-3">Tab. 3.1: </span>Codebook of Extracted Variables</caption>
 <thead>
@@ -186,7 +185,7 @@ soil organic carbon content and most probable soil class (source: SoilGrids)</li
 </tr>
 <tr class="even">
 <td align="left">chirps</td>
-<td align="left">CHIRPS v2 rainfall estimates (monthly, mm)</td>
+<td align="left">CHIRPS v2 rainfall estimates (monthly)</td>
 <td align="center">month (total)</td>
 <td align="center">mm</td>
 <td align="left">1/1/2015</td>
@@ -195,16 +194,16 @@ soil organic carbon content and most probable soil class (source: SoilGrids)</li
 </tr>
 <tr class="odd">
 <td align="left">et_anom</td>
-<td align="left">SSEBop evapotranspiration anomaly (monthly, percent of 2007-2016 median)</td>
+<td align="left">SSEBop evapotranspiration anomaly (monthly)</td>
 <td align="center">month</td>
-<td align="center">percent</td>
+<td align="center">percent of 2007-2016 median</td>
 <td align="left">1/1/2015</td>
 <td align="center">5/15/2017</td>
 <td align="center">0.009652 degree (~1 km)</td>
 </tr>
 <tr class="even">
 <td align="left">eta</td>
-<td align="left">SSEBop actual evapotranspiration (ETa) (dekadal, mm)</td>
+<td align="left">SSEBop actual evapotranspiration (ETa) (dekadal)</td>
 <td align="center">dekad</td>
 <td align="center">mm</td>
 <td align="left">1/1/2015</td>
@@ -213,16 +212,16 @@ soil organic carbon content and most probable soil class (source: SoilGrids)</li
 </tr>
 <tr class="odd">
 <td align="left">ndvi_anom</td>
-<td align="left">eMODIS C6 NDVI anomaly (dekadal, percent of 2007-2016 median)</td>
+<td align="left">eMODIS C6 NDVI anomaly (dekadal)</td>
 <td align="center">dekad</td>
-<td align="center">percent</td>
+<td align="center">percent of 2007-2016 median</td>
 <td align="left">1/1/2015</td>
 <td align="center">6/11/2017</td>
 <td align="center">0.002413 degree (~250 m)</td>
 </tr>
 <tr class="even">
 <td align="left">ndvi</td>
-<td align="left">eMODIS C6 smoothed normalized difference vegetation index (NDVI) (dekadal, 0-1)</td>
+<td align="left">eMODIS C6 smoothed normalized difference vegetation index (NDVI) (dekadal)</td>
 <td align="center">dekad</td>
 <td align="center">index -1,1</td>
 <td align="left">1/1/2015</td>
@@ -231,8 +230,8 @@ soil organic carbon content and most probable soil class (source: SoilGrids)</li
 </tr>
 <tr class="odd">
 <td align="left">pet</td>
-<td align="left">potential evapotranspiration (PET) (daily, mm)</td>
-<td align="center">dekad (daily means)</td>
+<td align="left">potential evapotranspiration (PET) (daily)</td>
+<td align="center">dekad (mean of daily means)</td>
 <td align="center">mm</td>
 <td align="left">1/1/2015</td>
 <td align="center">6/30/2017</td>
@@ -240,7 +239,7 @@ soil organic carbon content and most probable soil class (source: SoilGrids)</li
 </tr>
 <tr class="even">
 <td align="left">rfe</td>
-<td align="left">FEWS rainfall estimates (RFE) (dekadal, mm)</td>
+<td align="left">FEWS rainfall estimates (RFE) (dekadal)</td>
 <td align="center">dekad (total)</td>
 <td align="center">mm</td>
 <td align="left">1/1/2015</td>
