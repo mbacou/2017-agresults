@@ -25,6 +25,9 @@ library(GSIF)
 
 load("./tmp/2017-agresults.RData")
 
+# Raster defaults
+rasterOptions(tmpdir="/home/data/tmp", tmptime=24, chunksize=2e+08, progress="text", timer=T)
+
 # Catalog FEWS indicators and download points
 fews <- list(
   chirps = list(
@@ -646,7 +649,6 @@ minValue(tmp)
 maxValue(tmp)
 # [1] 32767
 proj4string(tmp) <- proj4string(pts)
-NAvalue(tmp) <- -0.001
 # Not clear how to best set missing and invalid values (-32768)
 spplot(crop(tmp, ken.pts), col.regions=pal.orcdrc)
 
@@ -663,7 +665,6 @@ minValue(tmp)
 # [1] -32768
 maxValue(tmp)
 # [1] 32767
-NAvalue(tmp) <- -0.001
 spplot(crop(tmp, ken.pts), at=pal.txgwrb$Number, col.regions=pal.taxnwrb$COLOR)
 
 m <- tm_shape(crop(tmp, pts)) + tm_raster(names(tmp), pal=pal.taxnwrb$COLOR,
@@ -714,7 +715,7 @@ tt <- dt[, .SD, .SDcols=c("CELL5M", "X", "Y", tmp)]
 rm(dt); gc()
 tt <- SpatialPixelsDataFrame(tt[, .(X,Y)], data.frame(tt)[, 4:8],
   proj4string=CRS("+init=epsg:4326"))
-tt <- brick(tt)
+tt <- stack(tt)
 
 # Map 2 of them
 m <- tm_shape(tt) + tm_raster("tt10_20k", pal=plasma(255),
