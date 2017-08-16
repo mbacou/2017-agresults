@@ -739,7 +739,7 @@ m.ken
 
 ## Uganda
 
-**`r format(nrow(uga.hh), big.mark=",")` households** are sampled in Uganda. There are **`r uga.hh[is.na(m16_5_latitude), .N]`** households missing coordinates. Missing coordinates are imputed using village centroids (these imputed locatoins are shown on the map below in red).
+**`r format(nrow(uga.hh), big.mark=",")` households** are sampled in Uganda. There are **`r uga.hh[is.na(m16_5_latitude), .N]`** households missing coordinates. Missing coordinates are imputed using village centroids (these imputed locations are shown on the map below in red).
 
 ```{r uga-na, results="asis"}
 
