@@ -429,8 +429,8 @@ save.image("./tmp/2017-agresults.RData")
 
 ```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria States, Kenya Regions, and Uganda Regions."}
 
-par(mfrow=c(1,2))
 for (i in iso3) {
+  if (i=="UGA") par(mfrow=c(1,1), las=2) else par(mfrow=c(1,2), las=0)
   pplot(rfe~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
     ylab="Dekadal Rainfall Estimate (mm, FEWSNET/RFE)", xlab=NA)
   pplot(chirps~adm1_name, pts.monthly[ISO3==i & date=="2017-05-15"], 
@@ -464,8 +464,8 @@ kable(pts.dekadal[, .(
 
 ```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across Nigeria States/Kenya Regions (1970-2000) Source: WorldClim v2."}
 
-par(mfrow=c(1,2))
 for (i in iso3) {
+  if (i=="UGA") par(mfrow=c(1,1), las=2) else par(mfrow=c(1,2), las=0)
   pplot(I(bio4/100)~adm1_name, pts.wc[ISO3==i], 
     ylab="Temperature Seasonality (celsius, std. dev.)", xlab=NA)
   pplot(bio15~adm1_name, pts.wc[ISO3==i], 
@@ -480,8 +480,8 @@ There seems to be an anomaly with 30 cm and lower depth estimates (only whole in
 
 ```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (permilles) Source: SoilGrids 250m."}
 
-par(mfrow=c(1,2))
 for (i in iso3) {
+  if (i=="UGA") par(mfrow=c(1,1), las=2) else par(mfrow=c(1,2), las=0)
   pplot(orcdrc_m_sl1_250m_ll~adm1_name, pts.soil[ISO3==i], 
     ylab="Soil Organic Carbon (0 cm, permilles)", xlab=NA)
   pplot(orcdrc_m_sl4_250m_ll~adm1_name, pts.soil[ISO3==i], 
@@ -494,8 +494,8 @@ for (i in iso3) {
 
 ```{r res-tt, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
 
-par(mfrow=c(1,2))
 for (i in iso3) {
+  if (i=="UGA") par(mfrow=c(1,1), las=2) else par(mfrow=c(1,2), las=0)
   pplot(tt10_20k~adm1_name, pts.tt[ISO3==i], 
     ylab="Travel Time to 20K Market (hrs)", xlab=NA)
   pplot(tt10_100k~adm1_name, pts.tt[ISO3==i], 
