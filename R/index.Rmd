@@ -7,15 +7,14 @@ site: bookdown::bookdown_site
 knit: bookdown::render_book
 output:
   bookdown::gitbook:
-  url: "https://mbacou.github.io/2017-agresults/"
-  github-repo: "mbacou/2017-agresults"
+    url: "https://mbacou.github.io/2017-agresults/"
+    github-repo: "mbacou/2017-agresults"
 df_print: paged
 always_allow_html: yes
 bibliography: biblio.bib
 cover-image: fig/cover.jpg
 csl: apa.csl
 link-citations: yes
-nocite: @mathew2016drought, @santiago2016speibase, @hengl2017soilgrids
 ---
 
 # Survey Sampling
@@ -31,7 +30,7 @@ library(knitr)
 library(stringr)
 library(curl)
 
-load("./tmp/2017-agresults.RData")
+load("../tmp/2017-agresults.RData")
 
 # Output options
 opts_chunk$set(comment=NA, warning=F, message=F, echo=F, base.url="../docs",
@@ -567,16 +566,11 @@ uga.pts <- SpatialPointsDataFrame(tmp[, .(m16_5_longitude, m16_5_latitude)],
 # Extract administrative details from GADM map
 # UGA is divide into 111 districts and 167+23+1 counties
 # Get recent UGA county maps
-uga.l2 <- shapefile("./maps/uga-nhs-13_L2.shp")
 uga.l3 <- getData("GADM", country="UGA", level=3)
 # We have 159 districts and 945 "counties" or "subcounties" in GADM
 # 114 counties in NHS 2013 map and 164 in 2006 reference map
 # Maybe best to use the NHS 2013 survey map as reference in this study?
-tmp <- extract(uga.l2, uga.pts)
-tmp <- data.table(respon_id=uga.pts@data[,"respon_id"], tmp[, -c(1:3, 12:13)])
-setkey(tmp, respon_id)
-setkey(uga.hh, respon_id)
-uga.hh <- tmp[uga.hh]
+uga.l2 <- shapefile("./maps/uga-nhs-13_L2.shp")
 
 # Compare district information from `uga.hh` and from NHS map
 tmp <- uga.hh[, .N, keyby=.(a6district, svyL2Nm)]
@@ -589,36 +583,89 @@ tmap_mode("view")
 tm_shape(uga.l2) +
   tm_polygons(col="yellow", border.col="red", lty="dashed", alpha=.2) + 
   tm_shape(uga.pts, is.master=T, projection="eck4") +
-  tm_dots(col="a6_2county", pal=viridis(60), shape=4, alpha=.9, legend.show=T, size=.1,
-    title="Uganda<br/>Household Locations<br/>across counties") +
+  tm_dots(col="a6district", pal=viridis(60), 
+    shape=4, alpha=.9, legend.show=T, size=.1,
+    popup.vars=c("respon_id", "a6district", "a6_2county"),
+    title="Uganda<br/>Household Locations<br/>across districts") +
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60)) +
   tm_layout(legend.outside=T)
-# => looks okay, we need to extract district/county details from the map and compare
-# with the info in `uga.hh`, then impute missing coords using county or village/parish
-# (?) centroids
+# => looks like X,Y were shuffled, patterns do not make sense, asked Betsy
 
+#####################################################################################
+# Received correction from Molly Brune on 2017.08.15
+uga.hh <- read.dta("./data/Uganda_2016_locations.dta")
+uga.hh <- data.table(uga.hh)
+summary(uga.hh$respon_id)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 1002    1458    1912    1916    2374    2834 
+
+tmp <- uga.hh[, sum(is.na(m16_5_latitude)), 
+  keyby=.(a6district, a6_2county, a7subcty, a8parish, a9village)]
+# 216 villages, some typos across villages
+tmp[, sum(V1)]
+# [1] 55
+# 55 villages with missing hhld coords
+tmp[, lapply(.SD, uniqueN)]
+#    a6district a6_2county a7subcty a8parish a9village V1
+# 1:         28         56      114      154       171  4
 
 tmp <- uga.hh[, sum(is.na(m16_5_latitude)/.N), 
   keyby=.(a6district, a6_2county, a7subcty, a8parish, a9village)][V1==1]
 # => there's no village with all missing hhld coords, so we could simply use village
 # centroids to impute missing coords
 
-
 # Make and save map
-tmp <- uga.pts[uga.pts$hhid,]
+tmp <- uga.hh[!is.na(m16_5_latitude)]
+uga.pts <- SpatialPointsDataFrame(tmp[, .(m16_5_longitude, m16_5_latitude)], 
+  data.frame(tmp), proj4string=CRS("+init=epsg:4326"))
 
-m.uga <- tm_shape(uga.l2) +
-  tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
-  tm_shape(tmp, is.master=T, projection="eck4") +
-  tm_dots(col="calc_lga", shape=4, alpha=.9, legend.show=T, size=.3,
-    title="Nigeria\nSurveyed\nHousehold\nLocations\n(invalid)") +
-  tm_shape(nga.l2) +
-  tm_text("svyL2Nm", col="grey30", size="AREA", root=4) +  
+# Another visual check
+tmap_mode("view")
+tm_shape(uga.l2) +
+  tm_polygons(col="yellow", border.col="red", lty="dashed", alpha=.2) + 
+  tm_shape(uga.pts, is.master=T, projection="eck4") +
+  tm_dots(col="a6_2county", pal=viridis(56), 
+    shape=4, alpha=.9, legend.show=T, size=.1,
+    popup.vars=c("respon_id", "a6district", "a6_2county"),
+    title="Uganda<br/>Household Locations<br/>across counties") +
   tm_scale_bar(position=c("left", "bottom"), breaks=c(0,20,40,60)) +
   tm_layout(legend.outside=T)
+# => OK across counties, good!
 
-save_tmap(m.uga, "./out/2017-abt-uga_odd.pdf", width=5, units="in")
+# Impute missing coords
+uga.hh[, `:=`(
+  X_imp = mean(m16_5_longitude, na.rm=T),
+  Y_imp = mean(m16_5_latitude, na.rm=T)
+  ), by=a9village]
+uga.hh[!is.na(m16_5_longitude), X_imp := m16_5_longitude]
+uga.hh[!is.na(m16_5_latitude), Y_imp := m16_5_latitude]
 
+# Extract GAUL `adm1_name` and `adm2_name` to match other surveys
+uga.l2 <- shapefile("./maps/g2015_2014_2_UGA.shp")
+crs(uga.l2)
+names(uga.l2) <- tolower(names(uga.l2))
+uga.pts <- SpatialPointsDataFrame(uga.hh[, .(X_imp, Y_imp)], 
+  data.frame(uga.hh), proj4string=CRS("+init=epsg:4326"))
+tmp <- extract(uga.l2, uga.pts)
+uga.pts@data$adm0_name <- tmp$adm0_name
+uga.pts@data$adm1_name <- tmp$adm1_name
+uga.pts@data$adm2_name <- tmp$adm2_name
+setnames(uga.pts@data, "respon_id", "hhid")
+
+# Make print map
+tmap_mode("plot")
+m.uga <- tm_shape(uga.l2) +
+  tm_polygons(fill="grey90", border.col="grey80", alpha=.2) + 
+  tm_text("adm2_name", col="grey30", size=.4) +  
+  tm_shape(uga.pts[!is.na(uga.pts$m16_5_altitude),], is.master=T, projection="eck4") +
+  tm_dots(col="a6district", shape=4, alpha=.9, legend.show=T, size=.3,
+    title="Uganda\nSurveyed\nHousehold\nLocations") +
+  tm_shape(uga.pts[is.na(uga.pts$m16_5_altitude),]) +
+  tm_dots(col="red", shape=4, alpha=.9, legend.show=T, size=.3) +  
+  tm_scale_bar(position=c("right", "bottom"), breaks=c(0,20,40,60)) +
+  tm_layout(legend.outside=T)
+
+save_tmap(m.uga, "./out/2017-abt-uga_pts.pdf", width=5, units="in")
 
 ```
 
@@ -694,7 +741,28 @@ m.ken
 
 [in progress]
 
-**` format(nrow(uga.hh), big.mark=",")` households** are sampled in Uganda. There are **` uga.hh[is.na(X), .N]`** households missing coordinates and **` nrow(uga.odd)` possibly invalid** locations.
+**` format(nrow(uga.hh), big.mark=",")` households** are sampled in Uganda. There are **` uga.hh[is.na(m16_5_latitude), .N]`** households missing coordinates. Missing coordinates are imputed using village centroids (shown on the map below in red).
+
+```{r uga-na, results="asis"}
+
+# How many NAs?
+tmp <- uga.hh[, .(N=.N, missing=sum(is.na(m16_5_latitude))), keyby=.(
+  District = tools::toTitleCase(tolower(a6district)), 
+  County = tools::toTitleCase(tolower(a6_2county)),
+  Parish = tools::toTitleCase(tolower(a8parish)),
+  Village = tools::toTitleCase(tolower(a9village)))]
+
+table_options(HTMLcaption="(#tab:uga-na) Survey Sampling across Districts and missing Household Locations")
+html(tabular(Factor(District)*(Factor(County)+1)*DropEmpty()+1~Format(big.mark=",")*Heading("Uganda Household GPS Locations")*((`Obs.`=N)+(`Missing`=missing))*Heading()*sum, 
+  data=tmp), rmarkdown=TRUE)
+
+```
+
+```{r uga-hh, fig.cap="Households Locations across Districts, Uganda", fig.height=6, fig.width=6}
+
+m.uga
+
+```
 
 
 

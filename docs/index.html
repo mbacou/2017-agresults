@@ -113,7 +113,7 @@
 <div id="header">
 <h1 class="title">Geospatial Characteristics of Program Beneficiaries (Documentation)</h1>
 <h4 class="author"><em><a href="http://github.com/mbacou">BACOU, Melanie</a> for <a href="http://agresults.org/">AgResults</a> (Abt Associates)</em></h4>
-<h4 class="date"><em>Last updated on 2017-07-12. DO NOT USE OR CITE</em></h4>
+<h4 class="date"><em>Last updated on 2017-08-16. DO NOT USE OR CITE</em></h4>
 </div>
 <div id="survey-sampling" class="section level1">
 <h1><span class="header-section-number">Section 1</span> Survey Sampling</h1>
@@ -1542,7 +1542,1236 @@ Fig. 1.2: Households Locations across Counties, Kenya
 <div id="uganda" class="section level2">
 <h2><span class="header-section-number">1.3</span> Uganda</h2>
 <p>[in progress]</p>
-<p><strong><code>format(nrow(uga.hh), big.mark=&quot;,&quot;)</code> households</strong> are sampled in Uganda. There are <strong><code>uga.hh[is.na(X), .N]</code></strong> households missing coordinates and <strong><code>nrow(uga.odd)</code> possibly invalid</strong> locations.</p>
+<p><strong><code>format(nrow(uga.hh), big.mark=&quot;,&quot;)</code> households</strong> are sampled in Uganda. There are <strong><code>uga.hh[is.na(m16_5_latitude), .N]</code></strong> households missing coordinates. Missing coordinates are imputed using village centroids (shown on the map below in red).</p>
+<table class="Rtable">
+<caption>
+<span id="tab:uga-na">Tab. 1.3: </span> Survey Sampling across Districts and missing Household Locations
+</caption>
+<thead>
+<tr class="center">
+<th>
+ 
+</th>
+<th>
+ 
+</th>
+<th colspan="2">
+Uganda Household GPS Locations
+</th>
+</tr>
+<tr class="center">
+<th>
+District
+</th>
+<th>
+County
+</th>
+<th>
+Obs.
+</th>
+<th>
+Missing
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="center">
+<th class="left">
+Amuria
+</th>
+<th class="left">
+Amuria County
+</th>
+<td>
+    9
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kapelebyong County
+</th>
+<td>
+   20
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   29
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Amuru
+</th>
+<th class="left">
+Kilak County
+</th>
+<td>
+  142
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  142
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Apac
+</th>
+<th class="left">
+Kwania County
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Arua
+</th>
+<th class="left">
+Ayivu County
+</th>
+<td>
+   20
+</td>
+<td>
+    4
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Madi-Okollo County
+</th>
+<td>
+   10
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Terego County
+</th>
+<td>
+   10
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   40
+</td>
+<td>
+   10
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Bushenyi
+</th>
+<th class="left">
+Bushenyi-Ishaka Municipality
+</th>
+<td>
+    9
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Igara County East
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Igara County West
+</th>
+<td>
+   30
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   49
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Gulu
+</th>
+<th class="left">
+Aswa County
+</th>
+<td>
+   29
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Omoro County
+</th>
+<td>
+   29
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   58
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Isingiro
+</th>
+<th class="left">
+Bukanga County
+</th>
+<td>
+    8
+</td>
+<td>
+    2
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Isingirocounty North
+</th>
+<td>
+   29
+</td>
+<td>
+    6
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   37
+</td>
+<td>
+    8
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kabale
+</th>
+<th class="left">
+Ndorwa County East
+</th>
+<td>
+   20
+</td>
+<td>
+    4
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Ndorwa County West
+</th>
+<td>
+   20
+</td>
+<td>
+    4
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rubanda County East
+</th>
+<td>
+   21
+</td>
+<td>
+    4
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rubanda County West
+</th>
+<td>
+    9
+</td>
+<td>
+    2
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   70
+</td>
+<td>
+   14
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kabarole
+</th>
+<th class="left">
+Bunyangabu County
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Burahya County
+</th>
+<td>
+    9
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Fortportal Municipality
+</th>
+<td>
+   21
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   49
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kamuli
+</th>
+<th class="left">
+Bugabula County South
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kanungu
+</th>
+<th class="left">
+Kinkinzi County West
+</th>
+<td>
+   10
+</td>
+<td>
+    2
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    2
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kasese
+</th>
+<th class="left">
+Bukonjo County West
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Busongora Countynorth
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kasese Municipality
+</th>
+<td>
+    9
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   38
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kibaale
+</th>
+<th class="left">
+Buyagaeast County
+</th>
+<td>
+   40
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Buyagawest County
+</th>
+<td>
+   20
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Buyanja County
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   79
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kiruhura
+</th>
+<th class="left">
+Kazo County
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Nyabushozi County
+</th>
+<td>
+   20
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   30
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Kyenjojo
+</th>
+<th class="left">
+Mwenge County North
+</th>
+<td>
+   23
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Mwenge County South
+</th>
+<td>
+   26
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   49
+</td>
+<td>
+    3
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Luweero
+</th>
+<th class="left">
+Katikamu County North
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Masaka
+</th>
+<th class="left">
+Bukoto County Central
+</th>
+<td>
+   47
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Bukoto County East
+</th>
+<td>
+   13
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Masaka Municipality
+</th>
+<td>
+   21
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   81
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Masindi
+</th>
+<th class="left">
+Bujenje County
+</th>
+<td>
+   19
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Buruli County
+</th>
+<td>
+   16
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   35
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Mbale
+</th>
+<th class="left">
+Bungokho County North
+</th>
+<td>
+   20
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Bungokho County South
+</th>
+<td>
+   40
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   60
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Mityana
+</th>
+<th class="left">
+Mityana County South
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Mubende
+</th>
+<th class="left">
+Buwekula County
+</th>
+<td>
+   30
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kasambya County
+</th>
+<td>
+   65
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kassanda County North
+</th>
+<td>
+   40
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Kassanda County South
+</th>
+<td>
+   44
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  179
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Mukono
+</th>
+<th class="left">
+Mukono County South
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Namutumba
+</th>
+<th class="left">
+Busiki County
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Ntungamo
+</th>
+<th class="left">
+Kajara County
+</th>
+<td>
+   72
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Ruhaama County
+</th>
+<td>
+   67
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Rushenyi County
+</th>
+<td>
+   27
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  166
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Oyam
+</th>
+<th class="left">
+Oyam County North
+</th>
+<td>
+   84
+</td>
+<td>
+    6
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+Oyam County South
+</th>
+<td>
+   73
+</td>
+<td>
+    4
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+  157
+</td>
+<td>
+   10
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Pader
+</th>
+<th class="left">
+Aruu County
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   10
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Wakiso
+</th>
+<th class="left">
+Kyadondo County North
+</th>
+<td>
+   21
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   21
+</td>
+<td>
+    0
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+Yumbe
+</th>
+<th class="left">
+Aringa County
+</th>
+<td>
+   21
+</td>
+<td>
+    5
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+ 
+</th>
+<th class="left">
+All
+</th>
+<td>
+   21
+</td>
+<td>
+    5
+</td>
+</tr>
+<tr class="center">
+<th class="left">
+</th>
+<th class="left">
+All
+</th>
+<td>
+1,479
+</td>
+<td>
+   55
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure"><span id="fig:uga-hh"></span>
+<img src="fig/uga-hh-1.png" alt="Households Locations across Districts, Uganda" width="1800" />
+<p class="caption">
+Fig. 1.3: Households Locations across Districts, Uganda
+</p>
+</div>
 
 </div>
 </div>

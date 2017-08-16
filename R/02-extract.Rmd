@@ -51,13 +51,15 @@ Below are summary graphs for a sample of indicators[^violin]. All estimates are 
 ```{r extract, eval=FALSE}
 
 # Limit to whatever locations are in `pts`
+iso3 <- c("KEN", "NGA", "UGA")
 nga.pts$ISO3 <- "NGA"
 ken.pts$ISO3 <- "KEN"
 uga.pts$ISO3 <- "UGA"
 
 pts <- rbind(
   nga.pts[, c("hhid", "ISO3", "adm0_name", "adm1_name", "adm2_name")], 
-  ken.pts[, c("hhid", "ISO3", "adm0_name", "adm1_name", "adm2_name")])
+  ken.pts[, c("hhid", "ISO3", "adm0_name", "adm1_name", "adm2_name")],
+  uga.pts[, c("hhid", "ISO3", "adm0_name", "adm1_name", "adm2_name")])
 
 pts.lbl <- c("household id", "ISO3 country code",
   "GADM admin level-0", "GADM admin level-1", "GADM admin level-2")
@@ -98,7 +100,7 @@ pts.tt.lbl <- c(pts.lbl, c(
   "travel time to 250K market (hrs)",
   "travel time to 500K market (hrs)"))
 
-for(i in c("NGA", "KEN")) write.dta(
+for(i in iso3) write.dta(
   setattr(pts.tt[ISO3==i], "var.labels", pts.tt.lbl),
   paste0("./out/2017-agresults-", i, "_traveltime.dta"), 
   convert.factors="string", version=12L)
@@ -192,7 +194,7 @@ tm_shape(pts[pts$hhid %in% c(10418, 110421),]) + tm_dots()
 # Export to STATA (1 file per country)
 pts.soil.lbl <- c(pts.lbl, afsis[, varLabel], "soil class based on the WRB (label)")
 
-for(i in c("NGA", "KEN")) write.dta(
+for(i in iso3) write.dta(
   setattr(pts.soil[ISO3==i], "var.labels", pts.soil.lbl),
   paste0("./out/2017-agresults-", i, "_soil.dta"), 
   convert.factors="string", version=12L)
@@ -203,6 +205,7 @@ for(i in c("NGA", "KEN")) write.dta(
 # Download tile and extract single point data, tiles are cached locally
 # For Nigeria we need tiles #26 "bio1_26"
 # For Kenya we need tiles #27 and #37 "bio1_27"
+# For Uganda we need tiles #27
 # Each of the 19 bioclim variables is available in a .bil raster
 vars <- paste0("bio", 1:19)
 
@@ -217,7 +220,7 @@ nga.wc <- lapply(vars, function(x) {
 
 # Combine all vars
 nga.wc <- do.call(cbind, nga.wc)
-nga.wc <- cbind(pts@data[pts$adm0_name=="Nigeria",], nga.wc)
+nga.wc <- cbind(pts@data[pts$ISO3=="NGA",], nga.wc)
 
 # Kenya (#27, #37)
 ken.wc <- lapply(vars, function(x) {
@@ -234,16 +237,46 @@ ken.wc <- lapply(vars, function(x) {
 ken.wc <- do.call(cbind, ken.wc)
 ken.wc <- cbind(pts@data[pts$ISO3=="KEN",], ken.wc)
 
-# TODO Uganda
+# Uganda (#26, #27, #36, #37)
+uga.hh[Y_imp==min(Y_imp), respon_id]
+uga.hh[Y_imp==max(Y_imp), respon_id]
+uga.hh[X_imp==min(X_imp), respon_id]
+uga.hh[order(-X_imp), respon_id][1:4]
+tmp <- coordinates(uga.pts[uga.pts$hhid==2746,])
+tmp <- getData("worldclim", var="bio", res=.5, lon=tmp[1], lat=tmp[2],
+  path="~/Projects/hc-data/WorldClim_0.5")
+
+tmap_mode("view")
+tm_shape(raster("~/Projects/hc-data/WorldClim_0.5/bio1_27.bil")) + tm_raster() +
+tm_shape(raster("~/Projects/hc-data/WorldClim_0.5/bio1_37.bil")) + tm_raster() +  
+  tm_shape(uga.pts, is.master=TRUE) + tm_dots()
+
+uga.wc <- lapply(vars, function(x) {
+  r26 <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_26.bil"))
+  r27 <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_27.bil"))
+  r36 <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_36.bil"))
+  r37 <- raster(paste0("~/Projects/hc-data/WorldClim_0.5/", x, "_37.bil"))
+  tmp26 <- extract(r26, pts[pts$ISO3=="UGA",])
+  tmp27 <- extract(r27, pts[pts$ISO3=="UGA",])
+  tmp36 <- extract(r36, pts[pts$ISO3=="UGA",])
+  tmp37 <- extract(r37, pts[pts$ISO3=="UGA",])
+  tmp <- data.table(rowMeans(cbind(tmp26, tmp27, tmp36, tmp37), na.rm=T))
+  setnames(tmp, x)
+  return(tmp)
+})
+
+# Combine all vars
+uga.wc <- do.call(cbind, uga.wc)
+uga.wc <- cbind(pts@data[pts$ISO3=="UGA",], uga.wc)
 
 # Combine all countries
-pts.wc <- rbind(nga.wc, ken.wc)
+pts.wc <- rbind(ken.wc, nga.wc, uga.wc)
 rm(ken.wc, nga.wc, uga.wc)
 
 
 #####################################################################################
 # Add SRTM Altitude and Slope
-pts.srtm <- lapply(c("NGA", "KEN"), function(x) {
+pts.srtm <- lapply(iso3, function(x) {
   r <- getData("alt", country=x, mask=F, path="~/Projects/hc-data/SRTM")
   tmp1 <- extract(r, pts[pts$ISO3==x,])
   slope <- terrain(r, opt=c("slope"), unit="degrees")
@@ -261,7 +294,7 @@ rm(pts.srtm)
 pts.wc.lbl <- c(pts.lbl, bio.lbl,
   "altitude (meter)", "slope (degree)")
 
-for(i in c("NGA", "KEN")) write.dta(
+for(i in iso3) write.dta(
   setattr(pts.wc[ISO3==i], "var.labels", pts.wc.lbl),
   paste0("./out/2017-agresults-", i, "_biovars.dta"), 
   convert.factors="string", version=12L)
@@ -325,7 +358,7 @@ pts.pet <- pts.pet[, .(value = mean(value, na.rm=T)),
   by=.(hhid, ISO3, adm0_name, adm1_name, adm2_name, 
     year=year(date), month=month(date), dekad)]
 pts.pet[, date := 
-    as.Date(paste(year, month, dplyr::recode(dekad, d1=1, d2=11, d3=21), sep="-")))]
+    as.Date(paste(year, month, dplyr::recode(dekad, d1=1, d2=11, d3=21), sep="-"))]
 pts.pet[, `:=`(year=NULL, month=NULL, dekad=NULL)]
 setnames(pts.pet, "value", "pet")
 
@@ -366,7 +399,7 @@ pts.dekadal.lbl <- c(pts.lbl, "date",
   "eMODIS TERRA NDVI anomaly (dekadal, percent of normal)",
   "potential evapotranspiration (PET) (monthly, mm)")
 
-for(i in c("NGA", "KEN")) write.dta(
+for(i in iso3) write.dta(
   setattr(pts.dekadal[ISO3==i], "var.labels", pts.dekadal.lbl),
   paste0("./out/2017-agresults-", i, "_dekadal.dta"), 
   convert.factors="string", version=12L)
@@ -375,7 +408,7 @@ pts.monthly.lbl <- c(pts.lbl, "date",
   "CHIRPS v2 rainfall estimates (monthly, mm)", 
   "SSEBop evapotranspiration anomaly (monthly, percent of median)")
 
-for(i in c("NGA", "KEN")) write.dta(
+for(i in iso3) write.dta(
   setattr(pts.monthly[ISO3==i], "var.labels", pts.monthly.lbl),
   paste0("./out/2017-agresults-", i, "_monthly.dta"), 
   convert.factors="string", version=12L)
@@ -394,10 +427,10 @@ save.image("./tmp/2017-agresults.RData")
 
 ### 2015-2017 Period
 
-```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria States and Kenya Regions."}
+```{r res-fews, fig.cap="Distribution of Last Period Bioclimatic Indicators at Household Locations across Nigeria States, Kenya Regions, and Uganda Regions."}
 
 par(mfrow=c(1,2))
-for (i in c("NGA", "KEN")) {
+for (i in iso3) {
   pplot(rfe~adm1_name, pts.dekadal[ISO3==i & date=="2017-06-01"], 
     ylab="Dekadal Rainfall Estimate (mm, FEWSNET/RFE)", xlab=NA)
   pplot(chirps~adm1_name, pts.monthly[ISO3==i & date=="2017-05-15"], 
@@ -432,7 +465,7 @@ kable(pts.dekadal[, .(
 ```{r res-wc, fig.cap="Distribution of Long-Term Precipitation and Temperature Seasonality at Household Locations across Nigeria States/Kenya Regions (1970-2000) Source: WorldClim v2."}
 
 par(mfrow=c(1,2))
-for (i in c("NGA", "KEN")) {
+for (i in iso3) {
   pplot(I(bio4/100)~adm1_name, pts.wc[ISO3==i], 
     ylab="Temperature Seasonality (celsius, std. dev.)", xlab=NA)
   pplot(bio15~adm1_name, pts.wc[ISO3==i], 
@@ -448,7 +481,7 @@ There seems to be an anomaly with 30 cm and lower depth estimates (only whole in
 ```{r res-afsis, fig.cap="Distribution of Soil Organic Carbon at Household Locations across States/Regions (permilles) Source: SoilGrids 250m."}
 
 par(mfrow=c(1,2))
-for (i in c("NGA", "KEN")) {
+for (i in iso3) {
   pplot(orcdrc_m_sl1_250m_ll~adm1_name, pts.soil[ISO3==i], 
     ylab="Soil Organic Carbon (0 cm, permilles)", xlab=NA)
   pplot(orcdrc_m_sl4_250m_ll~adm1_name, pts.soil[ISO3==i], 
@@ -462,7 +495,7 @@ for (i in c("NGA", "KEN")) {
 ```{r res-tt, fig.cap="Distribution of Travel Times to Market at Household Locations across States/Regions (hrs). Source: IFPRI/HarvestChoice."}
 
 par(mfrow=c(1,2))
-for (i in c("NGA", "KEN")) {
+for (i in iso3) {
   pplot(tt10_20k~adm1_name, pts.tt[ISO3==i], 
     ylab="Travel Time to 20K Market (hrs)", xlab=NA)
   pplot(tt10_100k~adm1_name, pts.tt[ISO3==i], 
