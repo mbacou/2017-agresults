@@ -4,13 +4,9 @@ author: "[BACOU, Melanie](http://github.com/mbacou) for [AgResults](http://agres
 date: "Last updated on `r Sys.Date()`. DO NOT USE OR CITE"
 description: "Biophysical, socio-economic, and market information derived from high-resolution remote sensing and modeled time series."
 site: bookdown::bookdown_site
-knit: bookdown::render_book
-output:
-  bookdown::gitbook:
-    url: "https://mbacou.github.io/2017-agresults/"
-    github-repo: "mbacou/2017-agresults"
-df_print: paged
-always_allow_html: yes
+output:bookdown::gitbook:
+  url: "https://mbacou.github.io/2017-agresults/"
+  github-repo: "mbacou/2017-agresults"
 bibliography: biblio.bib
 cover-image: fig/cover.jpg
 csl: apa.csl

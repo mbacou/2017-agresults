@@ -50,6 +50,10 @@ ul.summary > li:first-child {
   padding-top: 6px;
 }
 
+ul.summary > li.chapter {
+  border-bottom: 1px solid rgba(0,0,0,.07);
+}
+
 .book .book-body .page-wrapper .page-inner section.normal blockquote {
   color: #333;
   border-left: 4px solid #FFF3B8;
