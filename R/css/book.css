@@ -1,18 +1,17 @@
-/* Title:  A few custom fixes to Tufte HTML styles */
-/* Author: BACOU, Melanie                          */
-/* Date:   2017.04.04                              */
+/* Title:  Bootstrap customizations     */
+/* Author: BACOU, Melanie               */
+/* Date:   2017.04.04                   */
 
-/*
-.book.font-family-1, .book .book-header, .book .book-summary {
-  font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
+.book .book-summary {
+  background-color: rgba(242, 242, 242, 0.9);
 }
-*/
 
-.left   { text-align:left; }
-.center { text-align:center; }
-.right  { text-align:right; }
+.book.font-family-1, .book .book-summary, h4.author, h4.date {
+  font-family: Lato, "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .book .book-header, ul.summary > li:first-child {
+  font-family: Raleway, "Roboto Condensed", Helvetica, Arial, sans-serif;
   font-weight: normal;
 }
 
@@ -29,9 +28,13 @@ h5, h6 {
   border-bottom: 3px solid;
 }
 
+th {
+  font-weight: normal;
+}
+
 .book .book-body .page-wrapper .page-inner section.normal b,
 .book .book-body .page-wrapper .page-inner section.normal strong {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .book-summary ul ul {
@@ -44,10 +47,14 @@ h5, h6 {
   font-weight: 600;
 }
 
+.book .book-summary ul.summary li.divider {
+  margin-top: 4px;
+}
+
 ul.summary > li:first-child {
-  font-size: 14px;
-  font-weight: 500;
-  padding-top: 6px;
+  font-size: 18px;
+  font-weight: normal;
+  margin-top: 4px;
 }
 
 ul.summary > li.chapter {
@@ -69,33 +76,13 @@ ul.summary > li.chapter {
   word-wrap: break-word;
 }
 
-.caption, caption {
+.book .book-body .caption, .book .book-body caption {
   color: #777;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal .caption {
-   font-size: .9em;
-}
-
-caption {
-  text-align: left;
+  font-size: .9em;
 }
 
 caption span {
   font-weight: bold;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal table tr:nth-child(2n) {
-    background-color: transparent;
-}
-
-.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
-  padding: 0 2px;
-  vertical-align: bottom;
-}
-
-.table-condensed td em, .book .book-body .page-wrapper .page-inner section.normal td em {
-  color: #777;
 }
 
 .book .book-body .page-wrapper .page-inner section.normal table {
@@ -104,36 +91,56 @@ caption span {
 
 .book .book-body .page-wrapper .page-inner section.normal table td,
 .book .book-body .page-wrapper .page-inner section.normal table th {
-  border-top-style: dotted;
-  border-bottom-style: dotted;
   padding: 0 2px;
   vertical-align: bottom;
 }
 
-.book .book-body .page-wrapper .page-inner section.normal table tr,
-.book .book-body .page-wrapper .page-inner section.normal table thead th {
+.book .book-body .page-wrapper .page-inner section.normal table tbody th {
+  font-weight: normal;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table .center .left {
+  text-align: left;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table thead tr,
+.book .book-body .page-wrapper .page-inner section.normal table td,
+.book .book-body .page-wrapper .page-inner section.normal table th {
   border: none;
 }
 
-.book .book-body .page-wrapper .page-inner section.normal table tr:last-child th,
-.book .book-body .page-wrapper .page-inner section.normal table tr:last-child td {
+.book .book-body .page-wrapper .page-inner section.normal table tr {
+    border-top: 1px dotted #ddd;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table thead tr:first-child {
+  border-top: 1px solid #ddd;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table thead tr:last-child,
+.book .book-body .page-wrapper .page-inner section.normal table tbody tr:last-child {
   border-bottom: 2px solid #ddd;
 }
 
-.book .book-body .page-wrapper .page-inner section.normal table tbody th:nth-child(2) {
-  font-weight: normal;
-  font-style: italic;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal table thead tr:last-child th {
-  font-weight: normal;
-  font-style: italic;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal table thead tr:first-child th {
-  border-top: 1px solid #ddd;
-  font-weight: 600;
+.book .book-body .page-wrapper .page-inner section.normal table tbody th:nth-child(2),
+.book .book-body .page-wrapper .page-inner section.normal table thead tr:last-child th:first-child {
+  font-weight: bold;
   font-style: normal;
+  text-align: left;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal table tbody th:nth-child(2),
+.book .book-body .page-wrapper .page-inner section.normal table thead tr:last-child th: {
+  font-weight: normal;
+  font-style: italic;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal td em {
+  color: #777;
 }
 
 .references p {
@@ -145,3 +152,6 @@ div.rhandsontable {
   max-width: 100%;
 }
 
+.leaflet-container .leaflet-control-attribution, .leaflet-container .leaflet-control-scale {
+    font-size: 9pt;
+}
