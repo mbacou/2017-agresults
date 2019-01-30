@@ -34,7 +34,7 @@ fews <- list(
     varLabel = "CHIRPS v2 rainfall estimates (monthly, mm)",
     time = "month",
     unit = "mm",
-    files = paste0("chirps-v2.0.", format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "%Y.%m"), ".tif.gz"),
+    files = format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "chirps-v2.0.%Y.%m.tif.gz"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/"
   ),
   rfe = list(
@@ -48,7 +48,7 @@ fews <- list(
     varLabel = "potential evapotranspiration (PET) (monthly, mm)",
     time = "day",
     unit = "mm",
-    files = paste0("et", format(seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"), "%Y%m%d"), ".tar.gz"),
+    files = format(seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"), "et%Y%m%d.tar.gz"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/daily/pet/downloads/daily/"
   ),
   eta = list(
@@ -62,7 +62,7 @@ fews <- list(
     varLabel = "SSEBop evapotranspiration anomaly (monthly, percent of median)",
     time = "month",
     unit = "percent",
-    files = paste0("m", format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "%Y%m"), ".zip"),
+    files = format(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), "m%Y%m.zip"),
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/monthly/eta/anomaly/downloads/"
   ),
   ndvi_west = list(
@@ -142,10 +142,10 @@ fews[status==F, .N, by=varCode]
 # Fill in approx dates
 fews[, date := NULL]
 fews[time=="dekad", 
-  date := rep(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), each=3)+c(0,10,20),
+  date := rep(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), each=3) + c(0,10,20),
   by=varCode]
 fews[time=="month", 
-  date := seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month")+14,
+  date := seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month") + 14,
   by=varCode]
 fews[time=="day", 
   date := seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"),
