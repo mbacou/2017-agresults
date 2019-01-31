@@ -95,9 +95,9 @@ fews <- list(
   )  
 )
 
+# Flatten list to data.table
 fews <- lapply(fews, data.frame)
-fews <- rbindlist(fews, idcol=T)
-setnames(fews, ".id", "varCode")
+fews <- rbindlist(fews, idcol="varCode", fill=TRUE)
 fews[, .N, by=varCode]
 #           varCode   N
 # 1:            rfe 108
@@ -110,22 +110,21 @@ fews[, .N, by=varCode]
 # 8: ndvi_anom_east 108
 
 # Download all these files
-# Fill in spatial resolution and projection details
 dir <- "~/Projects/hc-data/FEWS/"
 fews[, dest := paste0(dir, varCode, "/", files)]
-download.file(paste0(fews$url, fews$files), fews$dest)
-# Retry a few vars
-tmp <- fews[varCode %like% "ndvi"]
-download.file(paste0(tmp$url, tmp$files), tmp$dest)
-tmp <- fews[varCode=="eta"]
-download.file(paste0(tmp$url, tmp$files), tmp$dest)
 
-# Which ones failed to download
-# Retry to download these 30 missing files by hand
-tmp <- fews[status=="FALSE"]
-download.file(paste0(tmp$url, tmp$files), tmp$dest)
-# => might need a few trials
-fews[, status := file.exists(dest)]
+# Only download when archive is not found, re-try URLs twice
+for (i in 1:2) {
+  # Which ones failed to download if any?
+  fews[, status := file.exists(dest)]
+  tmp <- fews[status==FALSE]
+  tmp[, try(silent=TRUE,
+    download.file(sprintf("%s%s", url, archives), sprintf("%s", dest), quiet=FALSE))]
+}
+
+# Blurb out
+if(fews[status==FALSE, .N]>0) warning("Failed to download ", fews[status==FALSE, .N], " rasters")
+
 fews[status==F, .N, by=varCode]
 #           varCode  N
 # 1:            rfe 19
@@ -140,26 +139,26 @@ fews[status==F, .N, by=varCode]
 # => all good!
 
 # Fill in approx dates
-fews[, date := NULL]
+fews[, date := as.Date(NA)]
 fews[time=="dekad", 
-  date := rep(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), each=3) + c(0,10,20),
-  by=varCode]
+     date := rep(seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month"), each=3) + c(0,10,20),
+     by=varCode]
 fews[time=="month", 
-  date := seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month") + 14,
-  by=varCode]
+     date := seq(as.Date("2015-01-01"), as.Date("2017-12-31"), "month") + 14,
+     by=varCode]
 fews[time=="day", 
-  date := seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"),
-  by=varCode]
+     date := seq(as.Date("2015-01-01"), as.Date("2017-06-30"), "day"),
+     by=varCode]
 
 # Unzip
 tmp <- lapply(fews[!varCode %in% c("pet", "chirps") & status==T, dest], 
-  function(x) unzip(x, exdir=dirname(x)))
+              function(x) unzip(x, exdir=dirname(x)))
 fews[!varCode %in% c("pet", "chirps") & status==T, 
-  raster := sapply(tmp, function(x) basename(x[1]))]
+     raster := sapply(tmp, function(x) basename(x[1]))]
 tmp <- lapply(fews[varCode %in% c("pet", "chirps") & status==T, dest], 
-  function(x) untar(x, exdir=dirname(x)))
+              function(x) untar(x, exdir=dirname(x)))
 fews[varCode %in% c("pet", "chirps") & status==T, 
-  raster := str_replace(files, ".tar.gz", ".bil")]
+     raster := str_replace(files, ".tar.gz", ".bil")]
 
 # Verify
 fews[, first(raster), by=varCode]
@@ -184,11 +183,11 @@ tmp <- lapply(fews[, first(raster), by=varCode][, V1], function(x) extent(raster
 
 # Read in projection into catalog
 fews[varCode!="rfe" & status==T, 
-  proj := "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"]
+     proj := "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"]
 
 # Refer to https://gis.stackexchange.com/questions/177447/defining-the-correct-aea-proj4string-for-fewsnet-rainfall-data-southern-africa
 fews[varCode=="rfe" & status==T, 
-  proj := "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"]
+     proj := "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"]
 
 # Add spatial resolution
 fews[varCode=="chirps", res := 0.05]
@@ -217,7 +216,7 @@ p <- tm_shape(pts, is.master=T, projection="eck4") +
   tm_facets("adm0_name", nrow=1, free.coords=T, free.scales=T) +
   tm_scale_bar(position=c("right", "bottom"), breaks=c(0,20,40,60,80)) +
   tm_layout(legend.outside=T, legend.text.size=.8,
-    attr.outside=T, title.size=.8)
+            attr.outside=T, title.size=.8)
 
 # Helper for scales
 na2null <- function(x) ifelse(is.na(x), "", x)
@@ -227,8 +226,8 @@ na2null <- function(x) ifelse(is.na(x), "", x)
 tmp <- fews[varCode=="chirps" & status==T, raster(last(raster), crs=last(proj))]
 tmp[tmp<0] <- NA
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
-  title="CHIRPS v2.0\nMay 2017\n(mm)",
-  breaks=seq(0,760,40), labels=na2null(seq(0,720,40)*c(1, NA))) + p
+                               title="CHIRPS v2.0\nMay 2017\n(mm)",
+                               breaks=seq(0,760,40), labels=na2null(seq(0,720,40)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-chirps.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
 
@@ -237,8 +236,8 @@ tmp <- fews[varCode=="rfe" & status==T, raster(last(raster), crs=last(proj))]
 tmp[tmp<0] <- NA
 colortable(tmp) <- logical(0)
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.rain(255),
-  title="RFE\nJune 2017\ndekad 2\n(mm)",
-  breaks=seq(0,168,8), labels=na2null(seq(0,160,8)*c(1, NA))) + p
+                               title="RFE\nJune 2017\ndekad 2\n(mm)",
+                               breaks=seq(0,168,8), labels=na2null(seq(0,160,8)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-rfe.png", width=6, height=3.6)
 
@@ -248,8 +247,8 @@ tmp[tmp<0] <- NA
 minValue(crop(tmp, pts))
 maxValue(crop(tmp, pts))
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.pet(255),
-  title="PET\nJune, 20 2017\n(mm)",
-  breaks=seq(100,960,40), labels=na2null(seq(100,920,40)*c(1, NA))) + p
+                               title="PET\nJune, 20 2017\n(mm)",
+                               breaks=seq(100,960,40), labels=na2null(seq(100,920,40)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-pet.png", width=6, height=3.6)
 
@@ -258,8 +257,8 @@ tmp <- fews[varCode=="eta" & status==T, raster(last(raster), crs=last(proj))]
 tmp[tmp<0] <- NA
 maxValue(crop(tmp, pts))
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et(255),
-  title="ETa\nJune 2017\ndekad 2\n(mm)",
-  breaks=seq(0,130,10), labels=na2null(seq(0,120,10)*c(1, NA))) + p
+                               title="ETa\nJune 2017\ndekad 2\n(mm)",
+                               breaks=seq(0,130,10), labels=na2null(seq(0,120,10)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-eta.png", width=6, height=3.6)
 
@@ -269,8 +268,8 @@ tmp <- fews[varCode=="et_anom" & status==T, raster(last(raster), crs=last(proj))
 colortable(tmp) <- logical(0)
 maxValue(crop(tmp, pts))
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.et_anom(255),
-  title="ET Anomaly\nJune 2017\ndekad 2\n(percent)",
-  breaks=seq(0,285,15), labels=na2null(seq(0,270,15)*c(1, NA))) + p
+                               title="ET Anomaly\nJune 2017\ndekad 2\n(percent)",
+                               breaks=seq(0,285,15), labels=na2null(seq(0,270,15)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/fews-et_anom.png", width=6, height=3.6)
 
@@ -296,10 +295,10 @@ tmp1 <- (tmp1 - 100) / 100
 spplot(tmp1, col.regions=pal.ndvi)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi(255),
-  title="NDVI\nJune 2017\ndekad 2\n(index)",
-  breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) +
+                               title="NDVI\nJune 2017\ndekad 2\n(index)",
+                               breaks=seq(-1,1.1,0.1), labels=na2null(seq(-1,1,0.1)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi(255),
-    legend.show=F, breaks=seq(-1,1.1,0.1)) + p
+                             legend.show=F, breaks=seq(-1,1.1,0.1)) + p
 
 save_tmap(m, "./docs/out/fews-ndvi.png", width=6, height=3.6)
 
@@ -324,10 +323,10 @@ maxValue(tmp1)
 spplot(tmp, col.regions=pal.ndvi_pct)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.ndvi_pct(255),
-  title="NDVI Anomaly\nJune 2017\ndekad 2\n(percent of normal)",
-  breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) +
+                               title="NDVI Anomaly\nJune 2017\ndekad 2\n(percent of normal)",
+                               breaks=seq(0,210,10), labels=na2null(seq(0,200,10)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster(names(tmp1), pal=pal.ndvi_pct(255),
-    legend.show=F, breaks=seq(0,210,10)) + p
+                             legend.show=F, breaks=seq(0,210,10)) + p
 
 save_tmap(m, "./docs/out/fews-ndvi_anom.png", width=6, height=3.6)
 
@@ -349,13 +348,13 @@ FEWS spatial grids are distributed through multiple channels, primarily USGS and
 To the author's knowledge there is no Web service or API to facilitate programmatic access to all of FEWSNET data archives, only public FTP locations[^thredds]:
 
 - **FEWS/USGS**  
-  https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/  
-  Contains RFE[^rfe], PET[^pet], ETa[^eta], NDVI[^ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions in Africa.
+https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/  
+Contains RFE[^rfe], PET[^pet], ETa[^eta], NDVI[^ndvi] at different timescales (daily, dekadal, monthly, yearly) and resolutions (usually 1km or lower), and across different regions in Africa.
 
 - **FEWS/NOAA**  
-  ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
-  Contains daily ARC2[^arc2] and RFE[^rfe] rainfall estimates for Africa at 10km resolution
-  
+ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa  
+Contains daily ARC2[^arc2] and RFE[^rfe] rainfall estimates for Africa at 10km resolution
+
 In this study all spatial estimates are derived from grids acquired at the following locations:
 
 - `chirps` (monthly, mm, 0.05 degree/~5km) -- https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/global/monthly/chirps/final/downloads/monthly/  
@@ -450,8 +449,8 @@ include_graphics("./out/fews-ndvi_anom.png", dpi=300)
 # These are available monthly or as long-term summaries
 # WEST
 tmp <- getData("worldclim", var="bio", res=0.5, 
-  lon=mean(nga.hh$X_imp), lat=mean(nga.hh$Y_imp),
-  path="~/Projects/hc-data/WorldClim_0.5")
+               lon=mean(nga.hh$X_imp), lat=mean(nga.hh$Y_imp),
+               path="~/Projects/hc-data/WorldClim_0.5")
 names(tmp)
 #  [1] "bio1_26"  "bio2_26"  "bio3_26"  "bio4_26"  "bio5_26"  "bio6_26"  "bio7_26"  "bio8_26"  "bio9_26" 
 # [10] "bio10_26" "bio11_26" "bio12_26" "bio13_26" "bio14_26" "bio15_26" "bio16_26" "bio17_26" "bio18_26"
@@ -467,11 +466,11 @@ spplot(crop(tmp[[15]], nga.pts))
 # EAST
 # Kenya locations require 2 tiles unfortunately (27 and 37)
 tmp1 <- getData("worldclim", var="bio", res=0.5, 
-  lon=mean(ken.hh$gps_lo, na.rm=T), lat=mean(ken.hh$gps_la, na.rm=T),
-  path="~/Projects/hc-data/WorldClim_0.5")
+                lon=mean(ken.hh$gps_lo, na.rm=T), lat=mean(ken.hh$gps_la, na.rm=T),
+                path="~/Projects/hc-data/WorldClim_0.5")
 tmp2 <- getData("worldclim", var="bio", res=0.5, 
-  lon=min(ken.hh$gps_lo, na.rm=T), lat=max(ken.hh$gps_la, na.rm=T),
-  path="~/Projects/hc-data/WorldClim_0.5")
+                lon=min(ken.hh$gps_lo, na.rm=T), lat=max(ken.hh$gps_la, na.rm=T),
+                path="~/Projects/hc-data/WorldClim_0.5")
 
 spplot(crop(tmp1[[4]], ken.pts))
 spplot(crop(tmp2[[4]], ken.pts))
@@ -482,27 +481,27 @@ spplot(crop(tmp2[[15]], ken.pts))
 
 # Plot BIO4
 m <- tm_shape(tmp) + tm_raster("bio4_26", pal=pal.temp(255),
-  title="Temperature\nSeasonality\n(std. dev.)",
-  breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) +
+                               title="Temperature\nSeasonality\n(std. dev.)",
+                               breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) +
   tm_shape(tmp1) + tm_raster("bio4_37", pal=pal.temp(255),
-    legend.show=F,
-    breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) +
+                             legend.show=F,
+                             breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) +
   tm_shape(tmp2) + tm_raster("bio4_27", pal=pal.temp(255),
-    legend.show=F,
-    breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) + p
+                             legend.show=F,
+                             breaks=seq(400, 3700, 100), labels=na2null(seq(400, 3600, 100)/100*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/wc-bio4.png", width=6, height=3.6)
 
 # Plot BIO15
 m <- tm_shape(tmp) + tm_raster("bio15_26", pal=pal.rain(255),
-  title="Precipitation\nSeasonality\n(coeff. var.)",
-  breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) +
+                               title="Precipitation\nSeasonality\n(coeff. var.)",
+                               breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) +
   tm_shape(tmp1) + tm_raster("bio15_37", pal=pal.rain(255),
-    legend.show=F,
-    breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) +
+                             legend.show=F,
+                             breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) +
   tm_shape(tmp2) + tm_raster("bio15_27", pal=pal.rain(255),
-    legend.show=F,
-    breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) + p
+                             legend.show=F,
+                             breaks=seq(10, 170, 10), labels=na2null(seq(10, 160, 10)*c(1, NA))) + p
 
 save_tmap(m, "./docs/out/wc-bio15.png", width=6, height=3.6)
 
@@ -587,18 +586,18 @@ Aside from [SPEIBase](http://digital.csic.es/handle/10261/128892), drought event
 
 {
 "title": "EONET Event Categories",
-	"description": "List of all the available event categories in the EONET system",
-	"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories",
-	"categories": [
-		{
-			"id": 6,
-			"title": "Drought",
-			"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/6",
-			"description": "Long lasting absence of precipitation affecting agriculture and livestock, and the overall availability of food and water.",
-			"layers": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/layers/6"
-		}
+"description": "List of all the available event categories in the EONET system",
+"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories",
+"categories": [
+{
+"id": 6,
+"title": "Drought",
+"link": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/6",
+"description": "Long lasting absence of precipitation affecting agriculture and livestock, and the overall availability of food and water.",
+"layers": "http://eonet.sci.gsfc.nasa.gov/api/v2.1/layers/6"
 }
-		
+}
+
 ```
 
 ## Soil Characteristics
@@ -640,7 +639,7 @@ afsis[, `:=`(
   raster = paste0("/home/mbacou/Projects/hc-data/AfSIS/", varCode, ".tif"),
   proj = "+proj=longlat +datum=WGS84",
   res = "250m")]
-  
+
 # ORCDRC
 rgdal::GDALinfo(afsis[, last(raster)])
 tmp <- raster(afsis[, first(raster)], crs=afsis[, first(proj)])
@@ -653,8 +652,8 @@ proj4string(tmp) <- proj4string(pts)
 spplot(crop(tmp, ken.pts), col.regions=pal.orcdrc)
 
 m <- tm_shape(tmp) + tm_raster(names(tmp), pal=pal.orcdrc(255),
-  breaks=seq(0,220,10), labels=na2null(seq(0,210,10)*c(1, NA)),
-  title="Soil Organic Carbon\n(0 cm depth, permilles)") + p
+                               breaks=seq(0,220,10), labels=na2null(seq(0,210,10)*c(1, NA)),
+                               title="Soil Organic Carbon\n(0 cm depth, permilles)") + p
 
 save_tmap(m, "./docs/out/afsis-orcdrc.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
 
@@ -668,8 +667,8 @@ maxValue(tmp)
 spplot(crop(tmp, ken.pts), at=pal.txgwrb$Number, col.regions=pal.taxnwrb$COLOR)
 
 m <- tm_shape(crop(tmp, pts)) + tm_raster(names(tmp), pal=pal.taxnwrb$COLOR,
-  breaks=pal.taxnwrb$Number, labels=pal.taxnwrb$Code,
-  title="Soil Classification\nPredicted Most Probable\nClass (NWRB)") + p
+                                          breaks=pal.taxnwrb$Number, labels=pal.taxnwrb$Code,
+                                          title="Soil Classification\nPredicted Most Probable\nClass (NWRB)") + p
 
 save_tmap(m, "./docs/out/afsis-taxnwrb.png", width=6, height=3.6, units="in", family="Roboto Condensed", pointsize=9)
 
@@ -714,21 +713,21 @@ tmp <- names(dt)[names(dt) %like% "tt10"]
 tt <- dt[, .SD, .SDcols=c("CELL5M", "X", "Y", tmp)]
 rm(dt); gc()
 tt <- SpatialPixelsDataFrame(tt[, .(X,Y)], data.frame(tt)[, 4:8],
-  proj4string=CRS("+init=epsg:4326"))
+                             proj4string=CRS("+init=epsg:4326"))
 tt <- stack(tt)
 
 # Map 2 of them
 m <- tm_shape(tt) + tm_raster("tt10_20k", pal=plasma(255),
-  title="Travel Time\nto nearest\n20K Market\n(hrs)",
-  breaks=c(0,.5,1,1.5,2,3,4,6,8,12,310), 
-  labels=c("0","< 1/2 hr", "< 1 hr", "", "< 2 hr", "", "< 4 hr", "", "< 8 hr", "> 12 hr")) + p
+                              title="Travel Time\nto nearest\n20K Market\n(hrs)",
+                              breaks=c(0,.5,1,1.5,2,3,4,6,8,12,310), 
+                              labels=c("0","< 1/2 hr", "< 1 hr", "", "< 2 hr", "", "< 4 hr", "", "< 8 hr", "> 12 hr")) + p
 
 save_tmap(m, "./docs/out/tt10_20k.png", width=6, height=3.6)
 
 m <- tm_shape(tt) + tm_raster("tt10_100k", pal=plasma(255),
-  title="Travel Time\nto nearest\n100K Market\n(hrs)",
-  breaks=c(0,.5,1,1.5,2,3,4,6,8,12,310), 
-  labels=c("0","< 1/2 hr", "< 1 hr", "", "< 2 hr", "", "< 4 hr", "", "< 8 hr", "> 12 hr")) + p
+                              title="Travel Time\nto nearest\n100K Market\n(hrs)",
+                              breaks=c(0,.5,1,1.5,2,3,4,6,8,12,310), 
+                              labels=c("0","< 1/2 hr", "< 1 hr", "", "< 2 hr", "", "< 4 hr", "", "< 8 hr", "> 12 hr")) + p
 
 save_tmap(m, "./docs/out/tt10_100k.png", width=6, height=3.6)
 
